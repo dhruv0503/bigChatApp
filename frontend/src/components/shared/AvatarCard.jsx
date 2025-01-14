@@ -2,7 +2,6 @@ import { Box, Stack, AvatarGroup, Avatar } from "@mui/material";
 import React from "react";
 
 const AvatarCard = ({ avatar = [], max = 4 }) => {
-  console.log(avatar.length);
   return (
     <Stack direction={"row"} spacing={0.5}>
       <AvatarGroup max={max}>

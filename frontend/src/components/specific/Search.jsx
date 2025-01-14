@@ -1,19 +1,25 @@
+import { Search as SearchIcon } from "@mui/icons-material";
 import {
   Dialog,
-  Stack,
   DialogTitle,
-  TextField,
   InputAdornment,
   List,
-  ListItem,
-  ListItemText,
+  Stack,
+  TextField,
 } from "@mui/material";
 import { useState } from "react";
-import { Search as SearchIcon } from "@mui/icons-material";
+import { sampleUsers } from "../../constants/sampleData";
+import UserItem from "../shared/UserItem";
 
 const Search = () => {
   const [searchText, setSearchText] = useState("");
-  const users = [1,2,3];
+  const [users, setUsers] = useState(sampleUsers);
+
+  const addFriendLoader = (e, _id) => {
+    e.preventDefault();
+    console.log("Add friend", _id);
+  };
+  let isLoadingSendFriendRequest = false;
   return (
     <Dialog open>
       <Stack p={"2rem"} direction={"column"} width={"25rem"}>
@@ -36,9 +42,12 @@ const Search = () => {
 
         <List>
           {users.map((user, idx) => (
-            <ListItem key={idx}>
-              <ListItemText />
-            </ListItem>
+            <UserItem
+              user={user}
+              key={user._id}
+              handler={addFriendLoader}
+              handlerIsLoading={isLoadingSendFriendRequest}
+            />
           ))}
         </List>
       </Stack>
