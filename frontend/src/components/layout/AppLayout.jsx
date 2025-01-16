@@ -27,6 +27,7 @@ const AppLayout = ({ WrappedContent, ...props }) => {
           height: "calc(100vh - 4rem)",
           display: "flex",
           flexDirection: "row",
+          width: "100%",
         }}
       >
         <Grid2
@@ -37,15 +38,18 @@ const AppLayout = ({ WrappedContent, ...props }) => {
             display: { xs: "none", sm: "block" },
             flexGrow: "1",
             maxWidth: "25%",
+            boxSizing: "border-box"
+
           }}
           height={"100%"}
+
         >
           {/* First */}
           <ChatList
             chats={sampleChats}
             chatId={chatId}
             handleDeleteChat={handleDeleteChat}
-            // onlineUsers={["1", "2"]}
+          // onlineUsers={["1", "2"]}
           />
         </Grid2>
         <Grid2
@@ -55,7 +59,10 @@ const AppLayout = ({ WrappedContent, ...props }) => {
           md={5}
           lg={6}
           height={"100%"}
-          sx={{ flexGrow: "2" }}
+          sx={{
+            flexGrow: "2",
+
+          }}
         >
           <WrappedContent {...props} />
         </Grid2>
@@ -66,9 +73,10 @@ const AppLayout = ({ WrappedContent, ...props }) => {
           sx={{
             display: { xs: "none", md: "block" },
             height: "100%",
-            bgcolor: "rgba(0,0,0,0.7)",
+            backgroundColor: "rgba(0,0,0,0.7)",
             flexGrow: "1",
             maxWidth: "25%",
+
           }}
         >
           <Profile />

@@ -18,7 +18,7 @@ const ChatList = ({
 }) => {
   return (
     // <Stack width={w} direction={"column"}>
-    <Stack direction={"column"}>
+    <Stack direction={"column"} width={w}>
       {chats?.map((data, idx) => {
         const { avatar, _id, name, groupChat, members } = data;
         const newMessageAlert = newMessagesAlert.find(

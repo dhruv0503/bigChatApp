@@ -13,6 +13,7 @@ const Profile = () => {
       direction={"column"}
       alignItems={"center"}
       marginTop={"1rem"}
+      boxSizing={"border-box"}
     >
       <Avatar
         sx={{
@@ -23,8 +24,8 @@ const Profile = () => {
           border: "5px solid white",
         }}
       />
-      <ProfileCard 
-        heading={"Bio"} 
+      <ProfileCard
+        heading={"Bio"}
         text={"This is a great bio"} />
       <ProfileCard
         heading={"Username"}

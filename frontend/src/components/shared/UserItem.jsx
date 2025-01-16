@@ -31,10 +31,10 @@ const UserItem = ({ user, handler, handlerIsLoading, isAdded = false }) => {
           disabled={handlerIsLoading}
           size="small"
           sx={{
-            bgcolor: isAdded ? "error.main" : "primary.main",
+            backgroundColor: isAdded ? "error.main" : "primary.main",
             color: "white",
             "&:hover": {
-              bgcolor: isAdded ? "error.dark" : "primary.dark",
+              backgroundColor: isAdded ? "error.dark" : "primary.dark",
             },
           }}
         >

@@ -70,3 +70,32 @@ export const sampleNotifications = [
     }
   }
 ]
+
+export const sampleMessage = [
+  {
+    attachments: [
+      {
+        public_id: 'abcd',
+        url: "https://www.w3schools.com/w3images/avatar2.png"
+      }
+    ],
+    _id: "xyz",
+    sender: {
+      _id: "bhc",
+      name: "Hella Name"
+    },
+    chat: "chatId",
+    createdAt: '2025-01-16T10:33:27.149Z'
+  },
+  {
+    attachments: [],
+    content: "Great Message2",
+    _id: "xyz2",
+    sender: {
+      _id: "1",
+      name: "Hella Name2"
+    },
+    chat: "chatId2",
+    createdAt: '2025-01-16T10:33:27.149Z'
+  }
+]
