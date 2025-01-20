@@ -2,6 +2,7 @@
 import { Stack } from "@mui/material";
 import React from "react";
 import ChatItem from "../shared/ChatItem";
+import { bgGradient } from "../../constants/color";
 
 const ChatList = ({
   w = "100%",
@@ -18,7 +19,7 @@ const ChatList = ({
 }) => {
   return (
     // <Stack width={w} direction={"column"}>
-    <Stack direction={"column"} width={w}>
+    <Stack direction={"column"} width={w} overflow={"auto"} height="100%" sx={{backgroundImage:bgGradient}}>
       {chats?.map((data, idx) => {
         const { avatar, _id, name, groupChat, members } = data;
         const newMessageAlert = newMessagesAlert.find(
