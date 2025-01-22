@@ -11,6 +11,9 @@ const Groups = lazy(() => import("./pages/Groups.jsx"));
 const NotFound = lazy(() => import("./pages/NotFound.jsx"));
 const AdminLogin = lazy(() => import("./pages/admin/AdminLogin.jsx"));
 const Dashboard = lazy(() => import("./pages/admin/Dashboard.jsx"));
+const ChatManager = lazy(() => import("./pages/admin/ChatManager.jsx"));
+const MessageManager = lazy(() => import("./pages/admin/MessageManager.jsx"));
+const UserManager = lazy(() => import("./pages/admin/UserManager.jsx"));
 
 let user = true;
 
@@ -36,6 +39,9 @@ const App = () => {
 
             <Route path="admin" element={<AdminLogin />} />
             <Route path="admin/dashboard" element={<Dashboard />} />
+            <Route path="admin/chats" element={<ChatManager />} />
+            <Route path="admin/users" element={<UserManager />} />
+            <Route path="admin/messages" element={<MessageManager />} />
 
             <Route path="*" element={<NotFound />} />
           </Routes>

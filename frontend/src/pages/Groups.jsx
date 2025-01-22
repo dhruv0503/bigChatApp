@@ -144,7 +144,7 @@ const Groups = () => {
       flexDirection: "row",
       width: "100%",
     }} >
-      <Grid2 item sm={4} sx={{
+      <Grid2 sm={4} sx={{
         display: {
           xs: "none",
           sm: "block"
@@ -156,7 +156,7 @@ const Groups = () => {
       }}>
         <GroupList myGroups={sampleChats} chatId={chatId} />
       </Grid2>
-      <Grid2 item xs={12} sm={8} sx={{
+      <Grid2 xs={12} sm={8} sx={{
         display: 'flex',
         flexDirection: "column",
         alignItems: "center",

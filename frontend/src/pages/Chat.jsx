@@ -26,7 +26,8 @@ const ChatContent = () => {
     <Stack ref={containerRef} boxSizing={"border-box"} padding={"1rem"} spacing={"1rem"} bgcolor={grayColor} height={"90%"} sx={{
       overflowX: "hidden",
       overflowY: "auto",
-      margin: 0
+      margin: 0,
+      borderRadius: "25px"
     }}>
       {
 
@@ -37,7 +38,7 @@ const ChatContent = () => {
     </Stack >
     <form style={{ height: "10%" }}>
       <Stack direction={"row"} height={"100%"} padding={"1rem 0"} alignItems={"center"} position={"relative"} boxSizing={"border-box"} sx={{
-        paddingRight: "1rem"
+        width: "100%"
       }}>
         <IconButton
           onClick={handleMenuOpen}

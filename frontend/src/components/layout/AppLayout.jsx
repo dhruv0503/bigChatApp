@@ -22,24 +22,24 @@ const AppLayout = ({ WrappedContent, ...props }) => {
       <Title />
       <Header />
       <Grid2
-        container
+        container={true}
         sx={{
-          height: "calc(100vh - 4rem)",
+          height: "calc(100vh - 6rem)",
           display: "flex",
           flexDirection: "row",
           width: "100%",
         }}
       >
         <Grid2
-          item
           sm={4}
           md={3}
           sx={{
             display: { xs: "none", sm: "block" },
             flexGrow: "1",
             maxWidth: "25%",
-            boxSizing: "border-box"
-
+            boxSizing: "border-box",
+            margin: "0.5rem",
+            borderRadius: "25px"
           }}
           height={"100%"}
 
@@ -53,7 +53,6 @@ const AppLayout = ({ WrappedContent, ...props }) => {
           />
         </Grid2>
         <Grid2
-          item
           xs={12}
           sm={8}
           md={5}
@@ -61,13 +60,13 @@ const AppLayout = ({ WrappedContent, ...props }) => {
           height={"100%"}
           sx={{
             flexGrow: "2",
-
+            margin : "0.5rem",
+            borderRadius: "25px",
           }}
         >
           <WrappedContent {...props} />
         </Grid2>
         <Grid2
-          item
           md={4}
           lg={3}
           sx={{
@@ -76,7 +75,8 @@ const AppLayout = ({ WrappedContent, ...props }) => {
             backgroundColor: "rgba(0,0,0,0.7)",
             flexGrow: "1",
             maxWidth: "25%",
-
+            margin: "0.5rem",
+            borderRadius: "25px"
           }}
         >
           <Profile />

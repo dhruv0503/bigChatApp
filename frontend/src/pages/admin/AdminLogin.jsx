@@ -10,15 +10,15 @@ import { Navigate } from "react-router-dom";
 
 const AdminLogin = () => {
     const [secretKey, setSecreyKey] = useState("");
-    const [isAdmin, setIsAdmin] = useState(false)
+    const [isAdmin, setIsAdmin] = useState(true)
 
     const submitForm = (e) => {
         e.preventDefault();
         console.log(secretKey)
     };
 
-    if(isAdmin){
-        Navigate("/admin/dashboard")
+    if (isAdmin) {
+        return <Navigate to={"/admin/dashboard"} />
     }
 
     return (

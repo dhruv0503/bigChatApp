@@ -4,7 +4,7 @@ import { Box, Typography } from "@mui/material";
 
 const HomeContent = () => {
   return (
-    <Box backgroundColor={"rgba(0,0,0,0.4)"} height={"100%"}>
+    <Box backgroundColor={"rgba(0,0,0,0.4)"} height={"100%"} borderRadius={"25px"}>
       <Typography variant="h5" p={"2rem"} textAlign={"center"} boxSizing={"border-box"}>
         Select a Friend to Chat
       </Typography>

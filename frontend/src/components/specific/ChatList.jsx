@@ -19,7 +19,7 @@ const ChatList = ({
 }) => {
   return (
     // <Stack width={w} direction={"column"}>
-    <Stack direction={"column"} width={w} overflow={"auto"} height="100%" sx={{backgroundImage:bgGradient}}>
+    <Stack direction={"column"} width={w} overflow={"auto"} height="100%" sx={{backgroundImage:bgGradient, borderRadius : "25px"}}>
       {chats?.map((data, idx) => {
         const { avatar, _id, name, groupChat, members } = data;
         const newMessageAlert = newMessagesAlert.find(

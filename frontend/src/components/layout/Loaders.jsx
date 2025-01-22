@@ -4,7 +4,7 @@ import { Grid2, Skeleton } from "@mui/material";
 export const LayoutLoader = () => {
   return (
     <Grid2
-      container
+      container={true}
       spacing="1rem"
       sx={{
         height: "calc(100vh - 4rem)",
@@ -13,7 +13,6 @@ export const LayoutLoader = () => {
       }}
     >
       <Grid2
-        item
         sm={4}
         md={3}
         sx={{ display: { xs: "none", sm: "block" }, flexGrow: "1" }}
@@ -22,7 +21,6 @@ export const LayoutLoader = () => {
         <Skeleton variant="rectangular" height={"100vh"} />
       </Grid2>
       <Grid2
-        item
         xs={12}
         sm={8}
         md={5}
@@ -37,7 +35,6 @@ export const LayoutLoader = () => {
         }) }
       </Grid2>
       <Grid2
-        item
         md={4}
         lg={3}
         sx={{

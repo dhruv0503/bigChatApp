@@ -30,10 +30,10 @@ const ChatItem = ({
           backgroundColor: sameSender ? "black" : "unset",
           position: "relative",
           color: sameSender ? "white" : "unset",
-          overflow : "hidden"
+          overflow: "hidden"
         }}
       >
-        <AvatarCard avatar={avatar}/>
+        <AvatarCard avatar={avatar} />
         <Stack >
           <Typography>{name}</Typography>
           {newMessageAlert && (

@@ -58,14 +58,16 @@ const Header = () => {
 
   return (
     <>
-      <Box sx={{ flexGrow: 1 }} height={"4rem"}>
+      <Box sx={{ flexGrow: 1, margin : "0.5rem" }} height={"4rem"} boxSizing={"border-box"}>
         <AppBar
           position="static"
           sx={{
             backgroundColor: { orange },
+            borderRadius: "25px",
+            boxShadow: "none",
           }}
         >
-          <Toolbar>
+          <Toolbar >
             <Typography
               variant="h6"
               sx={{
@@ -117,23 +119,23 @@ const Header = () => {
         </AppBar>
       </Box>
 
-              {isSearch && (
-                <Suspense fallback={<Backdrop open/>}>
-                  <Search />
-                </Suspense>
-              )}
+      {isSearch && (
+        <Suspense fallback={<Backdrop open />}>
+          <Search />
+        </Suspense>
+      )}
 
-              {isNewGroup && (
-                <Suspense fallback={<Backdrop open/>}>
-                  <NewGroup />
-                </Suspense>
-              )}
+      {isNewGroup && (
+        <Suspense fallback={<Backdrop open />}>
+          <NewGroup />
+        </Suspense>
+      )}
 
-              {isNotificationOpen && (
-                <Suspense fallback={<Backdrop open/>}>
-                  <Notifications />
-                </Suspense>
-              )}
+      {isNotificationOpen && (
+        <Suspense fallback={<Backdrop open />}>
+          <Notifications />
+        </Suspense>
+      )}
 
     </>
   );

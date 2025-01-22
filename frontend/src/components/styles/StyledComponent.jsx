@@ -18,7 +18,7 @@ export const VisuallyHiddenInput = styled("input")({
 export const StyledLink = styled(LinkComponent)({
   textDecoration: "none",
   color: "black",
-  padding: "unset",
+  padding: "0.5rem",
   "&:hover": {
     backgroundColor: "rgba(0,0,0,0.1)",
   },
@@ -31,7 +31,36 @@ export const InputBox = styled("input")({
   border: "none",
   outline: "none",
   paddingLeft: "2.5rem",
-  margin : "0.5rem",
+  margin : "unset",
   borderRadius: "1rem",
   backgroundColor: `${grayColor}`
+})
+
+export const SearchField = styled("input")({
+  padding : "1rem 2rem",
+  width : "20vmax",
+  border : "none",
+  outline : "none",
+  borderRadius : "1.5rem",
+  backgroundColor : grayColor,
+  fontSize : "1rem",
+  color : "white",
+  "&:focus" : {
+    outline : "none"
+  }
+})
+
+export const CurvedButton = styled("button")({
+  borderRadius : "1.5rem",
+  padding : "1rem 2rem",
+  border : "none",
+  outline : "none",
+  cursor : "pointer",
+  backgroundColor : "black",
+  color : "white",
+  fontSize : "1rem",
+  "&:focus" : {
+    outline : "none",
+    backgroundColor: "rgba(0, 0, 0, 0.8)",
+  }
 })

@@ -14,13 +14,13 @@ const Profile = () => {
       alignItems={"center"}
       marginTop={"1rem"}
       boxSizing={"border-box"}
+
     >
       <Avatar
         sx={{
           width: "10rem",
           height: "10rem",
           objectFit: "contain",
-          marginBottom: "1rem",
           border: "5px solid white",
         }}
       />
