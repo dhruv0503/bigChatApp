@@ -10,7 +10,7 @@ const columns = [
     { field: 'id', headerName: 'ID', headerClassName: "table-header", width: 124 },
     {
         field: 'avatar', headerName: 'Avatar', headerClassName: "table-header", width: 150,
-        renderCell: (params) => <Avatar alt={params.row.name} src={params.row.avatar} sx={{ marginTop: "0.3rem" }} />
+        renderCell: (params) => <AvatarCard avatar={params.row.avatar} sx={{ marginTop: "0.3rem" }} />
     },
     { field: 'name', headerName: 'Name', headerClassName: "table-header", width: 300 },
     { field: 'totalMembers', headerName: 'Total Members', headerClassName: "table-header", width: 120 },
@@ -30,8 +30,17 @@ const ChatManager = () => {
     const [rows, setRows] = useState([])
 
     useEffect(() => {
-        setRows(dashboardData.users.map((user) => {
-            return { ...user, id: user._id, avatar: transformImage(user.avatar, 50) }
+        setRows(dashboardData.chats.map((chat) => {
+            return {
+                ...chat,
+                id: chat._id,
+                avatar: chat.avatar.map((av) => transformImage(av, 50)),
+                members : chat.members.map((av) => transformImage(av.avatar, 50)),
+                creator : {
+                    ...chat.creator,
+                    avatar : transformImage(chat.creator.avatar, 50)
+                }
+            }
         }))
     }, [])
 
