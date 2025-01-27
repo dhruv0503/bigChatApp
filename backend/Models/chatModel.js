@@ -17,7 +17,7 @@ const chatSchema = new Schema({
     members: [{
         type: Types.ObjectId,
         ref: 'User',
-        required: true
+        required: true,
     }]
 }, {
     timestamps: true

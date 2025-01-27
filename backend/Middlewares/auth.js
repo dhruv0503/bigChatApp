@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const expressError = require('../utils/expressError');
+const expressError = require('../Utils/expressError');
 
 const isAuthenticated = (req, res, next) => {
     if (req.cookies.jsonToken) {

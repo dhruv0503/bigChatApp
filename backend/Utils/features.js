@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken')
 
 const cookieOptions = {
     httpOnly: true,
-    expires: new Date(Date.now() + 15 * 24 * 60 * 60 * 1000),
+    expires: new Date(Date.now() + 24 * 60 * 60 * 1000),
     sameSite: "none",
     secure: true
 }
@@ -26,7 +26,7 @@ const sendToken = (res, user, code, msg) => {
 }
 
 const emitEvent = (req, event, users, data) => {
-    console.log("Emitting Event")
+    // console.log("Emitting Event")
 }
 
 module.exports = { connectDB, sendToken,emitEvent}
