@@ -8,4 +8,6 @@ const multerUpload = multer({
 
 const singleFileUpload = multerUpload.single('avatar')
 
-module.exports = {singleFileUpload}
+const attachmentUpload = multerUpload.array('files', 5)
+
+module.exports = {singleFileUpload, attachmentUpload}

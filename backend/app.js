@@ -14,14 +14,22 @@ connectDB();
 const authRoutes = require('./Routes/authRoutes')
 const userRoutes = require('./Routes/userRoutes')   
 const chatRoutes = require('./Routes/chatRoutes')
+const messageRoutes = require('./Routes/messageRoutes')
+const requestRoutes = require('./Routes/requestRoutes')
+const adminRoutes = require('./Routes/adminRoutes')
+
 
 app.use(cors())
 app.use(express.json());
 app.use(cookieParser())
 
+
 app.use('/api', authRoutes);
 app.use('/api/user', userRoutes);
 app.use('/api/chat', chatRoutes);
+app.use('/api/message', messageRoutes);
+app.use('/api/request', requestRoutes);
+app.use('/api/admin', adminRoutes);
 
 app.get('/', (req, res) => {
     res.send('Hello World!')

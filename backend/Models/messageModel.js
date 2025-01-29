@@ -2,19 +2,19 @@ const mongoose = require('mongoose')
 const { Schema, model, models, Types } = mongoose;
 
 const messageSchema = new Schema({
-    content : String,
+    content: String,
     sender: {
         type: Types.ObjectId,
-        ref : "User",
-        required : true
+        ref: "User",
+        required: true
     },
     chat: {
         type: Types.ObjectId,
-        ref : "Chat",
-        required : true
+        ref: "Chat",
+        required: true
     },
-    attachment: {
-        publid_id: {
+    attachments: [{
+        public_id: {
             type: String,
             required: true
         },
@@ -22,7 +22,7 @@ const messageSchema = new Schema({
             type: String,
             required: true
         }
-    }
+    }]
 }, {
     timestamps: true
 })
