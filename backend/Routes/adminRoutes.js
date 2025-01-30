@@ -1,8 +1,15 @@
 const express = require('express');
 const catchAsync = require('../Utils/catchAsync');
-const { getUsers } = require('../Controllers/adminController');
+const { getUsers, allChats, allMessages, getDashboardStats, adminLogin, adminLogout } = require('../Controllers/adminController');
 const router = express.Router();
+const {validateHandler, adminLoginValidator} = require("../Utils/validators")
+const { isAuthenticated, isAdmin } = require('../Middlewares/auth');
 
-router.route('/users').get(catchAsync(getUsers))
+router.route('/login').post(adminLoginValidator(), validateHandler, catchAsync(adminLogin))
+router.route('/logout').post(isAdmin, adminLoginValidator(), validateHandler, catchAsync(adminLogout))
+router.route('/users').get(isAdmin, catchAsync(getUsers))
+router.route('/chats').get(isAdmin, catchAsync(allChats))
+router.route('/messages').get(isAdmin, catchAsync(allMessages))
+router.route('/dashboard').get(isAdmin, catchAsync(getDashboardStats))
 
 module.exports = router;

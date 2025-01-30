@@ -1,12 +1,11 @@
-const { body, validationResult, check, param } = require('express-validator');
+const { body, validationResult, param } = require('express-validator');
 const expressError = require('./expressError');
 
 module.exports.registerValidator = () => [
     body("name").trim().notEmpty().withMessage("Name is required"),
     body("username").trim().notEmpty().withMessage("Username is required"),
-    body("bio").trim().notEmpty().withMessage("Username is required"),
-    body("password").trim().isLength({ min: 8 }).withMessage("Password must be at least 8 characters long"),
-    check('avatar').notEmpty().withMessage('Avatar is required')
+    body("bio").trim().notEmpty().withMessage("Bio is required"),
+    body("password").trim().isLength({ min: 8 }).withMessage("Password must be at least 8 characters long")
 
 ];
 
@@ -42,7 +41,6 @@ module.exports.chatIdValidator = () => [
 
 module.exports.sendAttachmentValidator = () => [
     body("chatId").notEmpty().withMessage("Chat ID is required"),
-    check('files').isArray({ min: 1 }).withMessage('At least one file is required'),
 ];
 
 module.exports.sendRequestValidator = () => [
@@ -54,6 +52,10 @@ module.exports.acceptRequestValidator = () =>
         body("requestId").notEmpty().withMessage("Request ID is required"),
         body("accept").notEmpty().withMessage("Accept is required").isBoolean().withMessage("Accept must be a boolean")
     ]
+
+module.exports.adminLoginValidator = () => [
+    body("secretKey").notEmpty().withMessage("A Secret Key is required")
+]
 
 
 module.exports.validateHandler = (req, res, next) => {

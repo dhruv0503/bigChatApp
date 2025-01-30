@@ -33,4 +33,4 @@ const emitEvent = (req, event, users, data) => {
     // console.log("Emitting Event")
 }
 
-module.exports = { connectDB, sendToken,emitEvent, deleteFilesFromCloudinary}
+module.exports = { connectDB, sendToken,emitEvent, deleteFilesFromCloudinary, cookieOptions}

@@ -4,6 +4,7 @@ const { sendToken } = require('../Utils/features.js')
 
 const createUser = async (req, res, next) => {
     const { name, username, password, avatar, bio } = req.body;
+    return res.send({avatar, files : req.files})
     const user = new User({ name, username, password, avatar, bio });
     if (!user) return next(new expressError('User not created', 400));
     const createdUser = await user.save();

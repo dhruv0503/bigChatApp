@@ -51,7 +51,7 @@ module.exports.acceptFriendRequest = async(req, res, next) => {
 
     const newChat = new Chat({
         members,
-        name : `${request.sender.name} ${request.receiver.name}`,
+        name : `${request.sender.name} - ${request.receiver.name}`,
         creator : request.sender._id
     })
 
