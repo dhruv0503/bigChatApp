@@ -2,11 +2,12 @@ const Message = require("../Models/messageModel")
 const Chat = require("../Models/chatModel");
 const User = require("../Models/userModel");
 const expressError = require("../Utils/expressError");
-const {emitEvent} = require("../Utils/features")
+const { emitEvent } = require("../Utils/features")
+const {NEW_ATTACHMENT, NEW_MESSAGE} = require('../Constants/events')
 
 
 const getMessages = async (req, res, next) => {
-    const {id} = req.params;
+    const { id } = req.params;
     const { page = 1 } = req.query;
 
     const chat = await Chat.findById(id);
@@ -17,7 +18,7 @@ const getMessages = async (req, res, next) => {
     const skip = (page - 1) * limit;
 
     const messages = await Message.find({ chat: id }).sort({ createdAt: -1 }).skip(skip).limit(limit).populate("sender", "username avatar").lean();
-    
+
     const totalMessages = await Message.countDocuments({ chat: id })
     const totalPages = Math.ceil(totalMessages / limit);
 
@@ -48,6 +49,7 @@ const sendAttachment = async (req, res, next) => {
     if (!chat) return next(new expressError("Chat not found", 404))
 
     if (files.length < 1) return next(new expressError("Please provide attachments", 400))
+    if (files.length > 5) return next(new expressError("You can only send 5 attachments at a time", 400))
 
     const attachments = []
 
@@ -68,8 +70,8 @@ const sendAttachment = async (req, res, next) => {
 
     const message = await new Message(messageForDB).save();
 
-    emitEvent(req, "NEW_ATTACHMENT", chat.members, { message: messageForRealTime, chatId })
-    emitEvent(req, "NEW_MESSAGE", chat.members, chatId)
+    emitEvent(req, NEW_ATTACHMENT, chat.members, { message: messageForRealTime, chatId })
+    emitEvent(req, NEW_MESSAGE, chat.members, chatId)
 
     return res.status(200).json({ success: true, message })
 }

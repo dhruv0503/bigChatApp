@@ -1,6 +1,8 @@
 const Request = require('../Models/requestModel');
 const Chat = require('../Models/chatModel');
 const { emitEvent } = require('../Utils/features');
+const expressError = require('../Utils/expressError');
+const {REFETCH_CHAT, NEW_REQUEST} = require('../Constants/events')
 
 module.exports.sendFriendRequest = async(req, res, next) => {
     const {userId} = req.body;
@@ -21,7 +23,7 @@ module.exports.sendFriendRequest = async(req, res, next) => {
 
     await newRequest.save();
 
-    emitEvent(req, "NEW_REQUEST", userId, `Request Received from ${userId}`)
+    emitEvent(req, NEW_REQUEST, userId, `Request Received from ${userId}`)
 
     return res.status(200).json({
         success : true,
@@ -58,7 +60,7 @@ module.exports.acceptFriendRequest = async(req, res, next) => {
     await newChat.save();
     await request.deleteOne();
 
-    emitEvent(req, "REFETCH_CHAT", members)
+    emitEvent(req, REFETCH_CHAT, members)
 
     return res.status(200).json({
         success : true,

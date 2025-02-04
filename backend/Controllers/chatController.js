@@ -3,7 +3,7 @@ const User = require('../Models/userModel');
 const Message = require('../Models/messageModel');
 const expressError = require('../Utils/expressError');
 const { emitEvent, deleteFilesFromCloudinary } = require('../Utils/features')
-
+const {ALERT, REFETCH_CHATS} = require('../Constants/events')
 
 const newGroupChat = async (req, res, next) => {
     const { name, members } = req.body;
@@ -14,8 +14,8 @@ const newGroupChat = async (req, res, next) => {
     const newGroup = new Chat({ name, members: allMembers, groupChat: true, creator: req.userId })
     await newGroup.save();
 
-    emitEvent(req, "ALERT", allMembers, `Welcome to ${name} group`)
-    emitEvent(req, "REFETCH_CHATS", members)
+    emitEvent(req, ALERT, allMembers, `Welcome to ${name} group`)
+    emitEvent(req, REFETCH_CHATS, members)
 
     return res.status(200).json({ succes: true, message: "Group chat created successfully" })
 }
@@ -85,8 +85,8 @@ const addMembers = async (req, res, next) => {
     const updatedChat = await Chat.findByIdAndUpdate(chatId, { members: allMembers }, { new: true }).populate("members", "username")
     const allUsersName = updatedChat.members.map((member) => member.username).join(", ")
 
-    emitEvent(req, "ALERT", updatedChat.members, `${allUsersName} have been added to the group`)
-    emitEvent(req, "REFETCH_CHATS", updatedChat.members)
+    emitEvent(req, ALERT, updatedChat.members, `${allUsersName} have been added to the group`)
+    emitEvent(req, REFETCH_CHATS, updatedChat.members)
     return res.status(200).json({ success: true, message: "Members added successfully" })
 }
 
@@ -106,8 +106,8 @@ const removeMember = async (req, res, next) => {
 
     const updatedChat = await Chat.findByIdAndUpdate(chatId, { $pull: { members: userId } }, { new: true })
 
-    emitEvent(req, "ALERT", updatedChat.members, `${removedUser} have been removed from the group`)
-    emitEvent(req, "REFETCH_CHATS", updatedChat.members)
+    emitEvent(req, ALERT, updatedChat.members, `${removedUser} have been removed from the group`)
+    emitEvent(req, REFETCH_CHATS, updatedChat.members)
 
     return res.status(200).json({ success: true, message: `${removedUser.username} removed successfully` })
 }
@@ -132,7 +132,7 @@ const leaveGroup = async (req, res, next) => {
     chat.members = remainingMembers;
     const updatedChat = await chat.save();
 
-    emitEvent(req, "ALERT", updatedChat.members, `${user.username} has left the group`)
+    emitEvent(req, ALERT, updatedChat.members, `${user.username} has left the group`)
     return res.status(200).json({ success: true, message: "Group left successfully" })
 }
 
@@ -171,15 +171,15 @@ const renameGroup = async (req, res, next) => {
     chat.name = name;
     await chat.save();
 
-    emitEvent(req, "ALERT", chat.members, `Group name changed to ${name}`)
-    emitEvent(req, "REFETCH_CHATS", chat.members)
+    emitEvent(req, ALERT, chat.members, `Group name changed to ${name}`)
+    emitEvent(req, REFETCH_CHATS, chat.members)
 
     return res.status(200).json({ success: true, message: "Group renamed successfully" })
 }
 
 const deleteChat = async (req, res, next) => {
     const { chatId } = req.params;
-    console.log(chatId);
+    // console.log(chatId);
 
     const chat = await Chat.findById(chatId);
 
@@ -207,7 +207,7 @@ const deleteChat = async (req, res, next) => {
     await chat.deleteOne();
     await Message.deleteMany({ chat: chatId })
 
-    emitEvent(req, "REFETCH_CHATS", chat.members)
+    emitEvent(req, REFETCH_CHATS, chat.members)
 
     res.status(200).json({ success: true, message: "Chat deleted successfully" })
 }

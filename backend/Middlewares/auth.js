@@ -4,7 +4,6 @@ const expressError = require('../Utils/expressError');
 const isAuthenticated = (req, res, next) => {
     if (req.cookies.jsonToken) {
         const user = jwt.verify(req.cookies.jsonToken, process.env.JWT_SECRET);
-        console.log(user)
         req.userId = user._id;
         next();
     } else {
@@ -14,9 +13,9 @@ const isAuthenticated = (req, res, next) => {
 
 const isAdmin = (req, res, next) => {
     if(req.cookies.adminToken){
-        const secretKey = jwt.verify(req.cookies.adminToken, process.env.JWT_SECRET);
-        if(secretKey !== process.env.ADMIN_SECRET_KEY){
-            next(new expressError('Invalid Admin Token', 401));
+        const adminToken = jwt.verify(req.cookies.adminToken, process.env.JWT_SECRET);
+        if(adminToken !== process.env.ADMIN_SECRET_KEY){
+            next(new expressError('This route is only accessible by Admins', 401));
         }
         next();   
     } else{
