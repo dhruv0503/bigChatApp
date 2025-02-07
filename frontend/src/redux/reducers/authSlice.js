@@ -1,7 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { act } from "react";
 
-export default authSlice = createSlice({
+const authSlice = createSlice({
   name: "auth",
   initialState: {
     user: null,
@@ -17,10 +16,9 @@ export default authSlice = createSlice({
         state.user = null;
         state.loader = false;
     },
-    setAdmin : (state, action) => {
-        state.isAdmin = action.payload;
-    }
   },
 });
 
-export const {userExists, userNotExists, setAdmin} = authSlice.actions;
+export default authSlice;
+
+export const {userExists, userNotExists} = authSlice.actions;

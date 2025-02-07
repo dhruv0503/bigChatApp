@@ -1,13 +1,19 @@
 const User = require('../Models/userModel.js');
 const expressError = require('../Utils/expressError.js');
-const { sendToken } = require('../Utils/features.js')
+const { sendToken, uploadToCloudinary } = require('../Utils/features.js')
 
 module.exports.createUser = async (req, res, next) => {
     const { name, username, password, bio } = req.body;
-    const avatar = req.file.buffer;
-    if(!avatar) return next(new expressError('No file uploaded', 400));
-    const tranformedAvatar = await uploadOnCloudinary(avatar);
-    const user = new User({ name, username, password, avatar : tranformedAvatar, bio });
+    const file = req.file;
+    if (!file) return next(new expressError('Please uplaod avatar', 400));
+    const result = await uploadToCloudinary([file]);
+    const avatar = {
+        public_id: result[0].public_id,
+        url: result[0].url
+    }
+    console.log(avatar)
+
+    const user = new User({ name, username, password, avatar, bio });
     if (!user) return next(new expressError('User not created', 400));
     const createdUser = await user.save();
     sendToken(res, createdUser, 201, "Sign Up Successful");
@@ -23,11 +29,11 @@ module.exports.loginUser = async (req, res, next) => {
     sendToken(res, user, 200, `Welcome Back ${user.name}`);
 }
 
-module.exports.logout = async(req, res, next) => {
+module.exports.logout = async (req, res, next) => {
     res.clearCookie('jsonToken');
     res.status(200).json({
-        status : true,
-        message : "Logged Out Successfully"
+        status: true,
+        message: "Logged Out Successfully"
     });
 }
 

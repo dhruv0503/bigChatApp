@@ -1,8 +1,12 @@
-import { lazy, Suspense } from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { useDispatch, useSelector } from 'react-redux';
+import { lazy, Suspense, useEffect } from "react";
+import { BrowserRouter as Router, Routes, Route, Meta } from "react-router-dom";
 import ProtectRoute from "./components/auth/ProtectRoute.jsx";
 import { HelmetProvider } from "react-helmet-async";
 import { LayoutLoader } from "./components/layout/Loaders.jsx";
+// import {authInstance} from "./lib/axiosInstances";
+import { userNotExists } from './redux/reducers/authSlice.js';
+import { Toaster } from 'react-hot-toast';
 
 const Home = lazy(() => import("./pages/Home.jsx"));
 const Login = lazy(() => import("./pages/Login.jsx"));
@@ -15,10 +19,38 @@ const ChatManager = lazy(() => import("./pages/admin/ChatManager.jsx"));
 const MessageManager = lazy(() => import("./pages/admin/MessageManager.jsx"));
 const UserManager = lazy(() => import("./pages/admin/UserManager.jsx"));
 
-let user = true;
+import { userExists } from './redux/reducers/authSlice.js';
 
 const App = () => {
-  return (
+
+  const { user, loader } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
+
+  const getProfile = async () => {
+    try {
+      const res = await axios.get(`${import.meta.env.VITE_SERVER}/user/profile`, {
+        withCredentials: true
+      })
+      return res;
+    } catch (err) {
+      dispatch(userNotExists())
+      return null;
+    }
+  }
+
+  useEffect(() => {
+    const getData = async() => {
+      const response = await getProfile();
+      if(response) dispatch(userExists())
+    }
+
+    getData();
+
+  }, [])
+
+  return loader ? (
+    <LayoutLoader />
+  ) : (
     <HelmetProvider>
       <Router>
         <Suspense fallback={<LayoutLoader />}>
@@ -46,6 +78,7 @@ const App = () => {
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Suspense>
+        <Toaster position='bottom-center' />
       </Router>
     </HelmetProvider>
   );

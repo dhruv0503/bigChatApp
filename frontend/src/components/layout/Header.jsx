@@ -18,6 +18,10 @@ import {
   Logout as LogoutIcon,
   Notifications as NotificationIcon,
 } from "@mui/icons-material";
+import axios from "axios";
+import toast from "react-hot-toast";
+import { useDispatch } from "react-redux";
+import { userNotExists } from "../../redux/reducers/authSlice";
 
 const Search = lazy(() => import("../specific/Search"));
 const Notifications = lazy(() => import("../specific/Notifications"));
@@ -25,6 +29,7 @@ const NewGroup = lazy(() => import("../specific/NewGroup"));
 
 const Header = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const [isMobile, setIsMobile] = useState(false);
   const [isSearch, setIsSearch] = useState(false);
@@ -51,14 +56,22 @@ const Header = () => {
     navigate("/groups");
   };
 
-  const logoutHandler = () => {
-    console.log("Logout");
-    // navigate("/");
+  const logoutHandler = async () => {
+    try {
+      const { data } = await axios.post(`${import.meta.env.VITE_SERVER}/api/logout`, {}, {
+        withCredentials: true
+      })
+      dispatch(userNotExists())
+
+      toast.success(data.message)
+    } catch (err) {
+      toast.error(err?.response?.data?.error?.message || "Something Went Wrong")
+    }
   };
 
   return (
     <>
-      <Box sx={{ flexGrow: 1, margin : "0.5rem" }} height={"4rem"} boxSizing={"border-box"}>
+      <Box sx={{ flexGrow: 1, margin: "0.5rem" }} height={"4rem"} boxSizing={"border-box"}>
         <AppBar
           position="static"
           sx={{

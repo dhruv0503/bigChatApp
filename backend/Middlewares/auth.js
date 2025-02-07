@@ -7,6 +7,7 @@ const isAuthenticated = (req, res, next) => {
         req.userId = user._id;
         next();
     } else {
+        console.log(req.cookies);
         next(new expressError('Please Login First', 401));
     }
 }

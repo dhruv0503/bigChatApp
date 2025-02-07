@@ -1,21 +1,27 @@
-import {
-  Container,
-  Paper,
-  Typography,
-  TextField,
-  Button,
-  Stack,
-  Avatar,
-  IconButton,
-} from "@mui/material";
-import { useState } from "react";
 import { CameraAlt } from "@mui/icons-material";
+import {
+  Avatar,
+  Button,
+  Container,
+  IconButton,
+  Paper,
+  Stack,
+  TextField,
+  Typography,
+} from "@mui/material";
+// import {authInstance, formInstance} from '../lib/axiosInstances'
+import axios from 'axios'
+import { useState } from "react";
+import toast from "react-hot-toast";
+import { useDispatch } from "react-redux";
 import { VisuallyHiddenInput } from "../components/styles/styledComponent";
+import { userExists } from "../redux/reducers/authSlice";
 import { validateFormInput } from "../utils/validation";
 
 const Login = () => {
   const [isLogin, setIsLogin] = useState(true);
   const toggleLogin = () => setIsLogin(!isLogin);
+  const dispatch = useDispatch();
 
   const [formErrors, setFormErrors] = useState({
     username: "",
@@ -36,6 +42,7 @@ const Login = () => {
   const hanldeFileChange = (evt) => {
     const file = evt.target.files[0];
     if (file) setProfileImage(file);
+    console.log(file);
   };
 
   const handleChange = (e) => {
@@ -49,17 +56,48 @@ const Login = () => {
     });
   };
 
-  const submitForm = (e) => {
+  const submitForm = async (e) => {
     e.preventDefault();
-    const errors = validate();
-    if (Object.values(errors).some((error) => error)) {
+    if (Object.values(formErrors).some((error) => error)) {
       return;
+    }
+    setFormData({
+      name: "",
+      username: "",
+      password: "",
+      bio: "",
+    })
+    try {
+      if (isLogin) {
+        const { data } = await axios.post(`${import.meta.env.VITE_SERVER}/api/login`, {
+          username: formData.username,
+          password: formData.password
+        }, { withCredentials: true })
+
+        dispatch(userExists(true))
+        toast.success(data.message)
+      } else {
+        const multiForm = new FormData();
+        multiForm.append("name", formData.name)
+        multiForm.append("username", formData.username)
+        multiForm.append("password", formData.password)
+        multiForm.append("bio", formData.bio)
+        multiForm.append("avatar", profileImage)
+
+        const { data } = await axios.post(`${import.meta.env.VITE_SERVER}/api/signup`, multiForm)
+
+        dispatch(userExists(true))
+        toast.success(data.message)
+      }
+    } catch (err) {
+      console.log(err)
+      toast.error(err?.response?.data?.error?.message || "Something Went Wrong")
     }
   };
 
   return (
     <div style={{
-      backgroundImage : "linear-gradient(to right, #fbc2eb, #a6c1ee)"
+      backgroundImage: "linear-gradient(to right, #fbc2eb, #a6c1ee)"
     }}>
       <Container
         component={"main"}

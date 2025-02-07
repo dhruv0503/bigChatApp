@@ -16,8 +16,9 @@ module.exports.globalError = (err, req, res, next) => {
     if (!err.message) err.message = 'Internal Server Error';
     res.status(statusCode).json({
         error: {
-            message: process.env.NODE_ENV.trim() === "DEVELOPMENT" ? err : err.message,
-            status: err.statusCode
+            message: err.message,
+            status: err.statusCode,
+            stack : process.env.NODE_ENV.trim() === "DEVELOPMENT" ? err.stack : null
         }
     });
 }

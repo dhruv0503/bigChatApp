@@ -1,12 +1,12 @@
-import React from "react";
-import Footer from "./Footer";
-import Header from "./Header";
-import Title from "../shared/Title";
 import { Grid2 } from "@mui/material";
-import ChatList from "../specific/ChatList";
-import { sampleChats } from "../../constants/sampleData";
+import React from "react";
 import { useParams } from "react-router-dom";
+import { sampleChats } from "../../constants/sampleData";
+import Title from "../shared/Title";
+import ChatList from "../specific/ChatList";
 import Profile from "../specific/Profile";
+import Header from "./Header";
+import { useMyChatsQuery } from "../../redux/api/api";
 
 const AppLayout = ({ WrappedContent, ...props }) => {
   const params = useParams();
