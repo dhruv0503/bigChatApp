@@ -21,14 +21,15 @@ const newGroupChat = async (req, res, next) => {
 }
 
 const getMyChat = async (req, res, next) => {
+    const myInfo = await User.findById(req.userId);
     const chats = await Chat.find({ members: req.userId, groupChat : false }).populate("members", "username avatar")
     const transformedChats = chats.map(({ _id, name, members, groupChat }) => {
         const otherMember = members.find((member) => member._id.toString() !== req.userId.toString())
         return {
-            _id,
+            _id,    
             groupChat,
-            avatar: groupChat ? members.slice(0, 3).map((member) => member.avatar.url) : [otherMember.avatar.url],
-            name: groupChat ? name : otherMember.username,
+            avatar: [otherMember.avatar.url, myInfo.avatar.url],
+            name:  `${otherMember.username} - ${myInfo.username}`,
             members: members.reduce((prev, curr) => {
                 if (curr._id.toString() !== req.userId.toString()) {
                     prev.push(curr._id)

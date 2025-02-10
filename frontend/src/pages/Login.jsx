@@ -84,7 +84,9 @@ const Login = () => {
         multiForm.append("bio", formData.bio)
         multiForm.append("avatar", profileImage)
 
-        const { data } = await axios.post(`${import.meta.env.VITE_SERVER}/api/signup`, multiForm)
+        const { data } = await axios.post(`${import.meta.env.VITE_SERVER}/api/signup`, multiForm, {
+          withCredentials : true
+        })
 
         dispatch(userExists(true))
         toast.success(data.message)

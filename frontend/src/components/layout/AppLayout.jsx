@@ -1,4 +1,4 @@
-import { Grid2 } from "@mui/material";
+import { Grid2, Skeleton } from "@mui/material";
 import React from "react";
 import { useParams } from "react-router-dom";
 import { sampleChats } from "../../constants/sampleData";
@@ -6,11 +6,14 @@ import Title from "../shared/Title";
 import ChatList from "../specific/ChatList";
 import Profile from "../specific/Profile";
 import Header from "./Header";
-import { useMyChatsQuery } from "../../redux/api/api";
+import { useGetChatsQuery } from "../../redux/api/api";
 
 const AppLayout = ({ WrappedContent, ...props }) => {
   const params = useParams();
   const chatId = params.chatId;
+
+  const { data, isLoading, isError, error, refetch } = useGetChatsQuery("");
+  console.log(data);
 
   const handleDeleteChat = (e, _id, groupChat) => {
     e.preventDefault();
@@ -45,12 +48,15 @@ const AppLayout = ({ WrappedContent, ...props }) => {
 
         >
           {/* First */}
-          <ChatList
-            chats={sampleChats}
-            chatId={chatId}
-            handleDeleteChat={handleDeleteChat}
-          // onlineUsers={["1", "2"]}
-          />
+          {
+            isLoading ? <Skeleton /> : 
+            (<ChatList
+              chats={data?.chats}
+              chatId={chatId}
+              handleDeleteChat={handleDeleteChat}
+            // onlineUsers={["1", "2"]}
+            />)
+          }
         </Grid2>
         <Grid2
           xs={12}
@@ -60,7 +66,7 @@ const AppLayout = ({ WrappedContent, ...props }) => {
           height={"100%"}
           sx={{
             flexGrow: "2",
-            margin : "0.5rem",
+            margin: "0.5rem",
             borderRadius: "25px",
           }}
         >

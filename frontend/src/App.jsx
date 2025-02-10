@@ -1,12 +1,13 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { lazy, Suspense, useEffect } from "react";
-import { BrowserRouter as Router, Routes, Route, Meta } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Meta, data } from "react-router-dom";
 import ProtectRoute from "./components/auth/ProtectRoute.jsx";
 import { HelmetProvider } from "react-helmet-async";
 import { LayoutLoader } from "./components/layout/Loaders.jsx";
 // import {authInstance} from "./lib/axiosInstances";
 import { userNotExists } from './redux/reducers/authSlice.js';
 import { Toaster } from 'react-hot-toast';
+import axios from 'axios';
 
 const Home = lazy(() => import("./pages/Home.jsx"));
 const Login = lazy(() => import("./pages/Login.jsx"));
@@ -28,7 +29,7 @@ const App = () => {
 
   const getProfile = async () => {
     try {
-      const res = await axios.get(`${import.meta.env.VITE_SERVER}/user/profile`, {
+      const res = await axios.get(`${import.meta.env.VITE_SERVER}/api/user/profile`, {
         withCredentials: true
       })
       return res;
@@ -39,14 +40,15 @@ const App = () => {
   }
 
   useEffect(() => {
-    const getData = async() => {
+    const getData = async () => {
       const response = await getProfile();
-      if(response) dispatch(userExists())
+      console.log(response)
+      if (response) dispatch(userExists(response.data.user))
     }
 
     getData();
 
-  }, [])
+  }, [dispatch])
 
   return loader ? (
     <LayoutLoader />

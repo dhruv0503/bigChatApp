@@ -33,6 +33,7 @@ const deleteFilesFromCloudinary = async (pubic_ids) => {
 }
 
 const uploadToCloudinary = async (files = []) => {
+    if (files.length === 0) return [];
     const uploadPromises = files.map((file) => {
         return new Promise((resolve, reject) => {
             const uploadStream = cloudinary.uploader.upload_stream({
