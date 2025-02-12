@@ -47,7 +47,7 @@ module.exports.getUsers = async (req, res, next) => {
 
     res.status(200).json({
         success: true,
-        transformedUsers
+        users : transformedUsers
     });
 }
 
@@ -107,7 +107,7 @@ module.exports.allMessages = async (req, res, next) => {
 
     res.status(200).json({
         success: true,
-        transformedMessages
+        messages : transformedMessages
     })
 }
 

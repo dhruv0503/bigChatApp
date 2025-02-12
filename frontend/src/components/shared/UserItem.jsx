@@ -1,9 +1,10 @@
 import { Add as AddIcon, Remove as RemoveIcon } from "@mui/icons-material";
 import { Avatar, IconButton, ListItem, Stack, Typography } from "@mui/material";
 import { memo } from "react";
+import { transformImage } from "../../lib/features";
 
-const UserItem = ({ user, handler, handlerIsLoading, isAdded = false, styling={}}) => {
-  const { name, _id, avatar } = user;
+const UserItem = ({ user, handler, handlerIsLoading, isAdded = false, styling = {} }) => {
+  const { username, _id, avatar } = user;
   return (
     <ListItem>
       <Stack
@@ -13,7 +14,7 @@ const UserItem = ({ user, handler, handlerIsLoading, isAdded = false, styling={}
         width={"100%"}
         {...styling}
       >
-        <Avatar />
+        <Avatar src={transformImage(avatar)} />
         <Typography
           variant="body1"
           sx={{
@@ -24,7 +25,7 @@ const UserItem = ({ user, handler, handlerIsLoading, isAdded = false, styling={}
             textOverflow: "ellipsis",
           }}
         >
-          {name}
+          {username}
         </Typography>
         <IconButton
           onClick={(e) => handler(e, _id)}

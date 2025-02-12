@@ -9,18 +9,17 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-// import {authInstance, formInstance} from '../lib/axiosInstances'
 import axios from 'axios'
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { useDispatch } from "react-redux";
 import { VisuallyHiddenInput } from "../components/styles/styledComponent";
-import { userExists } from "../redux/reducers/authSlice";
+import { setIsLogin } from "../redux/reducers/miscSlice";
 import { validateFormInput } from "../utils/validation";
 
 const Login = () => {
-  const [isLogin, setIsLogin] = useState(true);
-  const toggleLogin = () => setIsLogin(!isLogin);
+  const [isRegistered, setIsRegistered] = useState(true);
+  const toggleRegistered = () => setIsRegistered(!isRegistered);
   const dispatch = useDispatch();
 
   const [formErrors, setFormErrors] = useState({
@@ -68,13 +67,13 @@ const Login = () => {
       bio: "",
     })
     try {
-      if (isLogin) {
+      if (isRegistered) {
         const { data } = await axios.post(`${import.meta.env.VITE_SERVER}/api/login`, {
           username: formData.username,
           password: formData.password
         }, { withCredentials: true })
 
-        dispatch(userExists(true))
+        dispatch(setIsLogin(true))
         toast.success(data.message)
       } else {
         const multiForm = new FormData();
@@ -88,7 +87,7 @@ const Login = () => {
           withCredentials : true
         })
 
-        dispatch(userExists(true))
+        dispatch(setIsLogin(true))
         toast.success(data.message)
       }
     } catch (err) {
@@ -120,7 +119,7 @@ const Login = () => {
             alignItems: "center",
           }}
         >
-          {isLogin ? (
+          {isRegistered ? (
             <>
               <Typography variant="h5">Login</Typography>
               <form style={{ width: "100%" }} onSubmit={(e) => submitForm(e)}>
@@ -166,7 +165,7 @@ const Login = () => {
                 <Typography sx={{ textAlign: "center", margin: "1rem" }}>
                   OR
                 </Typography>
-                <Button variant="text" fullWidth onClick={() => toggleLogin()}>
+                <Button variant="text" fullWidth onClick={() => toggleRegistered()}>
                   Sign Up Instead
                 </Button>
               </form>
@@ -280,7 +279,7 @@ const Login = () => {
                   margin={0}
                   variant="text"
                   fullWidth
-                  onClick={() => toggleLogin()}
+                  onClick={() => toggleRegistered()}
                 >
                   Login Instead
                 </Button>

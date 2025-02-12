@@ -4,8 +4,7 @@ import { BrowserRouter as Router, Routes, Route, Meta, data } from "react-router
 import ProtectRoute from "./components/auth/ProtectRoute.jsx";
 import { HelmetProvider } from "react-helmet-async";
 import { LayoutLoader } from "./components/layout/Loaders.jsx";
-// import {authInstance} from "./lib/axiosInstances";
-import { userNotExists } from './redux/reducers/authSlice.js';
+import { setIsLogin } from './redux/reducers/miscSlice.js';
 import { Toaster } from 'react-hot-toast';
 import axios from 'axios';
 
@@ -20,11 +19,12 @@ const ChatManager = lazy(() => import("./pages/admin/ChatManager.jsx"));
 const MessageManager = lazy(() => import("./pages/admin/MessageManager.jsx"));
 const UserManager = lazy(() => import("./pages/admin/UserManager.jsx"));
 
-import { userExists } from './redux/reducers/authSlice.js';
+import { updateUser } from './redux/reducers/authSlice.js';
 
 const App = () => {
 
-  const { user, loader } = useSelector((state) => state.auth);
+  const { isLogin, loader } = useSelector((state) => state.misc);
+  // const {}
   const dispatch = useDispatch();
 
   const getProfile = async () => {
@@ -34,7 +34,7 @@ const App = () => {
       })
       return res;
     } catch (err) {
-      dispatch(userNotExists())
+      dispatch(setIsLogin(false))
       return null;
     }
   }
@@ -42,13 +42,12 @@ const App = () => {
   useEffect(() => {
     const getData = async () => {
       const response = await getProfile();
-      console.log(response)
-      if (response) dispatch(userExists(response.data.user))
+      dispatch(setIsLogin(response ? true : false))
+      if (response) dispatch(updateUser(response.data.user))
     }
-
     getData();
 
-  }, [dispatch])
+  }, [isLogin, dispatch])
 
   return loader ? (
     <LayoutLoader />
@@ -57,7 +56,7 @@ const App = () => {
       <Router>
         <Suspense fallback={<LayoutLoader />}>
           <Routes>
-            <Route element={<ProtectRoute user={user} />}>
+            <Route element={<ProtectRoute user={isLogin} />}>
               <Route path="/" element={<Home />} />
               <Route path="/chat/:chatId" element={<Chat />} />
               <Route path="/groups" element={<Groups />} />
@@ -65,7 +64,7 @@ const App = () => {
             <Route
               path="/login"
               element={
-                <ProtectRoute user={!user} redirect="/">
+                <ProtectRoute user={!isLogin} redirect="/">
                   <Login />
                 </ProtectRoute>
               }

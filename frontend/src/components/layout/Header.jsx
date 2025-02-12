@@ -20,8 +20,9 @@ import {
 } from "@mui/icons-material";
 import axios from "axios";
 import toast from "react-hot-toast";
-import { useDispatch } from "react-redux";
-import { userNotExists } from "../../redux/reducers/authSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { updateUser } from "../../redux/reducers/authSlice";
+import { setIsLogin, setIsMobile, setIsNotification, setIsSearch } from "../../redux/reducers/miscSlice";
 
 const Search = lazy(() => import("../specific/Search"));
 const Notifications = lazy(() => import("../specific/Notifications"));
@@ -30,27 +31,14 @@ const NewGroup = lazy(() => import("../specific/NewGroup"));
 const Header = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const { isSearch, isNotification } = useSelector((state) => state.misc);
 
-  const [isMobile, setIsMobile] = useState(false);
-  const [isSearch, setIsSearch] = useState(false);
+  // const [isNotificationOpen, setIsNotificationOpen] = useState(false)
+  // const [isMobile, setIsMobile] = useState(false);
+  // const [isSearch, setIsSearch] = useState(false);
   const [isNewGroup, setIsNewGroup] = useState(false);
-  const [isNotificationOpen, setIsNotificationOpen] = useState(false);
 
-  const handleMobile = () => {
-    setIsMobile(!isMobile);
-  };
-
-  const openSearch = () => {
-    setIsSearch(!isSearch);
-  };
-
-  const openNewGroup = () => {
-    setIsNewGroup(!isNewGroup);
-  };
-
-  const openNotification = () => {
-    setIsNotificationOpen(!isNotificationOpen);
-  };
+  const openNewGroup = () => setIsNewGroup(!isNewGroup);
 
   const navigateToGroup = () => {
     navigate("/groups");
@@ -61,7 +49,8 @@ const Header = () => {
       const { data } = await axios.post(`${import.meta.env.VITE_SERVER}/api/logout`, {}, {
         withCredentials: true
       })
-      dispatch(userNotExists())
+      dispatch(setIsLogin(false))
+      dispatch(updateUser(null))
 
       toast.success(data.message)
     } catch (err) {
@@ -94,7 +83,7 @@ const Header = () => {
                 display: { xs: "block", sm: "none" },
               }}
             >
-              <IconButton color="inherit" onClick={handleMobile}>
+              <IconButton color="inherit" onClick={() => dispatch(setIsMobile(true))}>
                 <MenuIcon />
               </IconButton>
             </Box>
@@ -103,7 +92,7 @@ const Header = () => {
               <IconBtn
                 title={"Search"}
                 icon={<SearchIcon />}
-                onClick={openSearch}
+                onClick={() => dispatch(setIsSearch(true))}
               />
               <IconBtn
                 title={"Add Group"}
@@ -119,7 +108,7 @@ const Header = () => {
               <IconBtn
                 title={"Notifications"}
                 icon={<NotificationIcon />}
-                onClick={openNotification}
+                onClick={() => dispatch(setIsNotification(true))}
               />
 
               <IconBtn
@@ -144,7 +133,7 @@ const Header = () => {
         </Suspense>
       )}
 
-      {isNotificationOpen && (
+      {isNotification && (
         <Suspense fallback={<Backdrop open />}>
           <Notifications />
         </Suspense>

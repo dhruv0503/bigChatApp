@@ -24,17 +24,19 @@ module.exports.searchUser = async (req, res, next) => {
     const { username = "" } = req.query;
     const allChatMembers = await Chat.find({ groupChat: false, members: req.userId });
     const myFriends = allChatMembers.flatMap((chat) => chat.members).filter((member) => member.toString() !== req.userId.toString());
-    const searchList = await User.find({
+
+    const searchQuery = {
         _id: { $nin: [...myFriends, req.userId] },
-        username: {
-            $regex: username, $options: "i"
-        }
-    }).lean();
+    }
+
+    if (username.trim()) searchQuery.username = { $regex: username, $options: "i" }
+
+    const searchList = await User.find(searchQuery).lean();
 
     const updatedSearchList = searchList.map((user) => {
         return {
             ...user,
-            avatar: user.avatar.url
+            avatar: user.avatar?.url
         }
     })
     return res.status(200).json({
@@ -59,6 +61,6 @@ module.exports.getMyNotifications = async (req, res, next) => {
 
     return res.status(200).json({
         success: true,
-        transformedRequests
+        notifications : transformedRequests
     })
 }

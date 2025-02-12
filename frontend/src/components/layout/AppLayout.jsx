@@ -1,4 +1,4 @@
-import { Grid2, Skeleton } from "@mui/material";
+import { Drawer, Grid2, Skeleton } from "@mui/material";
 import React from "react";
 import { useParams } from "react-router-dom";
 import { sampleChats } from "../../constants/sampleData";
@@ -7,13 +7,19 @@ import ChatList from "../specific/ChatList";
 import Profile from "../specific/Profile";
 import Header from "./Header";
 import { useGetChatsQuery } from "../../redux/api/api";
+import { useDispatch, useSelector } from "react-redux";
+import { setIsMobile } from "../../redux/reducers/miscSlice";
+import { useErrors } from "../hooks/hooks";
 
 const AppLayout = ({ WrappedContent, ...props }) => {
   const params = useParams();
   const chatId = params.chatId;
+  const { isMobile } = useSelector(state => state.misc)
+  const dispatch = useDispatch();
 
-  const { data, isLoading, isError, error, refetch } = useGetChatsQuery("");
-  console.log(data);
+  const { data, isLoading, isError, error, refetch } = useGetChatsQuery();
+
+  useErrors([{ isError, error }]);
 
   const handleDeleteChat = (e, _id, groupChat) => {
     e.preventDefault();
@@ -24,6 +30,18 @@ const AppLayout = ({ WrappedContent, ...props }) => {
     <>
       <Title />
       <Header />
+      {
+        isLoading ? <Skeleton /> : (
+          <Drawer open={isMobile} onClose={() => dispatch(setIsMobile(false))}>
+            <ChatList
+              w="70vw"
+              chats={data?.chats}
+              chatId={chatId}
+              handleDeleteChat={handleDeleteChat}
+            />
+          </Drawer>
+        )
+      }
       <Grid2
         container={true}
         sx={{
@@ -49,13 +67,13 @@ const AppLayout = ({ WrappedContent, ...props }) => {
         >
           {/* First */}
           {
-            isLoading ? <Skeleton /> : 
-            (<ChatList
-              chats={data?.chats}
-              chatId={chatId}
-              handleDeleteChat={handleDeleteChat}
-            // onlineUsers={["1", "2"]}
-            />)
+            isLoading ? <Skeleton /> :
+              (<ChatList
+                chats={data?.chats}
+                chatId={chatId}
+                handleDeleteChat={handleDeleteChat}
+              // onlineUsers={["1", "2"]}
+              />)
           }
         </Grid2>
         <Grid2
