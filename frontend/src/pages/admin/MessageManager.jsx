@@ -19,13 +19,11 @@ const columns = [
           const fileType = fileFormat(url);
           console.log(url, fileType)
           return <Box sx={{
-            display : "flex",
-            alignItems : "center",
-            justifyContent : "center",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
           }}>
-            <a href="url" target='_blank' style={{color : "black"}} download key={idx}>
-              <RenderAttachment file={fileType} url={url} />
-            </a>
+            <RenderAttachment file={fileType} url={url} key={idx}/>
           </Box>
 
         })
@@ -33,11 +31,12 @@ const columns = [
     }
   },
   {
-    field: 'content', 
+    field: 'content',
     headerName: 'Content',
     headerClassName: "table-header",
     width: 200,
-    renderCell : (params) => (params.row.content ? params.row.content : "None")},
+    renderCell: (params) => (params.row.content ? params.row.content : "None")
+  },
   {
     field: 'sender', headerName: 'Sent By', headerClassName: "table-header", width: 200,
     renderCell: (params) => <Stack direction={"row"} spacing={"1rem"} alignItems={"center"}>
@@ -68,7 +67,7 @@ const MessageManager = () => {
     <AdminLayout>
       <Table rows={rows} columns={columns} heading={"All Messages"} rowHeight={160} />
     </AdminLayout>
-  ) 
+  )
 }
 
 export default MessageManager

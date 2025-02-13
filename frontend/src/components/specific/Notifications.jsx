@@ -27,12 +27,15 @@ const Notifications = () => {
   const [acceptRequest] = useAcceptFriendeRequestMutation();
 
   const friendRequestHandler = async (_id, accept) => {
+
+    dispatch(setIsNotification(false))
+
     try {
       const res = await acceptRequest({ requestId : _id, accept })
       console.log(res);
-      if (res?.data?.success) {
+      if (res?.data) {
         console.log("Use Socket here");
-        toast.success(res.data);
+        toast.success(res.data.message);
       } else {
         toast.error(res?.error?.data?.error?.message || "Something Went Wrong")
       }

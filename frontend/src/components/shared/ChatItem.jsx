@@ -6,7 +6,7 @@ import AvatarCard from "../shared/AvatarCard";
 
 const ChatItem = ({
   avatar = [],
-  name,
+  username,
   _id,
   groupChat = false,
   sameSender,
@@ -35,7 +35,7 @@ const ChatItem = ({
       >
         <AvatarCard avatar={avatar} />
         <Stack >
-          <Typography>{name}</Typography>
+          <Typography>{username}</Typography>
           {newMessageAlert && (
             <Typography>{newMessageAlert.count} New Messages</Typography>
           )}

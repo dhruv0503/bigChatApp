@@ -19,21 +19,21 @@ const ChatList = ({
 }) => {
   return (
     // <Stack width={w} direction={"column"}>
-    <Stack direction={"column"} width={w} overflow={"auto"} height="100%" sx={{backgroundImage:bgGradient, borderRadius : "25px"}}>
+    <Stack direction={"column"} width={w} overflow={"auto"} height="100%" sx={{ backgroundImage: bgGradient, borderRadius: "25px" }}>
       {chats?.map((data, idx) => {
-        const { avatar, _id, name, groupChat, members } = data;
+        const { avatar, _id, username, groupChat, members } = data;
         const newMessageAlert = newMessagesAlert.find(
           ({ chatId }) => chatId === _id
         );
         const isOnline = members?.some((member) => onlineUsers.includes(_id));
-        return (    
+        return (
           <ChatItem
             index={idx}
             key={_id}
             newMessageAlert={newMessageAlert}
             isOnline={isOnline}
             avatar={avatar}
-            name={name}
+            username={username}
             _id={_id}
             groupChat={groupChat}
             sameSender={chatId === _id}

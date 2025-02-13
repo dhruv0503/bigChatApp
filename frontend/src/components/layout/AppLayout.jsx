@@ -10,13 +10,14 @@ import { useGetChatsQuery } from "../../redux/api/api";
 import { useDispatch, useSelector } from "react-redux";
 import { setIsMobile } from "../../redux/reducers/miscSlice";
 import { useErrors } from "../hooks/hooks";
+import { getSocket } from "../../Socket";
 
 const AppLayout = ({ WrappedContent, ...props }) => {
   const params = useParams();
   const chatId = params.chatId;
   const { isMobile } = useSelector(state => state.misc)
   const dispatch = useDispatch();
-
+  const socket = getSocket();
   const { data, isLoading, isError, error, refetch } = useGetChatsQuery();
 
   useErrors([{ isError, error }]);
@@ -88,7 +89,7 @@ const AppLayout = ({ WrappedContent, ...props }) => {
             borderRadius: "25px",
           }}
         >
-          <WrappedContent {...props} />
+          <WrappedContent {...props} chatId={chatId} />
         </Grid2>
         <Grid2
           md={4}

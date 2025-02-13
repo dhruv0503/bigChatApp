@@ -19,7 +19,9 @@ const ChatManager = lazy(() => import("./pages/admin/ChatManager.jsx"));
 const MessageManager = lazy(() => import("./pages/admin/MessageManager.jsx"));
 const UserManager = lazy(() => import("./pages/admin/UserManager.jsx"));
 
-import { updateUser } from './redux/reducers/authSlice.js';
+import { updateUser } from './redux/reducers/authSlice';
+
+import { SocketProvider } from './Socket.jsx';
 
 const App = () => {
 
@@ -56,7 +58,11 @@ const App = () => {
       <Router>
         <Suspense fallback={<LayoutLoader />}>
           <Routes>
-            <Route element={<ProtectRoute user={isLogin} />}>
+            <Route element={
+              <SocketProvider>
+                <ProtectRoute user={isLogin} />
+              </SocketProvider>
+            }>
               <Route path="/" element={<Home />} />
               <Route path="/chat/:chatId" element={<Chat />} />
               <Route path="/groups" element={<Groups />} />

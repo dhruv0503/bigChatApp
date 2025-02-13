@@ -6,7 +6,6 @@ module.exports.createUser = async (req, res, next) => {
     const { name, username, password, bio } = req.body;
     const file = req.file;
     if (!file) return next(new expressError('Please uplaod avatar', 400));
-    console.log(file);
     const result = await uploadToCloudinary([file]);
     const avatar = {
         public_id: result[0].public_id,

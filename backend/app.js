@@ -11,24 +11,15 @@ const { globalError } = require('./Middlewares/error')
 const { Server } = require('socket.io')
 const http = require('http')
 const { NEW_MESSAGE, NEW_MESSAGE_ALERT } = require('./Constants/events')
-const uuid = require('uuid')
 const cloudinary = require('cloudinary').v2
-
+const { corsOptions, cloudinaryConfig } = require('./Constants/config')
 const app = express()
 const server = http.createServer(app)
-const io = new Server(server, {
-    cors: {
-        origin: ["http://localhost:5173", "http://localhost:4173"],
-        credentials: true
-    }
-})
+const io = new Server(server, { cors: corsOptions })
+
 connectDB();
 
-cloudinary.config({
-    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-    api_key: process.env.CLOUDINARY_API_KEY,
-    api_secret: process.env.CLOUDINARY_API_SECRET
-}) 
+cloudinary.config(cloudinaryConfig)
 
 const authRoutes = require('./Routes/authRoutes')
 const userRoutes = require('./Routes/userRoutes')
@@ -36,14 +27,11 @@ const chatRoutes = require('./Routes/chatRoutes')
 const messageRoutes = require('./Routes/messageRoutes')
 const requestRoutes = require('./Routes/requestRoutes')
 const adminRoutes = require('./Routes/adminRoutes')
-const Message = require('./Models/messageModel')
-const { getSokcets } = require('./Utils/helper')
+const { onNewMessage } = require('./Controllers/socketMethods')
+const { socketAuthenticator } = require('./Middlewares/auth')
+const { setSocket, deleteSocket } = require('./Utils/helper')
 
-
-app.use(cors({
-    origin: ["http://localhost:5173", "http://localhost:4173"],
-    credentials: true
-}))
+app.use(cors(corsOptions))
 app.use(express.json());
 app.use(cookieParser())
 app.use(express.urlencoded({ extended: true }))
@@ -60,47 +48,25 @@ app.get('/', (req, res) => {
     res.send('Hello World!')
 })
 
-const userSocketMap = new Map()
+io.use((socket, next) => {
+    cookieParser()(
+    socket.request,
+    socket.request.res,
+    async (err) => await socketAuthenticator(err, socket, next)
+    )
+})
 
 io.on("connection", (socket) => {
-    console.log("User Connected", socket.id);
-    const sender = {
-        _id: "67924f64e1ed6e7ea3e134f3",
-        username: "llakshita"
-    }
-    userSocketMap.set(sender._id.toString(), socket.id);
-    socket.on(NEW_MESSAGE, async({ chatId, members, message }) => {
-
-        const messageForRealTime = {
-            content: message,
-            _id: uuid.v4(),
-            sender: {
-                _id: sender._id,
-                username: sender.username
-            },
-            chat: chatId,
-            createdAt: new Date().toISOString()
-        }
-        const messageForDb = new Message({
-            content: message,
-            sender: sender._id,
-            chat: chatId
-        })
-
-        const membersSocket = getSokcets(members)
-
-        io.to(membersSocket).emit(NEW_MESSAGE, {
-            chatId,
-            message: messageForRealTime
-        })
-        io.to(membersSocket).emit(NEW_MESSAGE_ALERT, { chatId })
-
-        await messageForDb.save();
+    // console.log("User Connected", socket.id);
+    const user = socket.user;
+    setSocket(user._id, socket.id);
+    socket.on(NEW_MESSAGE, async ({ chatId, members, message }) => {
+        await onNewMessage(io, chatId, members, message, user);
     })
 
     socket.on("disconnect", () => {
-        userSocketMap.delete(sender._id.toString());
-        console.log("User Disconnected", socket.id)
+        deleteSocket(user._id);
+        // console.log("User Disconnected", socket.id)
     })
 })
 
@@ -114,5 +80,3 @@ app.use(globalError)
 server.listen(process.env.PORT || 3000, () => {
     console.log('Server is running on port 3000')
 })
-
-module.exports = userSocketMap

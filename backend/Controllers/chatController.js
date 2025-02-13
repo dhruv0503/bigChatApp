@@ -28,8 +28,8 @@ const getMyChat = async (req, res, next) => {
         return {
             _id,    
             groupChat,
-            avatar: [otherMember.avatar.url, myInfo.avatar.url],
-            name:  `${otherMember.username} - ${myInfo.username}`,
+            avatar: [otherMember.avatar.url],
+            username:  otherMember.username,
             members: members.reduce((prev, curr) => {
                 if (curr._id.toString() !== req.userId.toString()) {
                     prev.push(curr._id)
@@ -38,7 +38,6 @@ const getMyChat = async (req, res, next) => {
             }, [])
         }
     })
-
     return res.status(200).json({ success: true, chats: transformedChats })
 }
 
