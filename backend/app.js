@@ -17,6 +17,8 @@ const app = express()
 const server = http.createServer(app)
 const io = new Server(server, { cors: corsOptions })
 
+app.set("io", io)
+
 connectDB();
 
 cloudinary.config(cloudinaryConfig)
@@ -50,9 +52,9 @@ app.get('/', (req, res) => {
 
 io.use((socket, next) => {
     cookieParser()(
-    socket.request,
-    socket.request.res,
-    async (err) => await socketAuthenticator(err, socket, next)
+        socket.request,
+        socket.request.res,
+        async (err) => await socketAuthenticator(err, socket, next)
     )
 })
 

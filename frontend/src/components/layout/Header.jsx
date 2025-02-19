@@ -22,7 +22,9 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
 import { updateUser } from "../../redux/reducers/authSlice";
-import { setIsLogin, setIsMobile, setIsNotification, setIsSearch } from "../../redux/reducers/miscSlice";
+import { setIsMobile, setIsNotification, setIsSearch } from "../../redux/reducers/miscSlice";
+import {setIsLogin} from '../../redux/reducers/authSlice'
+import api from '../../redux/api/api'
 
 const Search = lazy(() => import("../specific/Search"));
 const Notifications = lazy(() => import("../specific/Notifications"));
@@ -49,6 +51,7 @@ const Header = () => {
       const { data } = await axios.post(`${import.meta.env.VITE_SERVER}/api/logout`, {}, {
         withCredentials: true
       })
+      dispatch(api.util.resetApiState())
       dispatch(setIsLogin(false))
       dispatch(updateUser(null))
 

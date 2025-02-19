@@ -12,7 +12,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { useLazySearchUserQuery, useSendFriendeRequestMutation } from "../../redux/api/api";
 import { setIsSearch } from "../../redux/reducers/miscSlice";
 import UserItem from "../shared/UserItem";
-import toast from "react-hot-toast";
 import { useAsyncMutation } from "../hooks/hooks";
 
 const Search = () => {
@@ -34,7 +33,9 @@ const Search = () => {
 
     const timeOutId = setTimeout(() => {
       searchUser(searchText)
-        .then(({ data }) => setUsers(data?.updatedSearchList))
+        .then(({ data }) => {
+          setUsers(data?.updatedSearchList)
+        })
         .catch((err) => console.log(err))
     }, 1000)
 
@@ -63,17 +64,16 @@ const Search = () => {
             },
           }}
         />
-
         <List>
           {
-            users?.map((user, idx) => (
-              <UserItem
+            users?.map((user, idx) => {
+              return <UserItem
                 user={user}
                 key={user._id}
                 handler={() => addFriendLoader(user._id)}
                 handlerIsLoading={isLoadingSendFriendRequest}
               />
-            )
+            }
             )}
         </List>
       </Stack>

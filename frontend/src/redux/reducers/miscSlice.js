@@ -3,8 +3,6 @@ import { createSlice } from "@reduxjs/toolkit";
 const miscSlice = createSlice({
   name: "misc",
   initialState: {
-    loader: true,
-    isLogin: false,
     isNewGroup: false,
     isAddMember: false,
     isNotification: false,
@@ -19,10 +17,6 @@ const miscSlice = createSlice({
     }
   },
   reducers: {
-    setIsLogin: (state, action) => {
-      state.isLogin = action.payload;
-      state.loader = false;
-    },
     setIsNewGroup: (state, action) => {
       state.isNewGroup = action.payload;
     },
@@ -65,5 +59,4 @@ export const {
   setIsDeleteMenu,
   setUploadingLoader,
   setSelecteDeleteChat,
-  setIsLogin
 } = miscSlice.actions;

@@ -115,7 +115,7 @@ const createMessages = async (numMessages) => {
             const randomChat = chats[Math.floor(Math.random() * chats.length)];
 
             const message = new Message({
-                chat: randomChat,
+                chatId: randomChat,
                 sender: randomUser,
                 content: faker.lorem.sentence()
             });
@@ -145,7 +145,7 @@ const createMessagesInChat = async (chatId, numMessages) => {
             const randomUser = users[Math.floor(Math.random() * users.length)];
 
             const message = new Message({
-                chat: chatId,
+                chatId,
                 sender: randomUser._id,
                 content: faker.lorem.sentence()
             });

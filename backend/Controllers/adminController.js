@@ -88,9 +88,9 @@ module.exports.allChats = async (req, res, next) => {
 }
 
 module.exports.allMessages = async (req, res, next) => {
-    const messages = await Message.find().populate("sender", "username avatar").populate("chat", "groupChat createdAt").lean();
+    const messages = await Message.find().populate("sender", "username avatar").populate("chatId", "groupChat createdAt").lean();
 
-    const transformedMessages = messages.map(({ _id, attachments, content, sender, chat }) => ({
+    const transformedMessages = messages.map(({ _id, attachments, content, sender, chatId }) => ({
         _id,
         attachements: attachments.url,
         content,
@@ -99,9 +99,9 @@ module.exports.allMessages = async (req, res, next) => {
             username: sender.username,
             avatar: sender.avatar.url
         },
-        chat: chat._id,
-        groupChat: chat.groupChat ? "Yes" : "No",
-        createdAt: chat.createdAt.toLocaleString()
+        chatId,
+        groupChat: chatId.groupChat ? "Yes" : "No",
+        createdAt: chatId.createdAt.toLocaleString()
     }))
 
 

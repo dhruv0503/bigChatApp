@@ -189,7 +189,7 @@ const deleteChat = async (req, res, next) => {
     if (chat.groupChat && !chat.members.includes(req.userId)) return next(new expressError("You are not in the group", 403))
 
     const messageWithAttachments = await Message.find({
-        chat: chatId,
+        chatId,
         attachments: {
             $exists: true,
             $ne: []
@@ -205,7 +205,7 @@ const deleteChat = async (req, res, next) => {
 
     await deleteFilesFromCloudinary(publicIds)
     await chat.deleteOne();
-    await Message.deleteMany({ chat: chatId })
+    await Message.deleteMany({ chatId })
 
     emitEvent(req, REFETCH_CHATS, chat.members)
 

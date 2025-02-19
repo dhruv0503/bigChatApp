@@ -1,15 +1,16 @@
 import moment from "moment";
 
-const fileFormat = (url="") => {
+const fileFormat = (url = "") => {
     const fileExtension = url.split(".").pop();
-    if(fileExtension === "mp4" || fileExtension === "webm" || fileExtension === "ogg") return "video";
-    if(fileExtension === "mp3" || fileExtension === "wav") return "audio";
-    if(fileExtension === "png" || fileExtension === "jpg" || fileExtension === "jpeg" || fileExtension === "gif") return "image";
+    if (fileExtension === "mp4" || fileExtension === "webm" || fileExtension === "ogg") return "video";
+    if (fileExtension === "mp3" || fileExtension === "wav") return "audio";
+    if (fileExtension === "png" || fileExtension === "jpg" || fileExtension === "jpeg" || fileExtension === "gif") return "image";
     return "file";
 }
 
-const transformImage = (url = "", width=100) => {
-    return url
+const transformImage = (url = "", width = 100) => {
+    const newUrl = url.replace("upload", `upload/dpr_auto/w_${width}`)
+    return newUrl;
 }
 
 const getLast7Days = () => {
@@ -22,4 +23,4 @@ const getLast7Days = () => {
     return days;
 }
 
-export {fileFormat, transformImage, getLast7Days}
+export { fileFormat, transformImage, getLast7Days }

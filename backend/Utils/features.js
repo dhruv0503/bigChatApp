@@ -2,6 +2,7 @@ const mongoose = require('mongoose')
 const jwt = require('jsonwebtoken')
 const { v4: uuid } = require('uuid')
 const streamifier = require('streamifier')
+const { getSockets } = require('./helper')
 const cloudinary = require('cloudinary').v2
 
 const cookieOptions = {
@@ -64,7 +65,9 @@ const uploadToCloudinary = async (files = []) => {
 }
 
 const emitEvent = (req, event, users, data) => {
-    // console.log("Emitting Event")
+    let io = req.app.get("io")
+    const userSockets = getSockets(users);
+    io.to(userSockets).emit(event, data);
 }
 
 module.exports = { connectDB, sendToken, emitEvent, deleteFilesFromCloudinary, cookieOptions, uploadToCloudinary }

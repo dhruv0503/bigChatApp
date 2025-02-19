@@ -6,11 +6,8 @@ import { fileFormat } from '../../lib/features';
 import RenderAttachment from './RenderAttachment';
 
 const MessageComponent = ({ message, user }) => {
-    // console.log(message)
     const { sender, content, attachments = [], createdAt } = message || {};
-    // console.log(message);
     const sameSender = sender?._id === user?._id;
-
     const timeAgo = moment(createdAt).fromNow()
 
     return (
@@ -20,11 +17,12 @@ const MessageComponent = ({ message, user }) => {
             color: "black",
             borderRadius: "5px",
             padding: "0.5rem",
-            width: "fit-content"
+            width: "fit-content",
+            maxWidth: "70%"
         }}>
             {
                 !sameSender && <Typography color={tealColor} fontWeight={600} variant='caption'>
-                    {sender.username}
+                    {sender?.username}
                 </Typography>
             }
             {
@@ -35,7 +33,7 @@ const MessageComponent = ({ message, user }) => {
                     const url = attach.url;
                     const file = fileFormat(url);
                     return <Box key={idx}>
-                        <RenderAttachment file={file} url={url} />
+                        <RenderAttachment key={idx} file={file} url={url} />
                     </Box>
                 })
             )}
@@ -46,4 +44,4 @@ const MessageComponent = ({ message, user }) => {
     )
 }
 
-export default memo(MessageComponent);
+export default MessageComponent;

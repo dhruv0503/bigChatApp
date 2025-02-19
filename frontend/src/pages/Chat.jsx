@@ -1,32 +1,50 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import AppLayout from "../components/layout/AppLayout";
-import { Stack, IconButton, Skeleton } from "@mui/material";
-import { InputBox } from "../components/styles/styledComponent";
+import { useDispatch } from 'react-redux';
 import { AttachFile as AttachFileButton, Send as SendIcon } from "@mui/icons-material";
-import { grayColor, orange } from "../constants/color";
+import { IconButton, Skeleton, Stack } from "@mui/material";
+import React, { useCallback, useMemo, useRef, useState, useEffect } from "react";
 import FileMenu from "../components/dialogs/FileMenu";
-import { sampleMessage, sampleUsers } from "../constants/sampleData";
+import { useErrors, useSocketEvents } from "../components/hooks/hooks";
+import AppLayout from "../components/layout/AppLayout";
 import MessageComponent from "../components/shared/MessageComponent";
+import { InputBox } from "../components/styles/styledComponent";
+import { grayColor, orange } from "../constants/color";
+import { NEW_MESSAGE } from '../constants/events';
+import { useGetChatDetailsQuery, useGetChatMessagesQuery } from "../redux/api/api";
 import { getSocket } from "../Socket";
-import { NEW_MESSAGE } from '../constants/events'
-import { useGetChatDetailsQuery } from "../redux/api/api";
-import { useSocketEvents } from "../components/hooks/hooks";
-import { useSelector } from "react-redux";
+import { useInfiniteScrollTop } from '6pp'
+import { setIsFileMenu } from '../redux/reducers/miscSlice';
 
-const ChatContent = ({ chatId }) => {
-
+const ChatContent = ({ chatId, user }) => {
+  const dispatch = useDispatch();
   const socket = getSocket();
+  const containerRef = useRef(null);
+
   const [message, setMessage] = useState("");
   const [messageList, setMessageList] = useState([]);
   const [menuAnchor, setMenuAnchor] = useState(null);
-  const containerRef = useRef(null);
-  const { user } = useSelector(state => state.auth);
+  const [page, setPage] = useState(1);
+  const chatDetails = useGetChatDetailsQuery({ chatId }, { skip: !chatId })
+  let oldMessagesChunk = useGetChatMessagesQuery({ chatId, page })
+  const members = chatDetails?.data?.chat?.members;
+  const { data: oldMessages, setData: setOldMessages } = useInfiniteScrollTop(
+    containerRef,
+    oldMessagesChunk?.data?.totalPages,
+    page,
+    setPage,
+    oldMessagesChunk?.data?.messages
+  )
 
-  const chatDetails = useGetChatDetailsQuery({ chatId, skip: !chatId })
-  const members = chatDetails?.data?.chat?.members || [];
+  const errors = [
+    { isError: chatDetails.isError, error: chatDetails.error },
+    { isError: oldMessagesChunk?.isError, error: oldMessagesChunk?.error }
+  ]
+
+
+  useErrors(errors)
 
   const handleMenuOpen = (event) => {
     setMenuAnchor(event.currentTarget);
+    dispatch(setIsFileMenu(true))
   };
 
   const handleMenuClose = () => {
@@ -36,35 +54,40 @@ const ChatContent = ({ chatId }) => {
   const submitHanlder = (e) => {
     e.preventDefault();
     if (!message.trim()) return;
-
     socket.emit(NEW_MESSAGE, { chatId, members, message })
     setMessage("");
   }
 
   const newMessageHandler = useCallback((data) => {
-    console.log("Received message:", data);
-    if (data?.message) {
-      setMessageList((prev) => [...prev, data.message]);
-    }
-  }, []);
+    if (data.chatId !== chatId) return;
+    setMessageList((prev) => [...prev, data.message]);
+  }, [chatId]);
 
 
-  const eventHandler = useMemo(() => ({ [NEW_MESSAGE]: newMessageHandler }), [newMessageHandler])
+  const eventHandler = { [NEW_MESSAGE]: newMessageHandler }
+
   useSocketEvents(socket, eventHandler)
+
+  const allMessages = [...oldMessages, ...messageList]
 
   return chatDetails.isLoading ? <Skeleton /> : (<>
 
-    <Stack ref={containerRef} boxSizing={"border-box"} padding={"1rem"} spacing={"1rem"} bgcolor={grayColor} height={"90%"} sx={{
-      overflowX: "hidden",
-      overflowY: "auto",
-      margin: 0,
-      borderRadius: "25px"
-    }}>
-      {
-        messageList.map((msg) => {
-          return <MessageComponent key={msg?._id} message={msg} user={user._id} />
-        })
-      }
+    <Stack
+      ref={containerRef}
+      boxSizing={"border-box"}
+      padding={"1rem"}
+      spacing={"1rem"}
+      bgcolor={grayColor}
+      height={"90%"}
+      sx={{
+        overflowX: "hidden",
+        overflowY: "auto",
+        margin: 0,
+        borderRadius: "25px",
+      }}>
+      {allMessages.map((msg) => (
+        msg && chatId === msg.chatId && <MessageComponent key={msg?._id} message={msg} user={user} />
+      ))}
     </Stack >
     <form style={{ height: "10%" }} onSubmit={submitHanlder}>
       <Stack direction={"row"} height={"100%"} padding={"1rem 0"} alignItems={"center"} position={"relative"} boxSizing={"border-box"} sx={{
@@ -75,7 +98,8 @@ const ChatContent = ({ chatId }) => {
           sx={{
             position: "absolute",
             left: "0.5rem"
-          }}>
+          }}
+        >
           <AttachFileButton />
         </IconButton>
 
@@ -96,7 +120,7 @@ const ChatContent = ({ chatId }) => {
         </IconButton>
       </Stack>
     </form>
-    <FileMenu anchorE1={menuAnchor} handleClose={handleMenuClose} />
+    <FileMenu anchorE1={menuAnchor} chatId={chatId} />
   </>
   );
 };

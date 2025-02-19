@@ -14,7 +14,7 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 import { useDispatch } from "react-redux";
 import { VisuallyHiddenInput } from "../components/styles/styledComponent";
-import { setIsLogin } from "../redux/reducers/miscSlice";
+import { setIsLogin } from "../redux/reducers/authSlice";
 import { validateFormInput } from "../utils/validation";
 
 const Login = () => {

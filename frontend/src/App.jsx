@@ -4,7 +4,7 @@ import { BrowserRouter as Router, Routes, Route, Meta, data } from "react-router
 import ProtectRoute from "./components/auth/ProtectRoute.jsx";
 import { HelmetProvider } from "react-helmet-async";
 import { LayoutLoader } from "./components/layout/Loaders.jsx";
-import { setIsLogin } from './redux/reducers/miscSlice.js';
+import { setIsLogin } from './redux/reducers/authSlice.js';
 import { Toaster } from 'react-hot-toast';
 import axios from 'axios';
 
@@ -25,7 +25,7 @@ import { SocketProvider } from './Socket.jsx';
 
 const App = () => {
 
-  const { isLogin, loader } = useSelector((state) => state.misc);
+  const { isLogin, loader } = useSelector((state) => state.auth);
   // const {}
   const dispatch = useDispatch();
 

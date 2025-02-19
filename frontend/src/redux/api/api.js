@@ -5,7 +5,7 @@ const api = createApi({
     baseQuery: fetchBaseQuery({
         baseUrl: `${import.meta.env.VITE_SERVER}/api`
     }),
-    tagTypes: ["chats", "user"],
+    tagTypes: ["chats", "user", "message"],
     endpoints: (builder) => ({
         getChats: builder.query({
             query: () => ({
@@ -41,7 +41,24 @@ const api = createApi({
                     credentials: "include"
                 }
             },
-            providesTags: ["chat"]
+            providesTags: ["chats"]
+        }),
+        getChatMessages: builder.query({
+            query: ({ chatId, page = 1 }) => ({
+                url: `/message/${chatId}?page=${page}`,
+                credentials: "include"
+
+            }),
+            providesTags: ["message"]
+        }),
+        sendAttachments: builder.mutation({
+            query: (data) => ({
+                url: `/message/attachment`,
+                method : "POST",
+                credentials: "include",
+                body : data
+
+            }),
         }),
         sendFriendeRequest: builder.mutation({
             query: (data) => ({
@@ -59,7 +76,7 @@ const api = createApi({
                 body: data,
                 credentials: 'include'
             }),
-            invalidatesTags: ["user", "chat"]
+            invalidatesTags: ["user", "chats"]
         }),
 
     })
@@ -71,5 +88,7 @@ export const {
     useSendFriendeRequestMutation,
     useGetNotificationsQuery,
     useAcceptFriendeRequestMutation,
-    useGetChatDetailsQuery
+    useGetChatDetailsQuery,
+    useGetChatMessagesQuery,
+    useSendAttachmentsMutation
 } = api
