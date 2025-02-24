@@ -21,9 +21,9 @@ module.exports.sendFriendRequest = async(req, res, next) => {
         receiver: userId
     })
 
-    await newRequest.save();
+    await newRequest.save();    
 
-    emitEvent(req, NEW_REQUEST, userId, `Request Received from ${userId}`)
+    emitEvent(req, NEW_REQUEST, [userId], `Request Received from ${userId}`)
 
     return res.status(200).json({
         success : true,

@@ -49,7 +49,7 @@ const api = createApi({
                 credentials: "include"
 
             }),
-            providesTags: ["message"]
+            keepUnusedDataFor : 0
         }),
         sendAttachments: builder.mutation({
             query: (data) => ({

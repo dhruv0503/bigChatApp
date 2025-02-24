@@ -13,6 +13,7 @@ import { useGetChatDetailsQuery, useGetChatMessagesQuery } from "../redux/api/ap
 import { getSocket } from "../Socket";
 import { useInfiniteScrollTop } from '6pp'
 import { setIsFileMenu } from '../redux/reducers/miscSlice';
+import { removeNewMessageAlert } from '../redux/reducers/chatSlice';
 
 const ChatContent = ({ chatId, user }) => {
   const dispatch = useDispatch();
@@ -39,6 +40,15 @@ const ChatContent = ({ chatId, user }) => {
     { isError: oldMessagesChunk?.isError, error: oldMessagesChunk?.error }
   ]
 
+  useEffect(() => {
+    dispatch(removeNewMessageAlert(chatId));
+    return () => {
+      setMessage("")
+      setMessageList([])
+      setPage(1)
+      setOldMessages([])
+    }
+  }, [chatId])
 
   useErrors(errors)
 
@@ -61,17 +71,15 @@ const ChatContent = ({ chatId, user }) => {
   const newMessageHandler = useCallback((data) => {
     if (data.chatId !== chatId) return;
     setMessageList((prev) => [...prev, data.message]);
-  }, [chatId]);
+  }, [chatId, setMessageList]);
 
 
   const eventHandler = { [NEW_MESSAGE]: newMessageHandler }
 
+
   useSocketEvents(socket, eventHandler)
-
   const allMessages = [...oldMessages, ...messageList]
-
   return chatDetails.isLoading ? <Skeleton /> : (<>
-
     <Stack
       ref={containerRef}
       boxSizing={"border-box"}
@@ -85,8 +93,9 @@ const ChatContent = ({ chatId, user }) => {
         margin: 0,
         borderRadius: "25px",
       }}>
+      {/* {console.log(messageList)} */}
       {allMessages.map((msg) => (
-        msg && chatId === msg.chatId && <MessageComponent key={msg?._id} message={msg} user={user} />
+        msg && <MessageComponent key={msg?._id} message={msg} user={user} />
       ))}
     </Stack >
     <form style={{ height: "10%" }} onSubmit={submitHanlder}>

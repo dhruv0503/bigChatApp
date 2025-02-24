@@ -8,6 +8,7 @@ import {
   IconButton,
   Tooltip,
   Backdrop,
+  Badge,
 } from "@mui/material";
 import { orange } from "../../constants/color";
 import {
@@ -23,8 +24,9 @@ import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
 import { updateUser } from "../../redux/reducers/authSlice";
 import { setIsMobile, setIsNotification, setIsSearch } from "../../redux/reducers/miscSlice";
-import {setIsLogin} from '../../redux/reducers/authSlice'
+import { setIsLogin } from '../../redux/reducers/authSlice'
 import api from '../../redux/api/api'
+import { resetNotficationCount } from "../../redux/reducers/chatSlice";
 
 const Search = lazy(() => import("../specific/Search"));
 const Notifications = lazy(() => import("../specific/Notifications"));
@@ -34,11 +36,13 @@ const Header = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { isSearch, isNotification } = useSelector((state) => state.misc);
-
-  // const [isNotificationOpen, setIsNotificationOpen] = useState(false)
-  // const [isMobile, setIsMobile] = useState(false);
-  // const [isSearch, setIsSearch] = useState(false);
+  const { notificationCount } = useSelector(state => state.chat)
   const [isNewGroup, setIsNewGroup] = useState(false);
+
+  const openNotification = () => {
+    setIsNotification(true);
+    dispatch(resetNotficationCount());
+  }
 
   const openNewGroup = () => setIsNewGroup(!isNewGroup);
 
@@ -111,7 +115,8 @@ const Header = () => {
               <IconBtn
                 title={"Notifications"}
                 icon={<NotificationIcon />}
-                onClick={() => dispatch(setIsNotification(true))}
+                onClick={openNotification}
+                value={notificationCount}
               />
 
               <IconBtn
@@ -146,11 +151,13 @@ const Header = () => {
   );
 };
 
-const IconBtn = ({ title, icon, onClick }) => {
+const IconBtn = ({ title, icon, onClick, value }) => {
   return (
     <Tooltip title={title}>
       <IconButton color="inherit" size="large" onClick={onClick}>
-        {icon}
+        {value ? <Badge badgeContent={value} color="error">
+          {icon}
+        </Badge> : (icon)}
       </IconButton>
     </Tooltip>
   );

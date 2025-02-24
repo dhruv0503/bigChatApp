@@ -20,12 +20,11 @@ module.exports.onNewMessage = async (io, chatId, members, message, user) => {
         chatId
     })
     const membersSocket = getSockets(members)
+    // console.log(messageForRealTime);
     io.to(membersSocket).emit(NEW_MESSAGE, {
         chatId,
         message: messageForRealTime
     })
-
-    io.to(membersSocket).emit(NEW_MESSAGE, { chatId })
-
+    io.to(membersSocket).emit(NEW_MESSAGE_ALERT, { chatId })
     await messageForDb.save();
 }

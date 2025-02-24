@@ -1,24 +1,37 @@
 import { Drawer, Grid2, Skeleton } from "@mui/material";
-import React, { useEffect } from "react";
+import { useEffect, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { useGetChatsQuery } from "../../redux/api/api";
 import { setIsMobile } from "../../redux/reducers/miscSlice";
 import { getSocket } from "../../Socket";
-import { useErrors } from "../hooks/hooks";
+import { useErrors, useSocketEvents } from "../hooks/hooks";
 import Title from "../shared/Title";
 import ChatList from "../specific/ChatList";
 import Profile from "../specific/Profile";
 import Header from "./Header";
+import { NEW_MESSAGE_ALERT, NEW_REQUEST } from "../../constants/events";
+import { incrementNotficationCount, setNewMessagesAlert } from "../../redux/reducers/chatSlice";
 
 const AppLayout = ({ WrappedContent, ...props }) => {
   const params = useParams();
   const chatId = params.chatId;
   const { isMobile } = useSelector(state => state.misc)
   const { user } = useSelector(state => state.auth)
+  const {newMessageAlert} = useSelector(state => state.chat)
   const dispatch = useDispatch();
   const socket = getSocket();
   const { data, isLoading, isError, error, refetch } = useGetChatsQuery();
+
+  console.log("newMessagesAlert", newMessageAlert);
+
+  const newMessageAlertHandler = useCallback((data) => {
+    if(data.chatId !== chatId) dispatch(setNewMessagesAlert(data))
+  }, [chatId, dispatch])
+
+  const newRequestHandler = useCallback(() => {
+    dispatch(incrementNotficationCount())
+  }, [dispatch])
 
   useEffect(() => {
     if (user) refetch();
@@ -30,6 +43,13 @@ const AppLayout = ({ WrappedContent, ...props }) => {
     e.preventDefault();
     console.log("Delete chat", _id, groupChat);
   };
+
+  const eventHandler = {
+    [NEW_MESSAGE_ALERT]: newMessageAlertHandler,
+    [NEW_REQUEST]: newRequestHandler
+  }
+
+  useSocketEvents(socket, eventHandler)
 
   return (
     <>
@@ -43,7 +63,7 @@ const AppLayout = ({ WrappedContent, ...props }) => {
                 chats={data?.chats}
                 chatId={chatId}
                 handleDeleteChat={handleDeleteChat}
-              // onlineUsers={["1", "2"]}
+                newMessagesAlert={newMessageAlert}
               />
             }
           </Drawer>
@@ -79,6 +99,7 @@ const AppLayout = ({ WrappedContent, ...props }) => {
                 chats={data?.chats}
                 chatId={chatId}
                 handleDeleteChat={handleDeleteChat}
+                newMessagesAlert={newMessageAlert}
               // onlineUsers={["1", "2"]}
               />)
           }
@@ -93,28 +114,28 @@ const AppLayout = ({ WrappedContent, ...props }) => {
             flexGrow: "2",
             margin: "0.5rem",
             borderRadius: "25px",
-            maxWidth : "50%"
+            maxWidth: "50%"
           }}
         >
-        <WrappedContent {...props} chatId={chatId} user={user} />
-      </Grid2>
-      <Grid2
-        md={4}
-        lg={3}
-        sx={{
-          display: { xs: "none", md: "block" },
-          height: "100%",
-          backgroundColor: "rgba(0,0,0,0.7)",
-          flexGrow: "1",
-          maxWidth: "25%",
-          margin: "0.5rem",
-          borderRadius: "25px"
-        }}
-      >
-        <Profile />
-      </Grid2>
-    </Grid2 >
-      {/* <Footer /> */ }
+          <WrappedContent {...props} chatId={chatId} user={user} />
+        </Grid2>
+        <Grid2
+          md={4}
+          lg={3}
+          sx={{
+            display: { xs: "none", md: "block" },
+            height: "100%",
+            backgroundColor: "rgba(0,0,0,0.7)",
+            flexGrow: "1",
+            maxWidth: "25%",
+            margin: "0.5rem",
+            borderRadius: "25px"
+          }}
+        >
+          <Profile />
+        </Grid2>
+      </Grid2 >
+      {/* <Footer /> */}
     </>
   );
 };

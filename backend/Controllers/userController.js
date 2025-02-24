@@ -22,11 +22,24 @@ module.exports.myFriends = async (req, res, next) => {
 
 module.exports.searchUser = async (req, res, next) => {
     const { username = "" } = req.query;
+    const userId = req.userId.toString();
     const allChatMembers = await Chat.find({ groupChat: false, members: req.userId });
-    const myFriends = allChatMembers.flatMap((chat) => chat.members).filter((member) => member.toString() !== req.userId.toString());
+    const myFriends = new Set(allChatMembers.flatMap((chat) => chat.members).map((member) => member.toString()))
+    myFriends.delete(userId);
+    const alreadyRequestSentUsers = await Request.find({
+        $or: [{ sender: req.userId }, { receiver: req.userId }]
+    })
+
+
+    const requestedUsers = new Set(
+        alreadyRequestSentUsers.map((req) => {
+
+            return req.sender.toString() === userId ? req.receiver.toString() : req.sender.toString()
+        }))
+    const requestSet = (new Set([...myFriends, userId, ...requestedUsers]))
 
     const searchQuery = {
-        _id: { $nin: [...myFriends, req.userId] },
+        _id: { $nin: [...myFriends, userId, ...requestedUsers] },
     }
 
     if (username.trim()) searchQuery.username = { $regex: username, $options: "i" }
@@ -61,6 +74,6 @@ module.exports.getMyNotifications = async (req, res, next) => {
 
     return res.status(200).json({
         success: true,
-        notifications : transformedRequests
+        notifications: transformedRequests
     })
 }
