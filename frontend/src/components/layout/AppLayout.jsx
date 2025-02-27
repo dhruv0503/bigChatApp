@@ -12,6 +12,7 @@ import Profile from "../specific/Profile";
 import Header from "./Header";
 import { NEW_MESSAGE_ALERT, NEW_REQUEST } from "../../constants/events";
 import { incrementNotficationCount, setNewMessagesAlert } from "../../redux/reducers/chatSlice";
+import { getOrSaveFromStorage } from "../../lib/features";
 
 const AppLayout = ({ WrappedContent, ...props }) => {
   const params = useParams();
@@ -36,6 +37,10 @@ const AppLayout = ({ WrappedContent, ...props }) => {
   useEffect(() => {
     if (user) refetch();
   }, [user])
+
+  useEffect(() => {
+    getOrSaveFromStorage({key : NEW_MESSAGE_ALERT, value : newMessageAlert})
+  }, [newMessageAlert])
 
   useErrors([{ isError, error }]);
 

@@ -10,7 +10,7 @@ const expressError = require('./Utils/expressError')
 const { globalError } = require('./Middlewares/error')
 const { Server } = require('socket.io')
 const http = require('http')
-const { NEW_MESSAGE } = require('./Constants/events')
+const { NEW_MESSAGE, START_TYPING } = require('./Constants/events')
 const cloudinary = require('cloudinary').v2
 const { corsOptions, cloudinaryConfig } = require('./Constants/config')
 const app = express()
@@ -29,7 +29,7 @@ const chatRoutes = require('./Routes/chatRoutes')
 const messageRoutes = require('./Routes/messageRoutes')
 const requestRoutes = require('./Routes/requestRoutes')
 const adminRoutes = require('./Routes/adminRoutes')
-const { onNewMessage } = require('./Controllers/socketMethods')
+const { onNewMessage, onTyping } = require('./Controllers/socketMethods')
 const { socketAuthenticator } = require('./Middlewares/auth')
 const { setSocket, deleteSocket } = require('./Utils/helper')
 
@@ -59,11 +59,15 @@ io.use((socket, next) => {
 })
 
 io.on("connection", (socket) => {
-    // console.log("User Connected", socket.id);
+    console.log("User Connected", socket.id);
     const user = socket.user;
+    console.log(user)
     setSocket(user._id, socket.id);
     socket.on(NEW_MESSAGE, async ({ chatId, members, message }) => {
         await onNewMessage(io, chatId, members, message, user);
+    })
+    socket.on(START_TYPING, ({ members, chatId }) => {
+        onTyping(io, members, chatId)
     })
 
     socket.on("disconnect", () => {

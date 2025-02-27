@@ -8,7 +8,7 @@ import AppLayout from "../components/layout/AppLayout";
 import MessageComponent from "../components/shared/MessageComponent";
 import { InputBox } from "../components/styles/styledComponent";
 import { grayColor, orange } from "../constants/color";
-import { NEW_MESSAGE } from '../constants/events';
+import { NEW_MESSAGE, START_TYPING } from '../constants/events';
 import { useGetChatDetailsQuery, useGetChatMessagesQuery } from "../redux/api/api";
 import { getSocket } from "../Socket";
 import { useInfiniteScrollTop } from '6pp'
@@ -40,6 +40,11 @@ const ChatContent = ({ chatId, user }) => {
     { isError: oldMessagesChunk?.isError, error: oldMessagesChunk?.error }
   ]
 
+  const messageChangeHandler = (e) => {
+    setMessage(e.target.value);
+    socket.emit(START_TYPING, { members, chatId })
+  }
+
   useEffect(() => {
     dispatch(removeNewMessageAlert(chatId));
     return () => {
@@ -68,13 +73,21 @@ const ChatContent = ({ chatId, user }) => {
     setMessage("");
   }
 
-  const newMessageHandler = useCallback((data) => {
+  const newMessageListener = useCallback((data) => {
+    if (data.chatId !== chatId) return;
+    console.log("typing", data)
+  }, [chatId]);
+
+  const startTypingListener = useCallback((data) => {
     if (data.chatId !== chatId) return;
     setMessageList((prev) => [...prev, data.message]);
-  }, [chatId, setMessageList]);
+  }, [chatId]);
 
 
-  const eventHandler = { [NEW_MESSAGE]: newMessageHandler }
+  const eventHandler = {
+    [NEW_MESSAGE]: newMessageListener,
+    [START_TYPING]: startTypingListener
+  }
 
 
   useSocketEvents(socket, eventHandler)
@@ -114,7 +127,7 @@ const ChatContent = ({ chatId, user }) => {
 
         <InputBox placeholder="Type Message Here..."
           value={message}
-          onChange={(e) => setMessage(e.target.value)}
+          onChange={messageChangeHandler}
         />
 
         <IconButton type="submit" sx={{

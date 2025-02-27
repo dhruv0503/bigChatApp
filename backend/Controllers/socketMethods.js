@@ -28,3 +28,11 @@ module.exports.onNewMessage = async (io, chatId, members, message, user) => {
     io.to(membersSocket).emit(NEW_MESSAGE_ALERT, { chatId })
     await messageForDb.save();
 }
+
+module.exports.onTyping = (io, chatId, members) => {
+    const membersSocket = getSockets([members])
+    console.log(members)
+    console.log(getAllSockets())
+    console.log(membersSocket);
+    io.to(membersSocket).emit("START_TYPING", { chatId })
+}
