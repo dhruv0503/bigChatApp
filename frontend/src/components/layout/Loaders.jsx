@@ -1,7 +1,7 @@
 import React from "react";
 import { Grid2, Skeleton } from "@mui/material";
 
-export const LayoutLoader = () => {
+const LayoutLoader = () => {
   return (
     <Grid2
       container={true}
@@ -48,3 +48,10 @@ export const LayoutLoader = () => {
     </Grid2>
   );
 };
+
+
+const TypingLoader = () => {
+    return <h4>Typing</h4>
+}
+
+export {TypingLoader, LayoutLoader}

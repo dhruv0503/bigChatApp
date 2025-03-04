@@ -24,7 +24,7 @@ const AppLayout = ({ WrappedContent, ...props }) => {
   const socket = getSocket();
   const { data, isLoading, isError, error, refetch } = useGetChatsQuery();
 
-  console.log("newMessagesAlert", newMessageAlert);
+  // console.log("newMessagesAlert", newMessageAlert);
 
   const newMessageAlertHandler = useCallback((data) => {
     if(data.chatId !== chatId) dispatch(setNewMessagesAlert(data))
