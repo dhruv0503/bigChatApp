@@ -23,7 +23,7 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
 import { updateUser } from "../../redux/reducers/authSlice";
-import { setIsMobile, setIsNotification, setIsSearch } from "../../redux/reducers/miscSlice";
+import { setIsMobile, setIsNewGroup, setIsNotification, setIsSearch } from "../../redux/reducers/miscSlice";
 import { setIsLogin } from '../../redux/reducers/authSlice'
 import api from '../../redux/api/api'
 import { resetNotficationCount } from "../../redux/reducers/chatSlice";
@@ -37,14 +37,14 @@ const Header = () => {
   const dispatch = useDispatch();
   const { isSearch, isNotification } = useSelector((state) => state.misc);
   const { notificationCount } = useSelector(state => state.chat)
-  const [isNewGroup, setIsNewGroup] = useState(false);
+  const { isNewGroup } = useSelector(state => state.misc)
 
   const openNotification = () => {
-    setIsNotification(true);
+    dispatch(setIsNotification(true));
     dispatch(resetNotficationCount());
   }
 
-  const openNewGroup = () => setIsNewGroup(!isNewGroup);
+  const openNewGroup = () => dispatch(setIsNewGroup(true));
 
   const navigateToGroup = () => {
     navigate("/groups");

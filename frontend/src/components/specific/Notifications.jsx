@@ -9,12 +9,11 @@ import {
   Typography
 } from "@mui/material";
 import { memo } from "react";
-import { useAcceptFriendeRequestMutation, useGetNotificationsQuery } from "../../redux/api/api";
-import { sampleNotifications } from "../../constants/sampleData";
-import { useErrors } from '../hooks/hooks';
-import { useDispatch, useSelector } from "react-redux";
-import { setIsNotification } from "../../redux/reducers/miscSlice";
 import toast from "react-hot-toast";
+import { useDispatch, useSelector } from "react-redux";
+import { useAcceptFriendeRequestMutation, useGetNotificationsQuery } from "../../redux/api/api";
+import { setIsNotification } from "../../redux/reducers/miscSlice";
+import { useErrors } from '../hooks/hooks';
 
 
 
@@ -22,7 +21,7 @@ const Notifications = () => {
   const { isNotification } = useSelector(state => state.misc)
   const dispatch = useDispatch();
   const { isLoading, data, error, isError } = useGetNotificationsQuery();
-  // console.log(data);
+  console.log(data);
 
   const [acceptRequest] = useAcceptFriendeRequestMutation();
 
@@ -31,7 +30,7 @@ const Notifications = () => {
     dispatch(setIsNotification(false))
 
     try {
-      const res = await acceptRequest({ requestId : _id, accept })
+      const res = await acceptRequest({ requestId: _id, accept })
       console.log(res);
       if (res?.data) {
         console.log("Use Socket here");
@@ -51,20 +50,22 @@ const Notifications = () => {
       <Stack p={{ xs: "0.5rem", sm: "1rem" }} maxWidth={"25rem"}>
         <DialogTitle>Notificatons</DialogTitle>
         {
-          isLoading ? <Skeleton /> :
-            data.notifications?.length > 0 ? (
-              data.notifications.map(({ sender, _id }) => (
-                <NotificationItem
-                  sender={sender}
-                  _id={_id}
-                  handler={friendRequestHandler}
-                  key={_id}
-                />
-              ))
-            ) : (
-              <Typography textAlign={"center"}>No new notifications</Typography>
-            )
-        }
+          isLoading ? <Skeleton /> : (
+            <>
+              {data?.notifications.length > 0 ? (
+                data?.notifications?.map(({ sender, _id }) => (
+                  <NotificationItem
+                    sender={sender}
+                    _id={_id}
+                    handler={friendRequestHandler}
+                    key={_id}
+                  />
+                ))
+              ) : (
+                <Typography textAlign={"center"}>No new notifications</Typography>
+              )}
+            </>
+          )}
       </Stack>
     </Dialog>
   );
@@ -92,7 +93,7 @@ const NotificationItem = memo(({ sender, _id, handler }) => {
               textOverflow: "ellipsis",
             }}
           >
-            {`${sender.name} sent you a friend request`}
+            {`${sender.username} sent you a friend request`}
           </Typography>
           <Stack
             direction={{

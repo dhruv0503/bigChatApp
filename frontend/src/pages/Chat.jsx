@@ -8,7 +8,7 @@ import AppLayout from "../components/layout/AppLayout";
 import MessageComponent from "../components/shared/MessageComponent";
 import { InputBox } from "../components/styles/styledComponent";
 import { grayColor, orange } from "../constants/color";
-import { NEW_MESSAGE, START_TYPING, STOP_TYPING } from '../constants/events';
+import { ALERT, NEW_MESSAGE, START_TYPING, STOP_TYPING } from '../constants/events';
 import { useGetChatDetailsQuery, useGetChatMessagesQuery } from "../redux/api/api";
 import { getSocket } from "../Socket";
 import { useInfiniteScrollTop } from '6pp'
@@ -21,6 +21,7 @@ const ChatContent = ({ chatId, user }) => {
   const dispatch = useDispatch();
   const socket = getSocket();
   const containerRef = useRef(null);
+  const bottomRef = useRef(null)
 
   const [typing, setTyping] = useState(false);
   const [userTyping, setUserTyping] = useState(false);
@@ -51,6 +52,23 @@ const ChatContent = ({ chatId, user }) => {
     { isError: oldMessagesChunk?.isError, error: oldMessagesChunk?.error }
   ]
 
+  useEffect(() => {
+    dispatch(removeNewMessageAlert(chatId));
+    return () => {
+      setMessage("")
+      setMessageList([])
+      setPage(1)
+      setOldMessages([])
+    }
+  }, [chatId])
+
+  useEffect(() => {
+    if (bottomRef.current) {
+      bottomRef.current.scrollIntoView({ behavior: "smooth" })
+    }
+  }, [messageList])
+
+
   const messageChangeHandler = (e) => {
     setMessage(e.target.value);
     if (!typing) {
@@ -64,16 +82,6 @@ const ChatContent = ({ chatId, user }) => {
       setTyping(false)
     }, [2000])
   }
-
-  useEffect(() => {
-    dispatch(removeNewMessageAlert(chatId));
-    return () => {
-      setMessage("")
-      setMessageList([])
-      setPage(1)
-      setOldMessages([])
-    }
-  }, [chatId])
 
   useErrors(errors)
 
@@ -93,9 +101,10 @@ const ChatContent = ({ chatId, user }) => {
     setMessage("");
   }
 
-  const stopTypingListener = useCallback((data) => {
+  const newMessageListener = useCallback((data) => {
+    // console.log(data.userId, authState.user._id)
     if (data.chatId !== chatId) return;
-    setUserTyping(false);
+    setMessageList((prev) => [...prev, data.message]);
   }, [chatId]);
 
   const startTypingListener = useCallback((data) => {
@@ -103,14 +112,26 @@ const ChatContent = ({ chatId, user }) => {
     setUserTyping(true);
   }, [chatId]);
 
-  const newMessageListener = useCallback((data) => {
-    console.log(data.userId, authState.user._id)
+  const stopTypingListener = useCallback((data) => {
     if (data.chatId !== chatId || data.userId.toString() === authState.user._id) return;
-    setMessageList((prev) => [...prev, data.message]);
+    setUserTyping(false);
   }, [chatId]);
 
+  const alertListener = useCallback((data) => {
+    const messageForAlert = {
+      content: data,
+      sender: {
+        _id: "67c8485d8b5433d4cca2e1bb",
+        username: "Admin1"
+      },
+      chatId,
+      createdAt: new Date().toISOString()
+    }
+    setMessageList((prev) => [...prev, messageForAlert]);
+  }, [chatId])
 
   const eventHandler = {
+    [ALERT]: alertListener,
     [NEW_MESSAGE]: newMessageListener,
     [START_TYPING]: startTypingListener,
     [STOP_TYPING]: stopTypingListener
@@ -118,62 +139,66 @@ const ChatContent = ({ chatId, user }) => {
 
 
   useSocketEvents(socket, eventHandler)
+
   const allMessages = [...oldMessages, ...messageList]
-  return chatDetails.isLoading ? <Skeleton /> : (<>
-    <Stack
-      ref={containerRef}
-      boxSizing={"border-box"}
-      padding={"1rem"}
-      spacing={"1rem"}
-      bgcolor={grayColor}
-      height={"90%"}
-      sx={{
-        overflowX: "hidden",
-        overflowY: "auto",
-        margin: 0,
-        borderRadius: "25px",
-      }}>
-      {/* {console.log(messageList)} */}
-      {allMessages.map((msg) => (
-        msg && <MessageComponent key={msg?._id} message={msg} user={user} />
-      ))}
-
-      {userTyping && <TypingLoader />}
-
-    </Stack >
-    <form style={{ height: "10%" }} onSubmit={submitHanlder}>
-      <Stack direction={"row"} height={"100%"} padding={"1rem 0"} alignItems={"center"} position={"relative"} boxSizing={"border-box"} sx={{
-        width: "100%"
-      }}>
-        <IconButton
-          onClick={handleMenuOpen}
-          sx={{
-            position: "absolute",
-            left: "0.5rem"
-          }}
-        >
-          <AttachFileButton />
-        </IconButton>
-
-        <InputBox placeholder="Type Message Here..."
-          value={message}
-          onChange={messageChangeHandler}
-        />
-
-        <IconButton type="submit" sx={{
-          bgcolor: orange,
-          color: "white",
-          padding: "0.5rem",
-          "&:hover": {
-            backgroundColor: "error.dark"
-          }
+  return chatDetails.isLoading ? <Skeleton /> : (
+    <>
+      <Stack
+        ref={containerRef}
+        boxSizing={"border-box"}
+        padding={"1rem"}
+        spacing={"1rem"}
+        bgcolor={grayColor}
+        height={"90%"}
+        sx={{
+          overflowX: "hidden",
+          overflowY: "auto",
+          margin: 0,
+          borderRadius: "25px",
         }}>
-          <SendIcon />
-        </IconButton>
-      </Stack>
-    </form>
-    <FileMenu anchorE1={menuAnchor} chatId={chatId} />
-  </>
+        {/* {console.log(messageList)} */}
+        {allMessages.map((msg) => (
+          msg && <MessageComponent key={msg?._id} message={msg} user={user} />
+        ))}
+
+        {userTyping && <TypingLoader />}
+
+        <div ref={bottomRef} />
+
+      </Stack >
+      <form style={{ height: "10%" }} onSubmit={submitHanlder}>
+        <Stack direction={"row"} height={"100%"} padding={"1rem 0"} alignItems={"center"} position={"relative"} boxSizing={"border-box"} sx={{
+          width: "100%"
+        }}>
+          <IconButton
+            onClick={handleMenuOpen}
+            sx={{
+              position: "absolute",
+              left: "0.5rem"
+            }}
+          >
+            <AttachFileButton />
+          </IconButton>
+
+          <InputBox placeholder="Type Message Here..."
+            value={message}
+            onChange={messageChangeHandler}
+          />
+
+          <IconButton type="submit" sx={{
+            bgcolor: orange,
+            color: "white",
+            padding: "0.5rem",
+            "&:hover": {
+              backgroundColor: "error.dark"
+            }
+          }}>
+            <SendIcon />
+          </IconButton>
+        </Stack>
+      </form>
+      <FileMenu anchorE1={menuAnchor} chatId={chatId} />
+    </>
   );
 };
 

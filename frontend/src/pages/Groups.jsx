@@ -7,12 +7,22 @@ import AvatarCard from '../components/shared/AvatarCard'
 import { sampleChats, sampleUsers } from '../constants/sampleData'
 import { bgGradient } from '../constants/color'
 import UserItem from '../components/shared/UserItem'
+import { useGetChatDetailsQuery, useGetGroupsQuery } from '../redux/api/api';
+import { useErrors } from '../components/hooks/hooks'
+import { LayoutLoader } from '../components/layout/Loaders'
 const ConfirmDeleteDialog = lazy(() => import('../components/dialogs/ConfirmDeleteDialog'))
 const AddMemberDialog = lazy(() => import('../components/dialogs/AddMemberDialog'))
 
 
+
 const Groups = () => {
   const chatId = useSearchParams()[0].get('group')
+
+  const myGroups = useGetGroupsQuery()
+  const groupDetails = useGetChatDetailsQuery({ chatId, populate: true }, {
+    skip: !chatId
+  })
+
   const navigate = useNavigate();
   const navigateBack = () => {
     navigate("/")
@@ -23,6 +33,27 @@ const Groups = () => {
   const [groupName, setGroupName] = useState("");
   const [groupNameUpdatedValue, setGroupNameUpdatedValue] = useState("");
   const [confirmDeleteDialog, setConfirmDeleteDialog] = useState(false)
+  const [members, setMembers] = useState([])
+
+  const errors = [{ isError: myGroups.isError, error: myGroups.error }, { isError: groupDetails.isError, error: groupDetails.error }]
+  useErrors(errors)
+
+  useEffect(() => {
+    const groupData = groupDetails?.data?.chat
+    if (groupData) {
+      setGroupName(groupData.name)
+      setGroupNameUpdatedValue(groupData.name)
+      setMembers(groupData.members);
+    }
+
+    return () => {
+      setGroupName("")
+      setGroupNameUpdatedValue("")
+      setMembers([])
+      setIsEdit(false)
+    }
+
+  }, [groupDetails.data])
 
   const deleteHandler = () => {
     console.log("Delete")
@@ -35,7 +66,7 @@ const Groups = () => {
   const handleMobileClose = () => setIsMobileMenuOpen(false);
 
   const updateGroupNameHandler = () => {
-    setIsEdit(false)
+    // setIsEdit(false)
     console.log(groupNameUpdatedValue)
   }
 
@@ -56,20 +87,6 @@ const Groups = () => {
   const removeMemberHandler = (id) => {
     console.log("Remove Member", id)
   }
-
-
-  useEffect(() => {
-    if (chatId) {
-      setGroupName(`Group Name ${chatId}`)
-      setGroupNameUpdatedValue(`Group Name ${chatId}`)
-    }
-
-    return () => {
-      setGroupName("")
-      setGroupNameUpdatedValue("")
-      setIsEdit(false)
-    }
-  }, [chatId])
 
   const ButtonGroup = () => {
     return <Stack direction={{
@@ -137,7 +154,7 @@ const Groups = () => {
     </>)
   }
 
-  return (
+  return myGroups.isLoading ? <LayoutLoader /> : (
     <Grid2 container sx={{
       height: "100vh",
       display: "flex",
@@ -154,7 +171,7 @@ const Groups = () => {
         boxSizing: "border-box",
         backgroundImage: bgGradient
       }}>
-        <GroupList myGroups={sampleChats} chatId={chatId} />
+        <GroupList myGroups={myGroups?.data?.groups} chatId={chatId} />
       </Grid2>
       <Grid2 xs={12} sm={8} sx={{
         display: 'flex',
@@ -191,7 +208,7 @@ const Groups = () => {
                 overflow: "auto"
               }}>
               {
-                sampleUsers.map((user) => {
+                members?.map((user) => {
                   return <UserItem user={user} key={user._id} isAdded styling={{
                     boxShadow: "0 0 0.5rem rgba(0,0,0,0.2)",
                     padding: "1rem 2rem",

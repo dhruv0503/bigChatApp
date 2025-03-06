@@ -1,7 +1,9 @@
+import { useDispatch, useSelector } from 'react-redux';
 import {
   Button,
   Dialog,
   DialogTitle,
+  Skeleton,
   Stack,
   TextField,
   Typography,
@@ -9,11 +11,19 @@ import {
 import { useState } from "react";
 import { sampleUsers } from "../../constants/sampleData";
 import UserItem from "../shared/UserItem";
+import { useCreateNewGroupMutation, useGetFriendsQuery } from '../../redux/api/api';
+import { useAsyncMutation, useErrors } from '../hooks/hooks';
+import { setIsNewGroup } from '../../redux/reducers/miscSlice';
+import toast from 'react-hot-toast';
 
 const NewGroup = () => {
+  const dispatch = useDispatch();
+  const { isNewGroup } = useSelector(state => state.misc)
+  const { isError, isLoading, error, data } = useGetFriendsQuery();
   const [groupName, setGroupName] = useState("");
-  const [members, setMembers] = useState(sampleUsers);
+  const [newGroup, newGroupisLoading] = useAsyncMutation(useCreateNewGroupMutation)
   const [selectedUsers, setSelectedUsers] = useState([]);
+  useErrors([{ isError, error }])
 
   const selectMemberHandler = (e, _id) => {
     setSelectedUsers((prev) =>
@@ -22,15 +32,18 @@ const NewGroup = () => {
   };
 
   const submitHandler = () => {
-    console.log("Submit");
+    if (!groupName.trim()) return toast.error("Group name is required")
+    if (selectedUsers.length < 2) return toast.error("Please select atleast 2 members")
+    newGroup("Creating New Group", { name: groupName, members: selectedUsers })
+    closeHandler()
   };
 
   const closeHandler = () => {
-    console.log("Close");
+    dispatch(setIsNewGroup(false))
   };
 
   return (
-    <Dialog open onClose={closeHandler}>
+    <Dialog open={isNewGroup} onClose={closeHandler}>
       <Stack p={{ xs: "1rem", sm: "3rem" }} spacing={"1rem"} width={"25rem"}>
         <DialogTitle textAlign={"center"} variant="h4">
           New Group
@@ -41,9 +54,8 @@ const NewGroup = () => {
           onChange={(e) => setGroupName(e.target.value)}
         />
         <Typography variant="body1">Members</Typography>
-
         <Stack sx={{ padding: "1rem", paddingTop: "unset" }}>
-          {members.map((user) => (
+          {isLoading ? <Skeleton /> : data?.friends.map((user) => (
             <UserItem
               user={user}
               key={user._id}
@@ -53,10 +65,10 @@ const NewGroup = () => {
           ))}
         </Stack>
         <Stack direction={"row"} justifyContent="space-evenly">
-          <Button variant="contained" color="error" size="large">
+          <Button variant="contained" color="error" size="large" onClick={closeHandler}>
             Cancel
           </Button>
-          <Button variant="contained" size="large" onClick={submitHandler}>
+          <Button variant="contained" size="large" onClick={submitHandler} disabled={newGroupisLoading}>
             Create
           </Button>
         </Stack>

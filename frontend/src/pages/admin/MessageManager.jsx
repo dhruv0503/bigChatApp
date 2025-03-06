@@ -17,7 +17,7 @@ const columns = [
         attachments.map((attachment, idx) => {
           const url = attachment.url;
           const fileType = fileFormat(url);
-          console.log(url, fileType)
+          // console.log(url, fileType)
           return <Box sx={{
             display: "flex",
             alignItems: "center",

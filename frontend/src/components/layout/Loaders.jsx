@@ -1,5 +1,6 @@
 import React from "react";
-import { Grid2, Skeleton } from "@mui/material";
+import { Grid2, Skeleton, Stack } from "@mui/material";
+import { BouncingSkeleton } from "../styles/StyledComponent";
 
 const LayoutLoader = () => {
   return (
@@ -28,11 +29,11 @@ const LayoutLoader = () => {
         height={"100%"}
         sx={{ flexGrow: "2" }}
       >
-        {Array.from({length : 10}).map((_, idx) => {
-            return (
-                <Skeleton key={idx} variant="rounded" height={"5rem"} sx={{marginBottom : "1rem"}} />
-            )
-        }) }
+        {Array.from({ length: 10 }).map((_, idx) => {
+          return (
+            <Skeleton key={idx} variant="rounded" height={"5rem"} sx={{ marginBottom: "1rem" }} />
+          )
+        })}
       </Grid2>
       <Grid2
         md={4}
@@ -51,7 +52,25 @@ const LayoutLoader = () => {
 
 
 const TypingLoader = () => {
-    return <h4>Typing</h4>
+  return <Stack
+    spacing={"0.5rem"}
+    direction={"row"}
+    padding={"0.5rem"}
+    justifyContent={"center"}
+  >
+
+    {[...Array(4)].map((_, i) => (
+      <BouncingSkeleton
+        key={i}
+        variant="circular"
+        width={15}
+        height={15}
+        style={{ animationDelay: `${i * 0.1}s` }}
+      />
+    ))}
+
+
+  </Stack>
 }
 
-export {TypingLoader, LayoutLoader}
+export { TypingLoader, LayoutLoader }

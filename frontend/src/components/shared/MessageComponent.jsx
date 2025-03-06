@@ -32,8 +32,8 @@ const MessageComponent = ({ message, user }) => {
                 attachments.map((attach, idx) => {
                     const url = attach.url;
                     const file = fileFormat(url);
-                    return <Box key={idx}>
-                        <RenderAttachment key={idx} file={file} url={url} />
+                    return <Box key={url}>
+                        <RenderAttachment file={file} url={url} />
                     </Box>
                 })
             )}
@@ -44,4 +44,4 @@ const MessageComponent = ({ message, user }) => {
     )
 }
 
-export default MessageComponent;
+export default memo(MessageComponent);

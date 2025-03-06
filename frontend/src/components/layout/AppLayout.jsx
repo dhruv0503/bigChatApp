@@ -60,6 +60,7 @@ const AppLayout = ({ WrappedContent, ...props }) => {
     <>
       <Title />
       <Header />
+      {console.log(data)}
       {
         isLoading ? <Skeleton /> : (
           <Drawer open={isMobile} onClose={() => dispatch(setIsMobile(false))}>

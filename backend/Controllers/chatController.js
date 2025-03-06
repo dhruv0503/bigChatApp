@@ -3,7 +3,7 @@ const User = require('../Models/userModel');
 const Message = require('../Models/messageModel');
 const expressError = require('../Utils/expressError');
 const { emitEvent, deleteFilesFromCloudinary } = require('../Utils/features')
-const {ALERT, REFETCH_CHATS} = require('../Constants/events')
+const { ALERT, REFETCH_CHATS } = require('../Constants/events')
 
 const newGroupChat = async (req, res, next) => {
     const { name, members } = req.body;
@@ -21,15 +21,14 @@ const newGroupChat = async (req, res, next) => {
 }
 
 const getMyChat = async (req, res, next) => {
-    const myInfo = await User.findById(req.userId);
-    const chats = await Chat.find({ members: req.userId, groupChat : false }).populate("members", "username avatar")
+    const chats = await Chat.find({ members: req.userId }).populate("members", "username avatar")
     const transformedChats = chats.map(({ _id, name, members, groupChat }) => {
-        const otherMember = members.find((member) => member._id.toString() !== req.userId.toString())
+        const otherMembers = members.filter((member) => member._id.toString() !== req.userId.toString());
         return {
-            _id,    
+            _id,
             groupChat,
-            avatar: [otherMember.avatar.url],
-            username:  otherMember.username,
+            avatar: groupChat ? members.slice(0, 3).map((member) => member.avatar.url) : [otherMembers[0].avatar.url],
+            name: groupChat ? name : otherMembers[0].username,
             members: members.reduce((prev, curr) => {
                 if (curr._id.toString() !== req.userId.toString()) {
                     prev.push(curr._id)
@@ -58,7 +57,7 @@ const getMyGroups = async (req, res, next) => {
         }
     })
 
-    return res.status(200).json({ success: true, chats: transformedChats })
+    return res.status(200).json({ success: true, groups: transformedChats })
 }
 
 const addMembers = async (req, res, next) => {

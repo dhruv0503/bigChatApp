@@ -41,7 +41,7 @@ const Login = () => {
   const hanldeFileChange = (evt) => {
     const file = evt.target.files[0];
     if (file) setProfileImage(file);
-    console.log(file);
+    // console.log(file);
   };
 
   const handleChange = (e) => {

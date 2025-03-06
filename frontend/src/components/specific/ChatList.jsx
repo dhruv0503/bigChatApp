@@ -21,7 +21,8 @@ const ChatList = ({
     // <Stack width={w} direction={"column"}>
     <Stack direction={"column"} width={w} overflow={"auto"} height="100%" sx={{ backgroundImage: bgGradient, borderRadius: "25px" }}>
       {chats?.map((data, idx) => {
-        const { avatar, _id, username, groupChat, members } = data;
+        const { avatar, _id, name, groupChat, members } = data;
+        console.log(name)
         const newMessageAlert = newMessagesAlert.find(
           ({ chatId }) => chatId === _id
         );
@@ -33,7 +34,7 @@ const ChatList = ({
             newMessageAlert={newMessageAlert}
             isOnline={isOnline}
             avatar={avatar}
-            username={username}
+            username={name}
             _id={_id}
             groupChat={groupChat}
             sameSender={chatId === _id}
