@@ -49,8 +49,8 @@ const useAsyncMutation = (mutationHook) => {
 
 const useSocketEvents = (socket, handlers) => {
     useEffect(() => {
-
         Object.entries(handlers).forEach(([event, handler]) => {
+            if (event === "ALERT") console.log(handler)
             socket.on(event, handler)
         });
 

@@ -71,7 +71,7 @@ const addMembers = async (req, res, next) => {
 
     if (!chat.groupChat) return next(new expressError("This is not a group chat", 400))
 
-    if (chat.creator.toString() !== req.userId.toString()) next(new expressError("You are not allowed to add members", 403))
+    if (chat.creator.toString() !== req.userId.toString()) return next(new expressError("You are not allowed to add members", 403))
 
     const currentMembersSet = new Set(chat.members.map((member) => member.toString()));
     const allMembersSet = new Set([...currentMembersSet, ...newMembers.map((member) => member.toString())]);
@@ -96,17 +96,18 @@ const removeMember = async (req, res, next) => {
     if (!removedUser) return next(new expressError("User not found", 404));
 
     const chat = await Chat.findById(chatId);
-
-    if (!chat) return next(new expressError("Chat not found", 404))
-    if (!chat.groupChat) return next(new expressError("This is not a group chat", 400))
-    if (chat.creator.toString() !== req.userId.toString()) next(new expressError("You are not allowed to remove members", 403))
-    if (!chat.members.includes(userId)) return next(new expressError("User is not in the group", 400))
+    
+    if (!chat) return next(new expressError("Chat not found", 404));
+    if (!chat.groupChat) return next(new expressError("This is not a group chat", 400));
+    if (chat.creator.toString() !== req.userId.toString()) return next(new expressError("You are not allowed to remove members", 403));
+    if (!chat.members.includes(userId)) return next(new expressError("User is not in the group", 400));
     if (chat.members.length - 1 < 3) return next(new expressError("Group must have at least 3 members", 400));
-
+    
+    const allMembers = chat.members.map(ele => ele.toString())
     const updatedChat = await Chat.findByIdAndUpdate(chatId, { $pull: { members: userId } }, { new: true })
 
     emitEvent(req, ALERT, updatedChat.members, `${removedUser} have been removed from the group`)
-    emitEvent(req, REFETCH_CHATS, updatedChat.members)
+    emitEvent(req, REFETCH_CHATS, allMembers)
 
     return res.status(200).json({ success: true, message: `${removedUser.username} removed successfully` })
 }

@@ -118,8 +118,11 @@ const ChatContent = ({ chatId, user }) => {
   }, [chatId]);
 
   const alertListener = useCallback((data) => {
+    console.log("Ello")
+    if (data.chatId !== chatId) return;
+    console.log("Ello")
     const messageForAlert = {
-      content: data,
+      content: data.message,
       sender: {
         _id: "67c8485d8b5433d4cca2e1bb",
         username: "Admin1"
@@ -127,6 +130,7 @@ const ChatContent = ({ chatId, user }) => {
       chatId,
       createdAt: new Date().toISOString()
     }
+    console.log(messageForAlert)
     setMessageList((prev) => [...prev, messageForAlert]);
   }, [chatId])
 

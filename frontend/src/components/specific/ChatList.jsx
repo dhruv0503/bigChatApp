@@ -22,7 +22,6 @@ const ChatList = ({
     <Stack direction={"column"} width={w} overflow={"auto"} height="100%" sx={{ backgroundImage: bgGradient, borderRadius: "25px" }}>
       {chats?.map((data, idx) => {
         const { avatar, _id, name, groupChat, members } = data;
-        console.log(name)
         const newMessageAlert = newMessagesAlert.find(
           ({ chatId }) => chatId === _id
         );

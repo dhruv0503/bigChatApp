@@ -21,7 +21,7 @@ module.exports.newGroupValidator = () => [
 
 module.exports.addMemberValidator = () => [
     body("chatId").notEmpty().withMessage("Chat ID is required"),
-    body("members").notEmpty().withMessage("Members are required").isArray({ min: 1, max: 97 }).withMessage("At least one member is required"),
+    body("newMembers").notEmpty().withMessage("Members are required").isArray({ min: 1, max: 97 }).withMessage("At least one member is required"),
 ];
 
 module.exports.removeMemberValidator = () => [
@@ -31,7 +31,7 @@ module.exports.removeMemberValidator = () => [
 
 
 module.exports.renameGroupValidator = () => [
-    param("id").notEmpty().withMessage("Chat ID is required"),
+    param("chatId").notEmpty().withMessage("Chat ID is required"),
     body("name").trim().notEmpty().withMessage("Name is required"),
 ];
 

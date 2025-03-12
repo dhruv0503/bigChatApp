@@ -1,7 +1,7 @@
 import { Drawer, Grid2, Skeleton } from "@mui/material";
 import { useEffect, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useGetChatsQuery } from "../../redux/api/api";
 import { setIsMobile } from "../../redux/reducers/miscSlice";
 import { getSocket } from "../../Socket";
@@ -10,12 +10,13 @@ import Title from "../shared/Title";
 import ChatList from "../specific/ChatList";
 import Profile from "../specific/Profile";
 import Header from "./Header";
-import { NEW_MESSAGE_ALERT, NEW_REQUEST } from "../../constants/events";
+import { NEW_MESSAGE_ALERT, NEW_REQUEST, REFETCH_CHATS } from "../../constants/events";
 import { incrementNotficationCount, setNewMessagesAlert } from "../../redux/reducers/chatSlice";
 import { getOrSaveFromStorage } from "../../lib/features";
 
 const AppLayout = ({ WrappedContent, ...props }) => {
   const params = useParams();
+  const navigate = useNavigate();
   const chatId = params.chatId;
   const { isMobile } = useSelector(state => state.misc)
   const { user } = useSelector(state => state.auth)
@@ -26,13 +27,18 @@ const AppLayout = ({ WrappedContent, ...props }) => {
 
   // console.log("newMessagesAlert", newMessageAlert);
 
-  const newMessageAlertHandler = useCallback((data) => {
+  const newMessageAlertListener = useCallback((data) => {
     if(data.chatId !== chatId) dispatch(setNewMessagesAlert(data))
   }, [chatId, dispatch])
 
-  const newRequestHandler = useCallback(() => {
+  const newRequestListener = useCallback(() => {
     dispatch(incrementNotficationCount())
   }, [dispatch])
+
+  const refetchListener = useCallback(() => {
+    refetch()
+    navigate('/')
+  }, [refetch, navigate])
 
   useEffect(() => {
     if (user) refetch();
@@ -50,8 +56,9 @@ const AppLayout = ({ WrappedContent, ...props }) => {
   };
 
   const eventHandler = {
-    [NEW_MESSAGE_ALERT]: newMessageAlertHandler,
-    [NEW_REQUEST]: newRequestHandler
+    [NEW_MESSAGE_ALERT]: newMessageAlertListener,
+    [NEW_REQUEST]: newRequestListener,
+    [REFETCH_CHATS] : refetchListener
   }
 
   useSocketEvents(socket, eventHandler)
@@ -60,7 +67,6 @@ const AppLayout = ({ WrappedContent, ...props }) => {
     <>
       <Title />
       <Header />
-      {console.log(data)}
       {
         isLoading ? <Skeleton /> : (
           <Drawer open={isMobile} onClose={() => dispatch(setIsMobile(false))}>

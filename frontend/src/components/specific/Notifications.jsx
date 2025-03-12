@@ -21,7 +21,7 @@ const Notifications = () => {
   const { isNotification } = useSelector(state => state.misc)
   const dispatch = useDispatch();
   const { isLoading, data, error, isError } = useGetNotificationsQuery();
-  console.log(data);
+  // console.log(data);
 
   const [acceptRequest] = useAcceptFriendeRequestMutation();
 
