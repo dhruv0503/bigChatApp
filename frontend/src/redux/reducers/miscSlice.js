@@ -11,8 +11,8 @@ const miscSlice = createSlice({
     isFileMenu: false,
     isDeleteMenu: false,
     uploadingLoader: false,
-    selecteDeleteChat: {
-      charId: "",
+    selectedDeleteChat: {
+      chatId: "",
       groupChat: false
     }
   },
@@ -41,8 +41,8 @@ const miscSlice = createSlice({
     setUploadingLoader: (state, action) => {
       state.uploadingLoader = action.payload;
     },
-    setSelecteDeleteChat: (state, action) => {
-      state.selecteDeleteChat = action.payload;
+    setSelectedDeleteChat: (state, action) => {
+      state.selectedDeleteChat = action.payload;
     }
   },
 });
@@ -58,5 +58,5 @@ export const {
   setIsFileMenu,
   setIsDeleteMenu,
   setUploadingLoader,
-  setSelecteDeleteChat,
+  setSelectedDeleteChat,
 } = miscSlice.actions;

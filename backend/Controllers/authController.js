@@ -11,8 +11,6 @@ module.exports.createUser = async (req, res, next) => {
         public_id: result[0].public_id,
         url: result[0].url
     }
-    // console.log(avatar)
-
     const user = new User({ name, username, password, avatar, bio });
     if (!user) return next(new expressError('User not created', 400));
     const createdUser = await user.save();

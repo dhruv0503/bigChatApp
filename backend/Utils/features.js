@@ -29,8 +29,19 @@ const sendToken = (res, user, code, msg) => {
     })
 }
 
-const deleteFilesFromCloudinary = async (pubic_ids) => {
+const deleteFilesFromCloudinary = async (files) => {
+    try {
+        if(files.length === 0) return
+        const images = files.filter((file) => file.fileType === "image").map(file => file.public_id)
+        const videos = files.filter((file) => file.fileType === "video").map(file => file.public_id)
+        const raws = files.filter((file) => file.fileType === "raw").map(file => file.public_id)
 
+        if (images.length > 0) await cloudinary.api.delete_resources(images, { resource_type: "image" });
+        if (videos.length > 0) await cloudinary.api.delete_resources(videos, { resource_type: "video" });
+        if (raws.length > 0) await cloudinary.api.delete_resources(raws, { resource_type: "raw" });
+    } catch (error) {
+        console.error("Error deleting media:", error);
+    }
 }
 
 const uploadToCloudinary = async (files = []) => {
@@ -65,7 +76,7 @@ const uploadToCloudinary = async (files = []) => {
 }
 
 const emitEvent = (req, event, users, data) => {
-    let io = req.app.get("io")
+    const io = req.app.get("io")
     const userSockets = getSockets(users);
     io.to(userSockets).emit(event, data);
 }

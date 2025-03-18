@@ -1,5 +1,4 @@
 module.exports.globalError = (err, req, res, next) => {
-    // console.log(err)
     const { statusCode = 500 } = err;
     //Duplicate Key Error Mongo
     if(err.code === 11000){

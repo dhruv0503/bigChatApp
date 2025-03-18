@@ -129,7 +129,23 @@ const api = createApi({
             query: ({ chatId, members }) => ({
                 url: `/chat/group/add`,
                 method: 'PATCH',
-                body: { chatId, newMembers : members },
+                body: { chatId, newMembers: members },
+                credentials: 'include'
+            }),
+            invalidatesTags: ["chat"]
+        }),
+        deleteChat: builder.mutation({
+            query: (chatId) => ({
+                url: `/chat/${chatId}`,
+                method: 'DELETE',
+                credentials: 'include'
+            }),
+            invalidatesTags: ["chat"]
+        }),
+        leaveGroup: builder.mutation({
+            query: (chatId) => ({
+                url: `/chat/group/leave/${chatId}`,
+                method: 'PATCH',
                 credentials: 'include'
             }),
             invalidatesTags: ["chat"]
@@ -151,5 +167,7 @@ export const {
     useCreateNewGroupMutation,
     useRenameGroupMutation,
     useRemoveMemberMutation,
-    useAddMemberMutation
+    useAddMemberMutation,
+    useDeleteChatMutation,
+    useLeaveGroupMutation
 } = api

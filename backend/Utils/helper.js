@@ -1,6 +1,6 @@
 const userSocketMap = new Map()
 
-const getSocket = (userId) => userSocketMap.get(userId.toString())
+const getSocket = (userId) => userSocketMap.get(userId.toString()).filter(socketId => socketId !== undefined)
 const setSocket = (userId, socketId) => userSocketMap.set(userId.toString(), socketId)
 const deleteSocket = (userId) => userSocketMap.delete(userId.toString())
 const getAllSockets = () => Array.from(userSocketMap.entries())

@@ -1,11 +1,10 @@
-import { useDispatch, useSelector } from 'react-redux'
 import { Button, Dialog, DialogTitle, Skeleton, Stack, Typography } from '@mui/material'
 import { useState } from 'react'
-import { sampleUsers } from '../../constants/sampleData'
-import UserItem from '../shared/UserItem'
-import { useAsyncMutation, useErrors } from '../hooks/hooks'
+import { useDispatch, useSelector } from 'react-redux'
 import { useAddMemberMutation, useGetFriendsQuery } from '../../redux/api/api'
 import { setIsAddMember } from '../../redux/reducers/miscSlice'
+import { useAsyncMutation, useErrors } from '../hooks/hooks'
+import UserItem from '../shared/UserItem'
 
 const AddMemberDialog = ({ chatId, groupMembers }) => {
   const [selectedUsers, setSelectedUsers] = useState([]);
@@ -14,7 +13,7 @@ const AddMemberDialog = ({ chatId, groupMembers }) => {
   const [addMember, isLoadingAddMember] = useAsyncMutation(useAddMemberMutation)
   const { isLoading, data, error, isError } = useGetFriendsQuery(chatId)
 
-  const groupMemberIds = new Set(groupMembers.map(item => item._id))
+  const groupMemberIds = new Set([...groupMembers])
   const finalArray = data?.friends.filter(item => !groupMemberIds.has(item._id))
   useErrors([{ isError, error }])
 

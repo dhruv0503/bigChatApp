@@ -4,29 +4,35 @@ import { tealColor } from '../../constants/color';
 import moment from 'moment';
 import { fileFormat } from '../../lib/features';
 import RenderAttachment from './RenderAttachment';
+import { motion } from 'framer-motion'
 
 const MessageComponent = ({ message, user }) => {
     const { sender, content, attachments = [], createdAt } = message || {};
     const sameSender = sender?._id === user?._id;
     const timeAgo = moment(createdAt).fromNow()
 
+    const isAdminMessage = message.sender?._id.toString() === "67c8485d8b5433d4cca2e1bb";
+
     return (
-        <div style={{
-            alignSelf: sameSender ? "flex-end" : "flex-start",
-            background: "white",
-            color: "black",
-            borderRadius: "5px",
-            padding: "0.5rem",
-            width: "fit-content",
-            maxWidth: "70%"
-        }}>
+        <motion.div
+            initial={{ opacity: 0, x: "-100%" }}
+            whileInView={{ opacity: 1, x: 0 }}
+            style={{
+                alignSelf: sameSender ? "flex-end" : isAdminMessage ? "center" : "flex-start",
+                background: isAdminMessage ? "rgb(235, 235, 235)" : "white",
+                color: "black",
+                borderRadius: "5px",
+                padding: isAdminMessage ? "0.2rem" : "0.5rem",
+                width: "fit-content",
+                maxWidth: "80%",
+            }}>
             {
-                !sameSender && <Typography color={tealColor} fontWeight={600} variant='caption'>
+                !isAdminMessage && !sameSender && <Typography color={tealColor} fontWeight={600} variant='caption'>
                     {sender?.username}
                 </Typography>
             }
             {
-                content && <Typography>{content}</Typography>
+                content && <Typography sx={{ wordWrap: "break-word", wordWrap: "breal-word", whiteSpace: "pre-wrap" }}>{content}</Typography>
             }
             {attachments.length > 0 && (
                 attachments.map((attach, idx) => {
@@ -37,10 +43,11 @@ const MessageComponent = ({ message, user }) => {
                     </Box>
                 })
             )}
-            <Typography variant='caption' color='text.secondary'>
+            {!isAdminMessage && <Typography variant='caption' color='text.secondary'>
                 {timeAgo}
             </Typography>
-        </div>
+            }
+        </motion.div>
     )
 }
 

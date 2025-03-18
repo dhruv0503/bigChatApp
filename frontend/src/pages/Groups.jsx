@@ -1,16 +1,16 @@
+import { Add as AddIcon, Delete as DeleteIcon, Done as DoneIcon, Edit as EditIcon, KeyboardBackspace as KeyboardBackSpaceIcon, Menu as MenuIcon } from '@mui/icons-material'
+import { Backdrop, Box, Button, CircularProgress, Drawer, Grid2, IconButton, Stack, TextField, Tooltip, Typography } from '@mui/material'
+import { lazy, memo, Suspense, useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { Grid2, Tooltip, IconButton, Box, Drawer, Stack, Typography, TextField, Button, Backdrop } from '@mui/material'
-import { KeyboardBackspace as KeyboardBackSpaceIcon, Menu as MenuIcon, Edit as EditIcon, Done as DoneIcon, Delete as DeleteIcon, Add as AddIcon } from '@mui/icons-material'
-import { useState, memo, useEffect, lazy, Suspense, useRef } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import { StyledLink } from '../components/styles/styledComponent'
-import AvatarCard from '../components/shared/AvatarCard'
-import { sampleChats } from '../constants/sampleData'
-import { bgGradient } from '../constants/color'
-import UserItem from '../components/shared/UserItem'
-import { useGetChatDetailsQuery, useGetGroupsQuery, useRemoveMemberMutation, useRenameGroupMutation } from '../redux/api/api';
 import { useAsyncMutation, useErrors } from '../components/hooks/hooks'
 import { LayoutLoader } from '../components/layout/Loaders'
+import AvatarCard from '../components/shared/AvatarCard'
+import UserItem from '../components/shared/UserItem'
+import { StyledLink } from '../components/styles/styledComponent'
+import { bgGradient } from '../constants/color'
+import { sampleChats } from '../constants/sampleData'
+import { useDeleteChatMutation, useGetChatDetailsQuery, useGetGroupsQuery, useRemoveMemberMutation, useRenameGroupMutation } from '../redux/api/api'
 import { setIsAddMember } from '../redux/reducers/miscSlice'
 const ConfirmDeleteDialog = lazy(() => import('../components/dialogs/ConfirmDeleteDialog'))
 const AddMemberDialog = lazy(() => import('../components/dialogs/AddMemberDialog'))
@@ -27,6 +27,7 @@ const Groups = () => {
     skip: !chatId
   })
   const [updateGroup, isLoadingGroupName] = useAsyncMutation(useRenameGroupMutation)
+  const [deleteGroup, isLoadingDeleteGroup] = useAsyncMutation(useDeleteChatMutation)
   const [removeMember, isLoadingRemoveMember] = useAsyncMutation(useRemoveMemberMutation)
 
   const navigate = useNavigate();
@@ -41,8 +42,13 @@ const Groups = () => {
   const [members, setMembers] = useState([])
   const inputRef = useRef(null)
 
+
   const errors = [{ isError: myGroups.isError, error: myGroups.error }, { isError: groupDetails.isError, error: groupDetails.error }]
   useErrors(errors)
+
+  useEffect(() => {
+    myGroups.refetch()
+  }, [])
 
   useEffect(() => {
     const groupData = groupDetails?.data?.chat
@@ -61,8 +67,9 @@ const Groups = () => {
 
   }, [groupDetails.data])
 
-  const deleteHandler = () => {
-    // console.log("Delete")
+  const deleteHandler = async () => {
+    deleteGroup("Deleting Group", chatId)
+    navigate("/groups")
     closeConfirmDeleteHandler();
   }
 
@@ -200,8 +207,9 @@ const Groups = () => {
         }
       }}>
         {<IconBtns />}
+
         {
-          groupName && <>
+          groupDetails?.data?.chat?._id === chatId && groupName && <>
             <GroupName />
             <Typography margin={"2rem"} alignSelf={"center"} variant='body1'>
               Members
@@ -222,7 +230,7 @@ const Groups = () => {
                 overflow: "auto"
               }}>
               {
-                members?.map((user) => {
+                isLoadingRemoveMember ? <CircularProgress /> : members?.map((user) => {
                   return <UserItem user={user} key={user._id} isAdded styling={{
                     boxShadow: "0 0 0.5rem rgba(0,0,0,0.2)",
                     padding: "1rem 2rem",
@@ -240,10 +248,9 @@ const Groups = () => {
           </>
         }
       </Grid2>
-
       {
         isAddMember && <Suspense fallback={<Backdrop open />}>
-          <AddMemberDialog chatId={chatId} groupMembers={groupDetails.data.chat.members}/>
+          <AddMemberDialog chatId={chatId} groupMembers={groupDetails.data.chat.members.map(member => member._id)} />
         </Suspense>
       }
 

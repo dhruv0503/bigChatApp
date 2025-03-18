@@ -15,9 +15,11 @@ import { useInfiniteScrollTop } from '6pp'
 import { setIsFileMenu } from '../redux/reducers/miscSlice';
 import { removeNewMessageAlert } from '../redux/reducers/chatSlice';
 import { TypingLoader } from '../components/layout/Loaders';
+import { useNavigate } from 'react-router-dom';
 
 const ChatContent = ({ chatId, user }) => {
   const authState = useSelector(state => state.auth)
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const socket = getSocket();
   const containerRef = useRef(null);
@@ -68,6 +70,9 @@ const ChatContent = ({ chatId, user }) => {
     }
   }, [messageList])
 
+  useEffect(() => {
+    if (!chatDetails.isLoading && !chatDetails?.data?.chat) navigate('/')
+  }, [chatDetails.data, chatDetails.isLoading])
 
   const messageChangeHandler = (e) => {
     setMessage(e.target.value);
@@ -82,8 +87,6 @@ const ChatContent = ({ chatId, user }) => {
       setTyping(false)
     }, [2000])
   }
-
-  useErrors(errors)
 
   const handleMenuOpen = (event) => {
     setMenuAnchor(event.currentTarget);
@@ -102,7 +105,6 @@ const ChatContent = ({ chatId, user }) => {
   }
 
   const newMessageListener = useCallback((data) => {
-    // console.log(data.userId, authState.user._id)
     if (data.chatId !== chatId) return;
     setMessageList((prev) => [...prev, data.message]);
   }, [chatId]);
@@ -117,32 +119,32 @@ const ChatContent = ({ chatId, user }) => {
     setUserTyping(false);
   }, [chatId]);
 
-  const alertListener = useCallback((data) => {
-    console.log("Ello")
-    if (data.chatId !== chatId) return;
-    console.log("Ello")
-    const messageForAlert = {
-      content: data.message,
-      sender: {
-        _id: "67c8485d8b5433d4cca2e1bb",
-        username: "Admin1"
-      },
-      chatId,
-      createdAt: new Date().toISOString()
-    }
-    console.log(messageForAlert)
-    setMessageList((prev) => [...prev, messageForAlert]);
-  }, [chatId])
+  // const alertListener = useCallback((data) => {
+  //   console.log("HELLO")
+  //   if (data.chatId !== chatId) return;
+  //   const messageForAlert = {
+  //     content: data.message,
+  //     sender: {
+  //       _id: "67c8485d8b5433d4cca2e1bb",
+  //       username: "Admin1"
+  //     },
+  //     chatId,
+  //     createdAt: new Date().toISOString()
+  //   }
+  //   console.log(messageForAlert)
+  //   setMessageList((prev) => [...prev, messageForAlert]);
+  // }, [chatId])
 
   const eventHandler = {
-    [ALERT]: alertListener,
     [NEW_MESSAGE]: newMessageListener,
+    // [ALERT]: alertListener,
     [START_TYPING]: startTypingListener,
     [STOP_TYPING]: stopTypingListener
   }
 
-
   useSocketEvents(socket, eventHandler)
+  useErrors(errors)
+
 
   const allMessages = [...oldMessages, ...messageList]
   return chatDetails.isLoading ? <Skeleton /> : (
@@ -160,7 +162,6 @@ const ChatContent = ({ chatId, user }) => {
           margin: 0,
           borderRadius: "25px",
         }}>
-        {/* {console.log(messageList)} */}
         {allMessages.map((msg) => (
           msg && <MessageComponent key={msg?._id} message={msg} user={user} />
         ))}
@@ -168,7 +169,6 @@ const ChatContent = ({ chatId, user }) => {
         {userTyping && <TypingLoader />}
 
         <div ref={bottomRef} />
-
       </Stack >
       <form style={{ height: "10%" }} onSubmit={submitHanlder}>
         <Stack direction={"row"} height={"100%"} padding={"1rem 0"} alignItems={"center"} position={"relative"} boxSizing={"border-box"} sx={{

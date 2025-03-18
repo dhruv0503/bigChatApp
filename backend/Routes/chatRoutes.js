@@ -16,7 +16,8 @@ router.route('/group').get(isAuthenticated, catchAsync(getMyGroups));
 router.route('/:chatId')
     .get(isAuthenticated, catchAsync(getChatDetails))
     .patch(isAuthenticated, renameGroupValidator(), validateHandler, catchAsync(renameGroup))
-    .delete(isAuthenticated, chatIdValidator(), validateHandler, catchAsync(deleteChat));
+    
+router.route('/:id').delete(isAuthenticated, chatIdValidator(), validateHandler, catchAsync(deleteChat));
 
 router.route('/').get(isAuthenticated, catchAsync(getMyChat));
 

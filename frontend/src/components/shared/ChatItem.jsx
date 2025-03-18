@@ -3,6 +3,8 @@ import { memo } from "react";
 import { StyledLink } from "../styles/styledComponent";
 import { Box, Stack, Typography } from "@mui/material";
 import AvatarCard from "../shared/AvatarCard";
+import { useDispatch } from "react-redux";
+import { setIsMobile } from "../../redux/reducers/miscSlice";
 
 const ChatItem = ({
   avatar = [],
@@ -15,10 +17,13 @@ const ChatItem = ({
   index = 0,
   handleDeleteChat,
 }) => {
+  const dispatch = useDispatch();
+
   return (
     <StyledLink
       to={`/chat/${_id}`}
       onContextMenu={(e) => handleDeleteChat(e, _id, groupChat)}
+      onClick={() => dispatch(setIsMobile(false))}
     >
       <div
         style={{
