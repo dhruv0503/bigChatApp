@@ -12,6 +12,7 @@ import { bgGradient } from '../constants/color'
 import { sampleChats } from '../constants/sampleData'
 import { useDeleteChatMutation, useGetChatDetailsQuery, useGetGroupsQuery, useRemoveMemberMutation, useRenameGroupMutation } from '../redux/api/api'
 import { setIsAddMember } from '../redux/reducers/miscSlice'
+import { motion } from 'framer-motion'
 const ConfirmDeleteDialog = lazy(() => import('../components/dialogs/ConfirmDeleteDialog'))
 const AddMemberDialog = lazy(() => import('../components/dialogs/AddMemberDialog'))
 
@@ -289,14 +290,20 @@ const GroupListItem = memo(({ group, chatId }) => {
   return <StyledLink to={`?group=${_id}`} onClick={(e) => {
     if (chatId === _id) e.preventDefault();
   }}>
-    <Stack direction={"row"} spacing={"1rem"} alignItems={"center"} sx={{
-      padding: "0.5rem",
-      gap: "1rem",
-      cursor: "pointer",
-    }}>
-      <AvatarCard avatar={avatar} />
-      <Typography>{name}</Typography>
-    </Stack>
+    <motion.div
+      initial={{ opacity: 0, y: "-100%" }}
+      whileInView={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+    >
+      <Stack direction={"row"} spacing={"1rem"} alignItems={"center"} sx={{
+        padding: "0.5rem",
+        gap: "1rem",
+        cursor: "pointer",
+      }}>
+        <AvatarCard avatar={avatar} />
+        <Typography>{name}</Typography>
+      </Stack>
+    </motion.div>
   </StyledLink>
 })
 

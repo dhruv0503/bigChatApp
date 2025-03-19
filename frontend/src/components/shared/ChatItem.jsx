@@ -5,6 +5,7 @@ import { Box, Stack, Typography } from "@mui/material";
 import AvatarCard from "../shared/AvatarCard";
 import { useDispatch } from "react-redux";
 import { setIsMobile } from "../../redux/reducers/miscSlice";
+import { delay, motion } from "framer-motion";
 
 const ChatItem = ({
   avatar = [],
@@ -25,7 +26,7 @@ const ChatItem = ({
       onContextMenu={(e) => handleDeleteChat(e, _id, groupChat)}
       onClick={() => dispatch(setIsMobile(false))}
     >
-      <div
+      <motion.div
         style={{
           display: "flex",
           alignItems: "center",
@@ -37,6 +38,9 @@ const ChatItem = ({
           color: sameSender ? "white" : "unset",
           overflow: "hidden"
         }}
+        initial={{ opacity: 0, y: "-100%" }}
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{ delay: index * 0.1 }}
       >
         <AvatarCard avatar={avatar} />
         <Stack >
@@ -60,8 +64,8 @@ const ChatItem = ({
             }}
           />
         )}
-      </div>
-    </StyledLink>
+      </motion.div>
+    </StyledLink >
   );
 };
 

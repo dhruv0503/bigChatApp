@@ -9,11 +9,10 @@ import {
   Typography
 } from "@mui/material";
 import { memo } from "react";
-import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
 import { useAcceptFriendeRequestMutation, useGetNotificationsQuery } from "../../redux/api/api";
 import { setIsNotification } from "../../redux/reducers/miscSlice";
-import { useErrors } from '../hooks/hooks';
+import { useAsyncMutation, useErrors } from '../hooks/hooks';
 
 
 
@@ -21,26 +20,13 @@ const Notifications = () => {
   const { isNotification } = useSelector(state => state.misc)
   const dispatch = useDispatch();
   const { isLoading, data, error, isError } = useGetNotificationsQuery();
-  // console.log(data);
+  console.log(data);
 
-  const [acceptRequest] = useAcceptFriendeRequestMutation();
+  const [acceptRequest] = useAsyncMutation(useAcceptFriendeRequestMutation)
 
   const friendRequestHandler = async (_id, accept) => {
-
     dispatch(setIsNotification(false))
-
-    try {
-      const res = await acceptRequest({ requestId: _id, accept })
-      console.log(res);
-      if (res?.data) {
-        console.log("Use Socket here");
-        toast.success(res.data.message);
-      } else {
-        toast.error(res?.error?.data?.error?.message || "Something Went Wrong")
-      }
-    } catch (err) {
-      console.log(error)
-    }
+    await acceptRequest("Accepting Friend Request", { requestId: _id, accept })
   };
 
   useErrors([{ error, isError }])
@@ -54,7 +40,7 @@ const Notifications = () => {
             <>
               {data?.notifications.length > 0 ? (
                 data?.notifications?.map(({ sender, _id }) => (
-                  <NotificationItem
+                  <NotificationItem 
                     sender={sender}
                     _id={_id}
                     handler={friendRequestHandler}
@@ -93,7 +79,7 @@ const NotificationItem = memo(({ sender, _id, handler }) => {
               textOverflow: "ellipsis",
             }}
           >
-            {`${sender.username} sent you a friend request`}
+            {sender.username}
           </Typography>
           <Stack
             direction={{
@@ -102,9 +88,7 @@ const NotificationItem = memo(({ sender, _id, handler }) => {
             }}
           >
             <Button onClick={() => handler(_id, true)}> Accept </Button>
-            <Button color="error" onClick={() => handler(_id, false)}>
-              Reject
-            </Button>
+            <Button color="error" onClick={() => handler(_id, false)}>Reject</Button>
           </Stack>
         </Stack>
       </ListItem>

@@ -37,14 +37,14 @@ const AppLayout = ({ WrappedContent, ...props }) => {
     dispatch(incrementNotficationCount())
   }, [dispatch])
 
-  const refetchListener = useCallback((data) => {
+  const refetchListener = useCallback((data = {}) => {
     refetch()
     if (data?.users.includes(user._id)) navigate('/')
   }, [refetch, navigate])
 
   useEffect(() => {
-    if (user) refetch();
-  }, [user])
+    if (user && !data) refetch();
+  }, [user, data])
 
   useEffect(() => {
     getOrSaveFromStorage({ key: NEW_MESSAGE_ALERT, value: newMessageAlert })

@@ -21,6 +21,7 @@ const Login = () => {
   const [isRegistered, setIsRegistered] = useState(true);
   const toggleRegistered = () => setIsRegistered(!isRegistered);
   const dispatch = useDispatch();
+  const [isLoading, setIsLoading] = useState(false);
 
   const [formErrors, setFormErrors] = useState({
     username: "",
@@ -66,7 +67,9 @@ const Login = () => {
       password: "",
       bio: "",
     })
+    const toastId = toast.loading("Logging In...");
     try {
+      setIsLoading(true)
       if (isRegistered) {
         const { data } = await axios.post(`${import.meta.env.VITE_SERVER}/api/login`, {
           username: formData.username,
@@ -84,7 +87,7 @@ const Login = () => {
         multiForm.append("avatar", profileImage)
 
         const { data } = await axios.post(`${import.meta.env.VITE_SERVER}/api/signup`, multiForm, {
-          withCredentials : true
+          withCredentials: true
         })
 
         dispatch(setIsLogin(true))
@@ -92,7 +95,11 @@ const Login = () => {
       }
     } catch (err) {
       console.log(err)
-      toast.error(err?.response?.data?.error?.message || "Something Went Wrong")
+      toast.error(err?.response?.data?.error?.message || "Something Went Wrong", {
+        id: toastId
+      })
+    } finally {
+      setIsLoading(false)
     }
   };
 
@@ -159,13 +166,14 @@ const Login = () => {
                   variant="contained"
                   color="primary"
                   fullWidth
+                  disabled={isLoading}
                 >
                   Login
                 </Button>
                 <Typography sx={{ textAlign: "center", margin: "1rem" }}>
                   OR
                 </Typography>
-                <Button variant="text" fullWidth onClick={() => toggleRegistered()}>
+                <Button variant="text" fullWidth onClick={() => toggleRegistered()} disabled={isLoading}>
                   Sign Up Instead
                 </Button>
               </form>
@@ -269,6 +277,7 @@ const Login = () => {
                   variant="contained"
                   color="primary"
                   fullWidth
+                  disabled={isLoading}
                 >
                   Sign Up
                 </Button>
@@ -280,6 +289,7 @@ const Login = () => {
                   variant="text"
                   fullWidth
                   onClick={() => toggleRegistered()}
+                  disabled={isLoading}
                 >
                   Login Instead
                 </Button>

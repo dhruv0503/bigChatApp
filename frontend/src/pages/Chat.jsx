@@ -71,7 +71,7 @@ const ChatContent = ({ chatId, user }) => {
   }, [messageList])
 
   useEffect(() => {
-    if (!chatDetails.isLoading && !chatDetails?.data?.chat) navigate('/')
+    if (chatDetails.isError) navigate('/')
   }, [chatDetails.data, chatDetails.isLoading])
 
   const messageChangeHandler = (e) => {

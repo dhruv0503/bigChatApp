@@ -26,12 +26,13 @@ const sendToken = (res, user, code, msg) => {
     return res.status(code).json({
         success: true,
         message: msg,
+        user
     })
 }
 
 const deleteFilesFromCloudinary = async (files) => {
     try {
-        if(files.length === 0) return
+        if (files.length === 0) return
         const images = files.filter((file) => file.fileType === "image").map(file => file.public_id)
         const videos = files.filter((file) => file.fileType === "video").map(file => file.public_id)
         const raws = files.filter((file) => file.fileType === "raw").map(file => file.public_id)

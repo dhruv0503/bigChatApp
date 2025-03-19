@@ -59,14 +59,14 @@ module.exports.searchUser = async (req, res, next) => {
 }
 
 module.exports.getMyNotifications = async (req, res, next) => {
-    const requests = await Request.find({ receiver: req.userId }).populate("sender", "name avatar")
+    const requests = await Request.find({ receiver: req.userId }).populate("sender", "username avatar")
 
     const transformedRequests = requests.map((request) => {
         return {
             _id: request._id,
             sender: {
                 _id: request.sender._id,
-                name: request.sender.name,
+                username: request.sender.username,
                 avatar: request.sender.avatar.url
             }
         }
