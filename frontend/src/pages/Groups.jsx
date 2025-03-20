@@ -241,6 +241,7 @@ const Groups = () => {
                       removeMemberHandler(user._id)
                     }}
                     disabled={isLoadingRemoveMember}
+                    creator={groupDetails?.data?.chat?.creator}
                   />
                 })
               }
@@ -286,7 +287,7 @@ const GroupList = ({ w = "100%", myGroups = [], chatId }) => {
 }
 
 const GroupListItem = memo(({ group, chatId }) => {
-  const { name, avatar, _id } = group;
+  const { name, avatar, _id, creator } = group;
   return <StyledLink to={`?group=${_id}`} onClick={(e) => {
     if (chatId === _id) e.preventDefault();
   }}>

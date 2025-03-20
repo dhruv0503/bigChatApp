@@ -46,8 +46,7 @@ const newGroupChat = async (req, res, next) => {
     const newGroup = new Chat({ name, members: allMembers, groupChat: true, creator: req.userId })
     const newGroupChat = await newGroup.save();
 
-    // emitEvent(req, ALERT, allMembers, { chatId: newGroupChat._id, message: `Welcome to ${name} group` })
-    emitEvent(req, REFETCH_CHATS, members )
+    emitEvent(req, REFETCH_CHATS, members)
     adminMessage(req, newGroupChat._id, `Welcome to ${name}`, allMembers)
 
     return res.status(200).json({ succes: true, message: "Group chat created successfully" })
@@ -176,15 +175,21 @@ const leaveGroup = async (req, res, next) => {
 const getChatDetails = async (req, res, next) => {
     if (req.query.populate === "true") {
         const chat = await Chat.findById(req.params.chatId).populate("members", "username avatar").lean();
-        if (!chat) return next(new expressError("Chat not found", 404))
+        if (!chat) return next(new expressError("Chat not found", 404));
 
-        chat.members = chat.members.map(({ _id, username, avatar }) => {
+        let index = 0;
+        chat.members = chat.members.map(({ _id, username, avatar }, idx) => {
+            if (_id.toString() === chat.creator.toString()) index = idx;
             return {
                 _id,
                 username,
                 avatar: avatar.url
             }
         })
+        let temp = chat.members[0];
+        chat.members[0] = chat.members[index];
+        chat.members[index] = temp;
+        
         return res.status(200).json({ success: true, chat })
     } else {
         const chat = await Chat.findById(req.params.chatId);
@@ -235,10 +240,10 @@ const deleteChat = async (req, res, next) => {
     messageWithAttachments.forEach(({ attachments }) => {
         attachments.forEach(({ public_id, url }) => {
             let fileType;
-            if(url.includes("/image/upload")) fileType = "image"
-            else if(url.includes("/video/upload")) fileType = "video"
-            else if(url.includes("/raw/upload")) fileType = "raw"
-            cloudinaryFiles.push({public_id, fileType})
+            if (url.includes("/image/upload")) fileType = "image"
+            else if (url.includes("/video/upload")) fileType = "video"
+            else if (url.includes("/raw/upload")) fileType = "raw"
+            cloudinaryFiles.push({ public_id, fileType })
         })
     })
 

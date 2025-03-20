@@ -4,12 +4,13 @@ import { memo } from "react";
 import { transformImage } from "../../lib/features";
 import { data } from "react-router-dom";
 
-const UserItem = ({ user, handler, handlerIsLoading, isAdded = false, styling = {} }) => {
+const UserItem = ({ user, handler, handlerIsLoading, isAdded = false, styling = {}, creator = "" }) => {
   const { username, _id } = user;
   let avatar;
   const avatarType = typeof (user.avatar);
   if (avatarType === "string") avatar = user.avatar;
   else if (avatarType === "object") avatar = user?.avatar?.url;
+
   return (
     <ListItem>
       <Stack
@@ -30,7 +31,7 @@ const UserItem = ({ user, handler, handlerIsLoading, isAdded = false, styling = 
             textOverflow: "ellipsis",
           }}
         >
-          {username}
+          {creator.toString() === _id.toString() ? <strong>{username}</strong> : username}
         </Typography>
         <IconButton
           onClick={(e) => handler(e, _id)}

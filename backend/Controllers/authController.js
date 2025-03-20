@@ -19,6 +19,7 @@ module.exports.createUser = async (req, res, next) => {
 }
 
 module.exports.loginUser = async (req, res, next) => {
+    console.log(req.body);
     const { username, password } = req.body;
     const user = await User.findOne({ username }).select("+password");
     if (!user) return next(new expressError('Incorrect Username or Password', 400));

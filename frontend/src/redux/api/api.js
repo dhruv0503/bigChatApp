@@ -71,13 +71,38 @@ const api = createApi({
             }),
             keepUnusedDataFor: 0
         }),
+        login: builder.mutation({
+            query: (data) => ({
+                url: `/login`,
+                method: "POST",
+                credentials: "include",
+                body: data
+            }),
+        }),
+        register: builder.mutation({
+            query: (data) => ({
+                url: `/signup`,
+                method: "POST",
+                credentials: "include",
+                body: data
+            }),
+        }),
+        logout: builder.mutation({
+            query: (data) => ({
+                url: `/logout`,
+                method: "POST",
+                credentials: "include",
+                body: data
+            }),
+            invalidatesTags: ["user", "chat", "message"]
+        }),
+
         sendAttachments: builder.mutation({
             query: (data) => ({
                 url: `/message/attachment`,
                 method: "POST",
                 credentials: "include",
                 body: data
-
             }),
         }),
         createNewGroup: builder.mutation({
@@ -169,5 +194,8 @@ export const {
     useRemoveMemberMutation,
     useAddMemberMutation,
     useDeleteChatMutation,
-    useLeaveGroupMutation
+    useLeaveGroupMutation,
+    useLoginMutation,
+    useRegisterMutation,
+    useLogoutMutation
 } = api

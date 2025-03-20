@@ -4,6 +4,7 @@ import { grayColor } from '../../constants/color'
 import { ExitToApp as ExitToAppIcon, Groups as GroupsIcon, ManageAccounts as ManageAccountsIcon, Menu as MenuIcon, Message as MessageIcon } from '@mui/icons-material'
 import { useLocation, Link, Navigate } from 'react-router-dom'
 import { Dashboard as DashboardIcon } from '@mui/icons-material'
+import { useSelector } from 'react-redux'
 
 const StyledLink = styled(Link)({
     textDecoration: "none",
@@ -90,9 +91,9 @@ const Sidebar = ({ w = "100%" }) => {
     )
 }
 
-const isAdmin = true;
 
 const AdminLayout = ({ children }) => {
+    const { isAdmin } = useSelector(state => state.auth);
     const [isMobile, setIsMobile] = useState(false);
     const hanldeMobile = () => {
         setIsMobile(!isMobile);
@@ -101,7 +102,7 @@ const AdminLayout = ({ children }) => {
         setIsMobile(false);
     }
 
-    if(!isAdmin) return <Navigate to={"/admin"}/>
+    if (!isAdmin) return <Navigate to={"/admin"} />
 
     return (
         <Grid2 conatiner={"true"} minHeight={"100vh"} display={"flex"} width={"100%"} height={"100%"}>

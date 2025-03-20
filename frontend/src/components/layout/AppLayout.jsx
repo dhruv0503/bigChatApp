@@ -1,19 +1,19 @@
 import { Drawer, Grid2, Skeleton } from "@mui/material";
-import { useEffect, useCallback, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
+import { NEW_MESSAGE_ALERT, NEW_REQUEST, REFETCH_CHATS } from "../../constants/events";
+import { getOrSaveFromStorage } from "../../lib/features";
 import { useGetChatsQuery } from "../../redux/api/api";
+import { incrementNotficationCount, setNewMessagesAlert } from "../../redux/reducers/chatSlice";
 import { setIsDeleteMenu, setIsMobile, setSelectedDeleteChat } from "../../redux/reducers/miscSlice";
 import { getSocket } from "../../Socket";
+import DeleteChatMenu from "../dialogs/DeleteChatMenu";
 import { useErrors, useSocketEvents } from "../hooks/hooks";
 import Title from "../shared/Title";
 import ChatList from "../specific/ChatList";
 import Profile from "../specific/Profile";
 import Header from "./Header";
-import { NEW_MESSAGE_ALERT, NEW_REQUEST, REFETCH_CHATS } from "../../constants/events";
-import { incrementNotficationCount, setNewMessagesAlert } from "../../redux/reducers/chatSlice";
-import { getOrSaveFromStorage } from "../../lib/features";
-import DeleteChatMenu from "../dialogs/DeleteChatMenu";
 
 const AppLayout = ({ WrappedContent, ...props }) => {
   const params = useParams();
@@ -24,7 +24,7 @@ const AppLayout = ({ WrappedContent, ...props }) => {
 
   const dispatch = useDispatch();
   const { user } = useSelector(state => state.auth)
-  const { isMobile, selectedDeleteChat } = useSelector(state => state.misc)
+  const { isMobile } = useSelector(state => state.misc)
   const { newMessageAlert } = useSelector(state => state.chat)
   const { data, isLoading, isError, error, refetch } = useGetChatsQuery();
 

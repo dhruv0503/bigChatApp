@@ -27,6 +27,8 @@ import { setIsMobile, setIsNewGroup, setIsNotification, setIsSearch } from "../.
 import { setIsLogin } from '../../redux/reducers/authSlice'
 import api from '../../redux/api/api'
 import { resetNotficationCount } from "../../redux/reducers/chatSlice";
+import { useAsyncMutation } from "../hooks/hooks";
+import { useLogoutMutation } from "../../redux/api/api";
 
 const Search = lazy(() => import("../specific/Search"));
 const Notifications = lazy(() => import("../specific/Notifications"));
@@ -38,6 +40,7 @@ const Header = () => {
   const { isSearch, isNotification } = useSelector((state) => state.misc);
   const { notificationCount } = useSelector(state => state.chat)
   const { isNewGroup } = useSelector(state => state.misc)
+  const [userLogout] = useAsyncMutation(useLogoutMutation);
 
   const openNotification = () => {
     dispatch(setIsNotification(true));
@@ -51,18 +54,10 @@ const Header = () => {
   };
 
   const logoutHandler = async () => {
-    try {
-      const { data } = await axios.post(`${import.meta.env.VITE_SERVER}/api/logout`, {}, {
-        withCredentials: true
-      })
-      dispatch(api.util.resetApiState())
-      dispatch(setIsLogin(false))
-      dispatch(updateUser(null))
-
-      toast.success(data.message)
-    } catch (err) {
-      toast.error(err?.response?.data?.error?.message || "Something Went Wrong")
-    }
+    await userLogout("Logging Out")
+    dispatch(api.util.resetApiState())
+    dispatch(setIsLogin(false))
+    dispatch(updateUser(null))
   };
 
   return (

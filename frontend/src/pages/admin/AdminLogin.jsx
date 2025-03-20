@@ -7,14 +7,22 @@ import {
 } from "@mui/material";
 import { useState } from "react";
 import { Navigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux"
+import { useAsyncMutation } from '../../components/hooks/hooks'
+import { useAdminLoginMutation } from "../../redux/api/adminApi";
+import { setIsAdmin } from "../../redux/reducers/authSlice";
 
 const AdminLogin = () => {
     const [secretKey, setSecreyKey] = useState("");
-    const [isAdmin, setIsAdmin] = useState(true)
+    const { isAdmin } = useSelector(state => state.auth)
+    const [adminLogin] = useAsyncMutation(useAdminLoginMutation)
+    const dispatch = useDispatch();
 
-    const submitForm = (e) => {
+    const submitForm = async (e) => {
         e.preventDefault();
-        console.log(secretKey)
+        const data = await adminLogin()
+        if (data) dispatch(setIsAdmin(true));
+
     };
 
     if (isAdmin) {
@@ -46,17 +54,18 @@ const AdminLogin = () => {
                 >
 
                     <Typography variant="h5">Admin Login</Typography>
-                    <form style={{ width: "100%" }} onSubmit={(e) => submitForm(e)}>                            <TextField
-                        required
-                        fullWidth
-                        label="Secret Key"
-                        type="password"
-                        margin="normal"
-                        variant="outlined"
-                        name="password"
-                        value={secretKey}
-                        onChange={(evt) => setSecreyKey(evt.target.value)}
-                    />
+                    <form style={{ width: "100%" }} onSubmit={(e) => submitForm(e)}>
+                        <TextField
+                            required
+                            fullWidth
+                            label="Secret Key"
+                            type="password"
+                            margin="normal"
+                            variant="outlined"
+                            name="password"
+                            value={secretKey}
+                            onChange={(evt) => setSecreyKey(evt.target.value)}
+                        />
                         <Button
                             sx={{ marginTop: "1rem" }}
                             type="submit"

@@ -9,19 +9,22 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import axios from 'axios'
 import { useState } from "react";
-import toast from "react-hot-toast";
 import { useDispatch } from "react-redux";
+import { useAsyncMutation } from "../components/hooks/hooks";
 import { VisuallyHiddenInput } from "../components/styles/styledComponent";
+import { useLoginMutation } from "../redux/api/api";
+import { useRegisterMutation } from "../redux/api/api";
 import { setIsLogin } from "../redux/reducers/authSlice";
 import { validateFormInput } from "../utils/validation";
 
 const Login = () => {
   const [isRegistered, setIsRegistered] = useState(true);
-  const toggleRegistered = () => setIsRegistered(!isRegistered);
+  const toggleRegistered = () => setIsRegistered(prev => !prev)
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false);
+  const [userLogin] = useAsyncMutation(useLoginMutation)
+  const [userRegister] = useAsyncMutation(useRegisterMutation)
 
   const [formErrors, setFormErrors] = useState({
     username: "",
@@ -39,10 +42,9 @@ const Login = () => {
 
   const [profileImage, setProfileImage] = useState(null);
 
-  const hanldeFileChange = (evt) => {
+  const handleFileChange = (evt) => {
     const file = evt.target.files[0];
     if (file) setProfileImage(file);
-    // console.log(file);
   };
 
   const handleChange = (e) => {
@@ -61,47 +63,33 @@ const Login = () => {
     if (Object.values(formErrors).some((error) => error)) {
       return;
     }
+    setIsLoading(true)
+    if (isRegistered) {
+      await userLogin("Logging In", {
+        username: formData.username,
+        password: formData.password
+      })
+      dispatch(setIsLogin(true))
+    } else {
+      const multiForm = new FormData();
+      multiForm.append("name", formData.name)
+      multiForm.append("username", formData.username)
+      multiForm.append("password", formData.password)
+      multiForm.append("bio", formData.bio)
+      multiForm.append("avatar", profileImage)
+
+      await userRegister("Registering User", multiForm)
+      dispatch(setIsLogin(true))
+    }
+    setIsLoading(false)
     setFormData({
       name: "",
       username: "",
       password: "",
       bio: "",
     })
-    const toastId = toast.loading("Logging In...");
-    try {
-      setIsLoading(true)
-      if (isRegistered) {
-        const { data } = await axios.post(`${import.meta.env.VITE_SERVER}/api/login`, {
-          username: formData.username,
-          password: formData.password
-        }, { withCredentials: true })
-
-        dispatch(setIsLogin(true))
-        toast.success(data.message)
-      } else {
-        const multiForm = new FormData();
-        multiForm.append("name", formData.name)
-        multiForm.append("username", formData.username)
-        multiForm.append("password", formData.password)
-        multiForm.append("bio", formData.bio)
-        multiForm.append("avatar", profileImage)
-
-        const { data } = await axios.post(`${import.meta.env.VITE_SERVER}/api/signup`, multiForm, {
-          withCredentials: true
-        })
-
-        dispatch(setIsLogin(true))
-        toast.success(data.message)
-      }
-    } catch (err) {
-      console.log(err)
-      toast.error(err?.response?.data?.error?.message || "Something Went Wrong", {
-        id: toastId
-      })
-    } finally {
-      setIsLoading(false)
-    }
-  };
+    setProfileImage(null)
+  }
 
   return (
     <div style={{
@@ -217,7 +205,7 @@ const Login = () => {
                     <VisuallyHiddenInput
                       type="file"
                       accepts="image/*"
-                      onChange={(evt) => hanldeFileChange(evt)}
+                      onChange={(evt) => handleFileChange(evt)}
                     />
                   </IconButton>
                 </Stack>
@@ -300,6 +288,5 @@ const Login = () => {
       </Container>
     </div>
   );
-};
-
+}
 export default Login;
