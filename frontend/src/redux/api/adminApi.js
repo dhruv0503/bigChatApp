@@ -1,11 +1,11 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 
 const adminApi = createApi({
-    reducerPath: "api",
+    reducerPath: "adminApi",
     baseQuery: fetchBaseQuery({
         baseUrl: `${import.meta.env.VITE_SERVER}/api/admin`
     }),
-    tagTypes: ["chat", "user", "message"],
+    tagTypes: [],
     endpoints: (builder) => ({
         adminLogin: builder.mutation({
             query: (data) => ({
@@ -50,6 +50,13 @@ const adminApi = createApi({
                 credentials: 'include'
             })
         }),
+        getIsAdmin: builder.query({
+            query: () => ({
+                url: '/',
+                method: 'GET',
+                credentials: 'include'
+            })
+        })
     })
 })
 
@@ -60,5 +67,6 @@ export const {
     useGetUsersQuery,
     useGetDashboardQuery,
     useGetChatsQuery,
-    useGetMessagesQuery
+    useGetMessagesQuery,
+    useGetIsAdminQuery
 } = adminApi

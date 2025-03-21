@@ -5,6 +5,9 @@ import { ExitToApp as ExitToAppIcon, Groups as GroupsIcon, ManageAccounts as Man
 import { useLocation, Link, Navigate } from 'react-router-dom'
 import { Dashboard as DashboardIcon } from '@mui/icons-material'
 import { useSelector } from 'react-redux'
+import { useAsyncMutation } from '../hooks/hooks'
+import { useAdminLogoutMutation } from '../../redux/api/adminApi'
+import { setIsAdmin } from '../../redux/reducers/authSlice'
 
 const StyledLink = styled(Link)({
     textDecoration: "none",
@@ -38,7 +41,12 @@ const tabs = [
 
 const Sidebar = ({ w = "100%" }) => {
     const location = useLocation();
-    const logoutHandler = () => { console.log("Logging Out") }
+    const [adminLogout] = useAsyncMutation(useAdminLogoutMutation);
+    const logoutHandler = async (e) => {
+        e.preventDefault();
+        const data = await adminLogout("Logging Out...");
+        if (data && data?.success) setIsAdmin(false)
+    }
     return (
         <Stack
             direction={"column"}
@@ -78,7 +86,7 @@ const Sidebar = ({ w = "100%" }) => {
                         )
                     })
                 }
-                <StyledLink onClick={logoutHandler}>
+                <StyledLink onClick={(e) => logoutHandler(e)}>
                     <Stack direction={"row"} alignItems={"center"} spacing={"1rem"}>
                         <ExitToAppIcon />
                         <Typography>
@@ -103,6 +111,7 @@ const AdminLayout = ({ children }) => {
     }
 
     if (!isAdmin) return <Navigate to={"/admin"} />
+    else <Navigate to={"/admin/dashboard"} />
 
     return (
         <Grid2 conatiner={"true"} minHeight={"100vh"} display={"flex"} width={"100%"} height={"100%"}>

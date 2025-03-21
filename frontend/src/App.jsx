@@ -26,7 +26,6 @@ import { SocketProvider } from './Socket.jsx';
 const App = () => {
 
   const { isLogin, loader } = useSelector((state) => state.auth);
-  // const {}
   const dispatch = useDispatch();
 
   const getProfile = async () => {

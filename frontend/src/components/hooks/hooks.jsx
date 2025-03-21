@@ -28,6 +28,7 @@ const useAsyncMutation = (mutationHook) => {
                     id: toastId
                 })
                 setData(res.data)
+                return res.data;
             } else {
                 toast.error(res?.error?.data?.error?.message || "Something Went Wrong", {
                     id: toastId
@@ -42,7 +43,6 @@ const useAsyncMutation = (mutationHook) => {
         }
     }
     return [executeMutation, isLoading, data]
-
 }
 
 const useSocketEvents = (socket, handlers) => {

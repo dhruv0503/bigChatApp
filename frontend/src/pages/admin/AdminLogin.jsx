@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import {
     Button,
     Container,
@@ -6,28 +7,32 @@ import {
     Typography
 } from "@mui/material";
 import { useState } from "react";
-import { Navigate } from "react-router-dom";
+import { Navigate, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from "react-redux"
 import { useAsyncMutation } from '../../components/hooks/hooks'
-import { useAdminLoginMutation } from "../../redux/api/adminApi";
+import { useAdminLoginMutation, useGetIsAdminQuery } from "../../redux/api/adminApi";
 import { setIsAdmin } from "../../redux/reducers/authSlice";
 
 const AdminLogin = () => {
-    const [secretKey, setSecreyKey] = useState("");
+    const [secretKey, setSecretKey] = useState("");
     const { isAdmin } = useSelector(state => state.auth)
-    const [adminLogin] = useAsyncMutation(useAdminLoginMutation)
+    const [adminLogin, isLoading] = useAsyncMutation(useAdminLoginMutation)
+    const { data } = useGetIsAdminQuery();
     const dispatch = useDispatch();
-
+    const navigate = useNavigate();
+    
     const submitForm = async (e) => {
         e.preventDefault();
-        const data = await adminLogin()
-        if (data) dispatch(setIsAdmin(true));
-
+        const result = await adminLogin("Logging In...", { secretKey });
+        if (result && result.success) dispatch(setIsAdmin(true));
+        setSecretKey("");
     };
 
-    if (isAdmin) {
-        return <Navigate to={"/admin/dashboard"} />
-    }
+    useEffect(() => {
+        dispatch(setIsAdmin(data?.success ? true : false))
+    }, [data, navigate]);
+
+    if (isAdmin) return <Navigate to={'/admin/dashboard'} />
 
     return (
         <div style={{
@@ -64,7 +69,7 @@ const AdminLogin = () => {
                             variant="outlined"
                             name="password"
                             value={secretKey}
-                            onChange={(evt) => setSecreyKey(evt.target.value)}
+                            onChange={(evt) => setSecretKey(evt.target.value)}
                         />
                         <Button
                             sx={{ marginTop: "1rem" }}
@@ -72,6 +77,7 @@ const AdminLogin = () => {
                             variant="contained"
                             color="primary"
                             fullWidth
+                            disabled={isLoading}
                         >
                             Login
                         </Button>

@@ -3,14 +3,16 @@ const Chat = require('../Models/chatModel')
 const Message = require('../Models/messageModel');
 const expressError = require('../Utils/expressError');
 const { cookieOptions } = require('../Utils/features');
-const jwt = require('jsonwebtoken')
+const jwt = require('jsonwebtoken');
+const { isAdmin } = require('../Middlewares/auth');
 
 module.exports.adminLogin = async (req, res, next) => {
     const { secretKey } = req.body;
 
-    if (secretKey !== process.env.ADMIN_SECRET_KEY) return next(new expressError("Invalid Key", 401))
+    if (secretKey !== process.env.ADMIN_SECRET_KEY) {
+        return next(new expressError("Invalid Key", 401))
+    }
     const token = jwt.sign(secretKey, process.env.JWT_SECRET)
-
     return res.status(200).cookie('adminToken', token, {
         ...cookieOptions,
         maxAge: 1000 * 60 * 60
@@ -20,10 +22,17 @@ module.exports.adminLogin = async (req, res, next) => {
     })
 }
 
-module.exports.adminLogout = async(req,res,next) =>{
+module.exports.adminLogout = async (req, res, next) => {
     return res.status(200).clearCookie('adminToken').json({
         success: true,
         message: "Logged Out Successfully"
+    })
+}
+
+module.exports.getAdminLogin = async (req, res, next) => {
+    return res.status(200).json({
+        success: true,
+        message: "Authenticated Successfully"
     })
 }
 
@@ -47,7 +56,7 @@ module.exports.getUsers = async (req, res, next) => {
 
     res.status(200).json({
         success: true,
-        users : transformedUsers
+        users: transformedUsers
     });
 }
 
@@ -107,7 +116,7 @@ module.exports.allMessages = async (req, res, next) => {
 
     res.status(200).json({
         success: true,
-        messages : transformedMessages
+        messages: transformedMessages
     })
 }
 
@@ -149,3 +158,4 @@ module.exports.getDashboardStats = async (req, res, next) => {
         stats,
     })
 }
+

@@ -11,9 +11,9 @@ const store = configureStore({
         [miscSlice.name]: miscSlice.reducer,
         [chatSlice.name]: chatSlice.reducer,
         [api.reducerPath]: api.reducer,
-        // [adminApi.reducerPath]: adminApi.reducer
+        [adminApi.reducerPath]: adminApi.reducer
     },
-    middleware: (mid) => [...mid(), api.middleware]
+    middleware: (mid) => [...mid(), api.middleware, adminApi.middleware]
 })
 
 export default store;
