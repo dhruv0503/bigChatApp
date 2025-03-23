@@ -7,7 +7,7 @@ const { isAdmin } = require('../Middlewares/auth');
 
 router.route('/').get(isAdmin, catchAsync(getAdminLogin));
 router.route('/login').post(adminLoginValidator(), validateHandler, catchAsync(adminLogin));
-router.route('/logout').post(isAdmin, adminLoginValidator(), validateHandler, catchAsync(adminLogout));
+router.route('/logout').post(isAdmin, catchAsync(adminLogout));
 router.route('/users').get(isAdmin, catchAsync(getUsers));
 router.route('/chats').get(isAdmin, catchAsync(allChats));
 router.route('/messages').get(isAdmin, catchAsync(allMessages));

@@ -1,4 +1,3 @@
-import React from 'react'
 import { Line, Doughnut } from 'react-chartjs-2'
 import {
     Chart as ChartJS,
@@ -53,7 +52,6 @@ const LineChartOptions = {
 
 const DoughnutChartOptions = {
     responsive: true,
-    // maintainAspectRatio: false,
     plugins: {
         legend: {
             display: false

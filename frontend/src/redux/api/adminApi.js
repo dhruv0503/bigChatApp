@@ -22,28 +22,28 @@ const adminApi = createApi({
                 credentials: 'include'
             })
         }),
-        getUsers: builder.query({
+        getAdminUsers: builder.query({
             query: () => ({
                 url: '/users',
                 method: 'GET',
                 credentials: 'include'
             })
         }),
-        getDashboard: builder.query({
+        getAdminDashboard: builder.query({
             query: () => ({
                 url: '/dashboard',
                 method: 'GET',
                 credentials: 'include'
             })
         }),
-        getChats: builder.query({
+        getAdminChats: builder.query({
             query: () => ({
                 url: '/chats',
                 method: 'GET',
                 credentials: 'include'
             })
         }),
-        getMessages: builder.query({
+        getAdminMessages: builder.query({
             query: () => ({
                 url: '/messages',
                 method: 'GET',
@@ -64,9 +64,9 @@ export default adminApi;
 export const {
     useAdminLoginMutation,
     useAdminLogoutMutation,
-    useGetUsersQuery,
-    useGetDashboardQuery,
-    useGetChatsQuery,
-    useGetMessagesQuery,
-    useGetIsAdminQuery
+    useGetIsAdminQuery,
+    useGetAdminChatsQuery,
+    useGetAdminDashboardQuery,
+    useGetAdminMessagesQuery,
+    useGetAdminUsersQuery
 } = adminApi

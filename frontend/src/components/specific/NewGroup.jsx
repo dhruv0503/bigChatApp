@@ -1,4 +1,3 @@
-import { useDispatch, useSelector } from 'react-redux';
 import {
   Button,
   Dialog,
@@ -9,12 +8,12 @@ import {
   Typography,
 } from "@mui/material";
 import { useState } from "react";
-import { sampleUsers } from "../../constants/sampleData";
-import UserItem from "../shared/UserItem";
-import { useCreateNewGroupMutation, useGetFriendsQuery } from '../../redux/api/api';
-import { useAsyncMutation, useErrors } from '../hooks/hooks';
-import { setIsNewGroup } from '../../redux/reducers/miscSlice';
 import toast from 'react-hot-toast';
+import { useDispatch, useSelector } from 'react-redux';
+import { useCreateNewGroupMutation, useGetFriendsQuery } from '../../redux/api/api';
+import { setIsNewGroup } from '../../redux/reducers/miscSlice';
+import { useAsyncMutation, useErrors } from '../hooks/hooks';
+import UserItem from "../shared/UserItem";
 
 const NewGroup = () => {
   const dispatch = useDispatch();

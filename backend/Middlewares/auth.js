@@ -31,7 +31,7 @@ const socketAuthenticator = async (err, socket, next) => {
         const authToken = socket.request.cookies.jsonToken
 
         if (!authToken) return next(new expressError('Please Login First', 401))
-S
+
         const decodedData = jwt.verify(authToken, process.env.JWT_SECRET)
         const user = await User.findById(decodedData._id)
 

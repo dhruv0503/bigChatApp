@@ -4,7 +4,6 @@ const Message = require('../Models/messageModel');
 const expressError = require('../Utils/expressError');
 const { cookieOptions } = require('../Utils/features');
 const jwt = require('jsonwebtoken');
-const { isAdmin } = require('../Middlewares/auth');
 
 module.exports.adminLogin = async (req, res, next) => {
     const { secretKey } = req.body;
@@ -37,7 +36,7 @@ module.exports.getAdminLogin = async (req, res, next) => {
 }
 
 module.exports.getUsers = async (req, res, next) => {
-    const users = await User.find({ _id: { $ne: req.userId } }).lean();
+    const users = await User.find({ _id: { $ne: process.env.ADMIN_ID } }).lean();
     const transformedUsers = [];
 
     for (const user of users) {
@@ -97,7 +96,7 @@ module.exports.allChats = async (req, res, next) => {
 }
 
 module.exports.allMessages = async (req, res, next) => {
-    const messages = await Message.find().populate("sender", "username avatar").populate("chatId", "groupChat createdAt").lean();
+    const messages = await Message.find({ sender: { $ne: process.env.ADMIN_ID } }).populate("sender", "username avatar").populate("chatId", "groupChat createdAt").lean();
 
     const transformedMessages = messages.map(({ _id, attachments, content, sender, chatId }) => ({
         _id,
@@ -125,7 +124,7 @@ module.exports.getDashboardStats = async (req, res, next) => {
     const [totalUsers, totalChats, totalMessages, singleChats] = await Promise.all([
         User.countDocuments(),
         Chat.countDocuments({}),
-        Message.countDocuments({}),
+        Message.countDocuments({ sender: { $ne: process.env.ADMIN_ID } }),
         Chat.countDocuments({ groupChat: false })
     ])
 
@@ -135,17 +134,18 @@ module.exports.getDashboardStats = async (req, res, next) => {
 
     const graphMessages = await Message.find({ createdAt: { $gt: sevenDaysAgo } }).select('createdAt');
 
+
     const last7DaysStats = new Array(7).fill(0);
 
     const dayInMs = 1000 * 60 * 60 * 24;
 
     graphMessages.forEach(msg => {
-        const dif = Math.floor((msg.createdAt - today) / dayInMs)
+        const dif = Math.floor((today - msg.createdAt) / dayInMs)
         last7DaysStats[6 - dif]++;
     })
 
     stats = {
-        totalUsers,
+        totalUsers: totalUsers - 1,
         totalChats,
         totalMessages,
         singleChats,
