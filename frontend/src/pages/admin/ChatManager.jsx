@@ -78,8 +78,8 @@ const ChatManager = () => {
           ...chat,
           id: chat._id,
           avatar: chat?.avatar?.map((av) => transformImage(av, 50)),
-          members: chat?.members?.avatar?.map((av) =>
-            transformImage(av.avatar, 50)
+          members: chat?.members?.map((av) =>
+            transformImage(av, 50)
           ),
           creator: {
             ...chat.creator,

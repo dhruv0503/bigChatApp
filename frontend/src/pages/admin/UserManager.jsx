@@ -4,7 +4,7 @@ import { useErrors } from "../../components/hooks/hooks";
 import AdminLayout from "../../components/layout/AdminLayout";
 import Table from "../../components/shared/Table";
 import { transformImage } from "../../lib/features";
-import { useGetAdminChatsQuery } from "../../redux/api/adminApi";
+import { useGetAdminUsersQuery } from "../../redux/api/adminApi";
 
 const columns = [
   {
@@ -54,11 +54,11 @@ const columns = [
 
 const UserManager = () => {
   const [rows, setRows] = useState([]);
-  const { data, isError, error, isLoading } = useGetAdminChatsQuery();
+  const { data, isError, error, isLoading } = useGetAdminUsersQuery();
   useEffect(() => {
     console.log(data);
     setRows(
-      data?.users.map((user) => {
+      data?.users?.map((user) => {
         return {
           ...user,
           id: user._id,

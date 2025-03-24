@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import AdminLayout from '../../components/layout/AdminLayout'
 import Table from '../../components/shared/Table'
-import { Avatar, Box, Stack } from '@mui/material'
+import { Avatar, Box, Skeleton, Stack } from '@mui/material'
 import { dashboardData } from '../../constants/sampleData'
 import { fileFormat, transformImage } from '../../lib/features'
 import moment from 'moment'
 import RenderAttachment from '../../components/shared/RenderAttachment'
+import { useGetAdminMessagesQuery } from '../../redux/api/adminApi'
 
 const columns = [
   { field: 'id', headerName: 'ID', headerClassName: "table-header", width: 124 },
@@ -17,13 +18,12 @@ const columns = [
         attachments.map((attachment, idx) => {
           const url = attachment.url;
           const fileType = fileFormat(url);
-          // console.log(url, fileType)
           return <Box sx={{
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
           }}>
-            <RenderAttachment file={fileType} url={url} key={idx}/>
+            <RenderAttachment file={fileType} url={url} key={idx} />
           </Box>
 
         })
@@ -51,8 +51,10 @@ const columns = [
 
 const MessageManager = () => {
   const [rows, setRows] = useState([])
+  const { data, error, isError, isLoading } = useGetAdminMessagesQuery()
 
   useEffect(() => {
+    console.log(data);
     setRows(dashboardData.messages.map((msg) => {
       return {
         ...msg,
@@ -65,7 +67,9 @@ const MessageManager = () => {
 
   return (
     <AdminLayout>
-      <Table rows={rows} columns={columns} heading={"All Messages"} rowHeight={160} />
+      {isLoading ?
+        <Skeleton /> :
+        <Table rows={rows} columns={columns} heading={"All Messages"} rowHeight={160} />}
     </AdminLayout>
   )
 }

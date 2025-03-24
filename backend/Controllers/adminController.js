@@ -4,6 +4,7 @@ const Message = require('../Models/messageModel');
 const expressError = require('../Utils/expressError');
 const { cookieOptions } = require('../Utils/features');
 const jwt = require('jsonwebtoken');
+const mongoose = require("mongoose");
 
 module.exports.adminLogin = async (req, res, next) => {
     const { secretKey } = req.body;
@@ -66,7 +67,7 @@ module.exports.allChats = async (req, res, next) => {
 
     for (const chat of chats) {
 
-        const totalMessages = await Message.countDocuments({ chat: chat._id });
+        const totalMessages = await Message.countDocuments({ chatId: chat._id });
 
         const transformedChat = {
             _id: chat._id,
@@ -75,10 +76,7 @@ module.exports.allChats = async (req, res, next) => {
                 chat.members.map(member => member.avatar.url),
             name: chat.groupChat ? chat.name : ` ${chat.members[0].username} - ${chat.members[1].username} `,
             totalMembers: chat.members.length,
-            members: {
-                avatar: chat.members.map(member => member.avatar.url),
-                username: chat.members.map(member => member.username)
-            },
+            members: chat.members.map(member => member.avatar.url),
             groupChat: chat.groupChat,
             creator: {
                 username: chat.creator.username,
@@ -112,7 +110,6 @@ module.exports.allMessages = async (req, res, next) => {
         createdAt: chatId.createdAt.toLocaleString()
     }))
 
-
     res.status(200).json({
         success: true,
         messages: transformedMessages
@@ -120,30 +117,35 @@ module.exports.allMessages = async (req, res, next) => {
 }
 
 module.exports.getDashboardStats = async (req, res, next) => {
-
-    const [totalUsers, totalChats, totalMessages, singleChats] = await Promise.all([
+    const adminId = new mongoose.Types.ObjectId(process.env.ADMIN_ID)
+    const [totalUsers, totalChats, totalMessages, adminSentMessages, singleChats] = await Promise.all([
         User.countDocuments(),
         Chat.countDocuments({}),
-        Message.countDocuments({ sender: { $ne: process.env.ADMIN_ID } }),
+        Message.countDocuments({ sender: { $ne: adminId } }),
         Chat.countDocuments({ groupChat: false })
     ])
 
-    const today = new Date()
+    const today = new Date();
+    today.setUTCHours(0, 0, 0, 0);
+
     const sevenDaysAgo = new Date();
-    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7)
+    sevenDaysAgo.setUTCDate(sevenDaysAgo.getUTCDate() - 7);
+    sevenDaysAgo.setUTCHours(0, 0, 0, 0);
 
     const graphMessages = await Message.find({ createdAt: { $gt: sevenDaysAgo } }).select('createdAt');
 
-
     const last7DaysStats = new Array(7).fill(0);
-
     const dayInMs = 1000 * 60 * 60 * 24;
 
     graphMessages.forEach(msg => {
-        const dif = Math.floor((today - msg.createdAt) / dayInMs)
-        last7DaysStats[6 - dif]++;
-    })
+        const msgDate = new Date(msg.createdAt);
+        msgDate.setUTCHours(0, 0, 0, 0);
 
+        const dif = Math.floor((today - msgDate) / dayInMs);
+        if (dif >= 0 && dif < 7) {
+            last7DaysStats[6 - dif]++;
+        }
+    });
     stats = {
         totalUsers: totalUsers - 1,
         totalChats,

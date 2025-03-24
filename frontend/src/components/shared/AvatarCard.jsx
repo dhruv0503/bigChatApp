@@ -7,11 +7,10 @@ const AvatarCard = ({ avatar = [], max = 4 }) => {
     <Stack direction={"row"} spacing={0.5}>
       <AvatarGroup max={max} sx={{ position: "relative" }}>
         <Box width={"5rem"} height={"3rem"}>
-          {/* {console.log(avatar)} */}
           {avatar.map((src, idx) => {
             return <Avatar
               key={Math.random() * 1000}
-              src={transformImage(src)}
+              src={transformImage(src, 50)}
               alt={`Avatar ${idx}`}
               sx={{
                 height: "3rem",
