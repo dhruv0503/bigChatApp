@@ -14,7 +14,8 @@ const miscSlice = createSlice({
     selectedDeleteChat: {
       chatId: "",
       groupChat: false
-    }
+    },
+    areOptionsOpen: false
   },
   reducers: {
     setIsNewGroup: (state, action) => {
@@ -43,6 +44,9 @@ const miscSlice = createSlice({
     },
     setSelectedDeleteChat: (state, action) => {
       state.selectedDeleteChat = action.payload;
+    },
+    setAreOptionsOpen: (state, action) => {
+      state.areOptionsOpen = action.payload
     }
   },
 });
@@ -59,4 +63,5 @@ export const {
   setIsDeleteMenu,
   setUploadingLoader,
   setSelectedDeleteChat,
+  setAreOptionsOpen
 } = miscSlice.actions;

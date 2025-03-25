@@ -1,25 +1,18 @@
 import {
-    AdminPanelSettings as AdminPanelSettingsIcon,
-    Group as GroupIcon,
-    Message as MessageIcon,
-    Notifications as NotificationIcon,
-    Person as PersonIcon,
+  AdminPanelSettings as AdminPanelSettingsIcon,
+  Group as GroupIcon,
+  Message as MessageIcon,
+  Person as PersonIcon,
 } from "@mui/icons-material";
-import {
-    Box,
-    Container,
-    Paper,
-    Stack,
-    Typography
-} from "@mui/material";
+import { Box, Container, Paper, Stack, Typography } from "@mui/material";
 import moment from "moment";
 import { useErrors } from "../../components/hooks/hooks";
 import AdminLayout from "../../components/layout/AdminLayout";
 import { LayoutLoader } from "../../components/layout/Loaders";
 import { DoughnutChart, LineChart } from "../../components/specific/Charts";
 import {
-    CurvedButton,
-    SearchField,
+  CurvedButton,
+  SearchField,
 } from "../../components/styles/StyledComponent";
 import { useGetAdminDashboardQuery } from "../../redux/api/adminApi";
 const Dashboard = () => {
@@ -38,7 +31,7 @@ const Dashboard = () => {
         }}
       >
         <Stack spacing={"1rem"} alignItems={"center"} direction={"row"}>
-          <AdminPanelSettingsIcon sx={{ fontSize: "2rem" }} />
+          <AdminPanelSettingsIcon sx={{ fontSize: "3rem" }} />
           <SearchField />
           <CurvedButton>Search</CurvedButton>
           <Box flexGrow={1} />
@@ -47,10 +40,10 @@ const Dashboard = () => {
               xs: "none",
               xl: "block",
             }}
+            textAlign={"center"}
           >
             {moment().format("MMMM Do YYYY")}
           </Typography>
-          <NotificationIcon />
         </Stack>
       </Paper>
     );
@@ -96,11 +89,14 @@ const Dashboard = () => {
         <Stack
           direction={{
             xs: "column",
-            md: "row",
+            lg: "row",
           }}
           flexWrap={"wrap"}
           justifyContent={"center"}
-          alignItems="center"
+          alignItems={{
+            xs : "center",
+            lg: "strech",
+          }}
           sx={{
             gap: "2rem",
           }}
@@ -111,7 +107,10 @@ const Dashboard = () => {
               padding: "2rem",
               borderRadius: "1rem",
               width: "100%",
-              maxWidth: "40rem",
+              maxWidth: {
+                xs: "100%",
+                sm: "30rem",
+              },
             }}
           >
             <Typography margin={"2rem 0"} variant="h4">
@@ -131,7 +130,8 @@ const Dashboard = () => {
               position: "relative",
               maxWidth: {
                 xs: "40rem",
-                xl: "30rem",
+                sm: "30rem",
+                // md: "25rem",
               },
             }}
           >

@@ -1,8 +1,7 @@
 /* eslint-disable react/prop-types */
 import { Stack } from "@mui/material";
-import React from "react";
-import ChatItem from "../shared/ChatItem";
 import { bgGradient } from "../../constants/color";
+import ChatItem from "../shared/ChatItem";
 
 const ChatList = ({
   w = "100%",
@@ -18,7 +17,13 @@ const ChatList = ({
   handleDeleteChat,
 }) => {
   return (
-    <Stack direction={"column"} width={w} overflow={"auto"} height="100%" sx={{ backgroundImage: bgGradient, borderRadius: "25px" }}>
+    <Stack
+      direction={"column"}
+      width={w}
+      overflow={"auto"}
+      height="100%"
+      sx={{ backgroundImage: bgGradient, borderRadius: "25px" }}
+    >
       {chats?.map((data, idx) => {
         const { avatar, _id, name, groupChat, members } = data;
         const newMessageAlert = newMessagesAlert.find(

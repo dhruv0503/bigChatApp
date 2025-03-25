@@ -14,6 +14,7 @@ import {
   setNewMessagesAlert,
 } from "../../redux/reducers/chatSlice";
 import {
+  setAreOptionsOpen,
   setIsDeleteMenu,
   setIsMobile,
   setSelectedDeleteChat,
@@ -25,6 +26,7 @@ import Title from "../shared/Title";
 import ChatList from "../specific/ChatList";
 import Profile from "../specific/Profile";
 import Header from "./Header";
+import OptionsSidebar from "../specific/OptionsSidebar";
 
 const AppLayout = ({ WrappedContent, ...props }) => {
   const params = useParams();
@@ -35,7 +37,7 @@ const AppLayout = ({ WrappedContent, ...props }) => {
 
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
-  const { isMobile } = useSelector((state) => state.misc);
+  const { isMobile, areOptionsOpen } = useSelector((state) => state.misc);
   const { newMessageAlert } = useSelector((state) => state.chat);
   const { data, isLoading, isError, error, refetch } = useGetChatsQuery();
 
@@ -56,7 +58,7 @@ const AppLayout = ({ WrappedContent, ...props }) => {
       refetch();
       if (data?.users?.includes(user._id)) navigate("/");
     },
-    [refetch, navigate, data?.users]
+    [refetch, navigate, user._id]
   );
 
   useEffect(() => {
@@ -104,6 +106,17 @@ const AppLayout = ({ WrappedContent, ...props }) => {
           )}
         </Drawer>
       )}
+      {isLoading ? (
+        <Skeleton />
+      ) : (
+        <Drawer open={areOptionsOpen} onClose={() => dispatch(setAreOptionsOpen(false))}>
+          {isLoading ? (
+            <Skeleton />
+          ) : (
+            <OptionsSidebar />
+          )}
+        </Drawer>
+      )}
       <Grid2
         container={true}
         sx={{
@@ -121,7 +134,7 @@ const AppLayout = ({ WrappedContent, ...props }) => {
             flexGrow: "1",
             maxWidth: {
               sm: "33%",
-              md: "25%"
+              md: "25%",
             },
             boxSizing: "border-box",
             margin: "0.5rem",
@@ -153,7 +166,7 @@ const AppLayout = ({ WrappedContent, ...props }) => {
             maxWidth: {
               xs: "100%",
               sm: "67%",
-              md: "50%"
+              md: "50%",
             },
           }}
         >

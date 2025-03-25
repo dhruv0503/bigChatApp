@@ -1,4 +1,4 @@
-import { Avatar, Stack } from "@mui/material";
+import { Avatar, Skeleton, Stack } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useErrors } from "../../components/hooks/hooks";
 import AdminLayout from "../../components/layout/AdminLayout";
@@ -78,9 +78,7 @@ const ChatManager = () => {
           ...chat,
           id: chat._id,
           avatar: chat?.avatar?.map((av) => transformImage(av, 50)),
-          members: chat?.members?.map((av) =>
-            transformImage(av, 50)
-          ),
+          members: chat?.members?.map((av) => transformImage(av, 50)),
           creator: {
             ...chat.creator,
             avatar: transformImage(chat.creator.avatar, 50),
@@ -94,7 +92,11 @@ const ChatManager = () => {
 
   return (
     <AdminLayout>
-      <Table rows={rows} columns={columns} heading={"All Chats"} />
+      {isLoading ? (
+        <Skeleton height={"100vh"} />
+      ) : (
+        <Table rows={rows} columns={columns} heading={"All Chats"} />
+      )}
     </AdminLayout>
   );
 };

@@ -1,28 +1,27 @@
-import { useDispatch } from "react-redux";
 import {
-  Grid2,
-  Box,
-  IconButton,
-  Drawer,
-  Stack,
-  Typography,
-  styled,
-} from "@mui/material";
-import React, { useState } from "react";
-import { grayColor } from "../../constants/color";
-import {
+  Dashboard as DashboardIcon,
   ExitToApp as ExitToAppIcon,
   Groups as GroupsIcon,
   ManageAccounts as ManageAccountsIcon,
   Menu as MenuIcon,
   Message as MessageIcon,
 } from "@mui/icons-material";
-import { useLocation, Link, Navigate } from "react-router-dom";
-import { Dashboard as DashboardIcon } from "@mui/icons-material";
-import { useSelector } from "react-redux";
-import { useAsyncMutation } from "../hooks/hooks";
+import {
+  Box,
+  Drawer,
+  Grid2,
+  IconButton,
+  Stack,
+  Typography,
+  styled,
+} from "@mui/material";
+import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { Link, Navigate, useLocation } from "react-router-dom";
+import { grayColor } from "../../constants/color";
 import { useAdminLogoutMutation } from "../../redux/api/adminApi";
 import { setIsAdmin } from "../../redux/reducers/authSlice";
+import { useAsyncMutation } from "../hooks/hooks";
 
 const StyledLink = styled(Link)({
   textDecoration: "none",
@@ -138,7 +137,7 @@ const AdminLayout = ({ children }) => {
           display: { xs: "block", lg: "none" },
           position: "fixed",
           right: "3rem",
-          top: "2.5rem",
+          top: "4.5rem",
         }}
       >
         <IconButton onClick={hanldeMobile}>
@@ -167,7 +166,7 @@ const AdminLayout = ({ children }) => {
           minHeight: "100%",
           minWidth: {
             xs: "100%",
-            lg: "75%",
+            sm: "75%",
           },
         }}
       >

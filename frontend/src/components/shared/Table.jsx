@@ -4,7 +4,7 @@ import { DataGrid } from '@mui/x-data-grid'
 
 const Table = ({ rows, columns, heading, rowHeight = 52 }) => {
     return (
-        <Container sx={{height : "90%"}}>
+        <Container sx={{height : "90%",}}>
             <Paper elevation={3} sx={{
                 padding: "1rem 4rem",
                 borderRadius: "1rem",

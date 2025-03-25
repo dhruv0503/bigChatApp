@@ -98,7 +98,7 @@ module.exports.allMessages = async (req, res, next) => {
 
     const transformedMessages = messages.map(({ _id, attachments, content, sender, chatId }) => ({
         _id,
-        attachements: attachments.url,
+        attachments: attachments.map(attach => attach.url),
         content,
         sender: {
             _id: sender._id,
@@ -118,7 +118,7 @@ module.exports.allMessages = async (req, res, next) => {
 
 module.exports.getDashboardStats = async (req, res, next) => {
     const adminId = new mongoose.Types.ObjectId(process.env.ADMIN_ID)
-    const [totalUsers, totalChats, totalMessages, adminSentMessages, singleChats] = await Promise.all([
+    const [totalUsers, totalChats, totalMessages, singleChats] = await Promise.all([
         User.countDocuments(),
         Chat.countDocuments({}),
         Message.countDocuments({ sender: { $ne: adminId } }),

@@ -1,11 +1,4 @@
-import {
-  Add as AddIcon,
-  Group as GroupIcon,
-  Logout as LogoutIcon,
-  Menu as MenuIcon,
-  Notifications as NotificationIcon,
-  Search as SearchIcon,
-} from "@mui/icons-material";
+import { Chat as ChatIcon, Menu as MenuIcon } from "@mui/icons-material";
 import {
   AppBar,
   Backdrop,
@@ -18,47 +11,34 @@ import {
 } from "@mui/material";
 import { lazy, Suspense } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
 import { orange } from "../../constants/color";
-import api, { useLogoutMutation } from '../../redux/api/api';
-import { setIsLogin, updateUser } from "../../redux/reducers/authSlice";
-import { resetNotficationCount } from "../../redux/reducers/chatSlice";
-import { setIsMobile, setIsNewGroup, setIsNotification, setIsSearch } from "../../redux/reducers/miscSlice";
-import { useAsyncMutation } from "../hooks/hooks";
+import { setAreOptionsOpen, setIsMobile } from "../../redux/reducers/miscSlice";
+import {
+  AddGroupButton,
+  LogoutButton,
+  ManageGroupsButton,
+  NotificationButton,
+  SearchButton,
+} from "../shared/IconButtons";
+
 
 const Search = lazy(() => import("../specific/Search"));
 const Notifications = lazy(() => import("../specific/Notifications"));
 const NewGroup = lazy(() => import("../specific/NewGroup"));
 
 const Header = () => {
-  const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { isSearch, isNotification } = useSelector((state) => state.misc);
-  const { notificationCount } = useSelector(state => state.chat)
-  const { isNewGroup } = useSelector(state => state.misc)
-  const [userLogout] = useAsyncMutation(useLogoutMutation);
-
-  const openNotification = () => {
-    dispatch(setIsNotification(true));
-    dispatch(resetNotficationCount());
-  }
-
-  const openNewGroup = () => dispatch(setIsNewGroup(true));
-
-  const navigateToGroup = () => {
-    navigate("/groups");
-  };
-
-  const logoutHandler = async () => {
-    await userLogout("Logging Out")
-    dispatch(api.util.resetApiState())
-    dispatch(setIsLogin(false))
-    dispatch(updateUser(null))
-  };
+  const { isSearch, isNotification, isNewGroup } = useSelector(
+    (state) => state.misc
+  );
 
   return (
     <>
-      <Box sx={{ flexGrow: 1, margin: "0.5rem" }} height={"4rem"} boxSizing={"border-box"}>
+      <Box
+        sx={{ flexGrow: 1, margin: "0.5rem" }}
+        height={"4rem"}
+        boxSizing={"border-box"}
+      >
         <AppBar
           position="static"
           sx={{
@@ -67,7 +47,7 @@ const Header = () => {
             boxShadow: "none",
           }}
         >
-          <Toolbar >
+          <Toolbar>
             <Typography
               variant="h6"
               sx={{
@@ -81,40 +61,42 @@ const Header = () => {
                 display: { xs: "block", sm: "none" },
               }}
             >
-              <IconButton color="inherit" onClick={() => dispatch(setIsMobile(true))}>
-                <MenuIcon />
+              <IconButton
+                color="inherit"
+                onClick={() => dispatch(setIsMobile(true))}
+              >
+                <ChatIcon />
               </IconButton>
             </Box>
             <Box sx={{ flexGrow: 1 }} />
-            <Box>
-              <IconBtn
-                title={"Search"}
-                icon={<SearchIcon />}
-                onClick={() => dispatch(setIsSearch(true))}
-              />
-              <IconBtn
-                title={"Add Group"}
-                icon={<AddIcon />}
-                onClick={openNewGroup}
-              />
-              <IconBtn
-                title={"Manage Groups"}
-                icon={<GroupIcon />}
-                onClick={navigateToGroup}
-              />
-
-              <IconBtn
-                title={"Notifications"}
-                icon={<NotificationIcon />}
-                onClick={openNotification}
-                value={notificationCount}
-              />
-
-              <IconBtn
-                title={"Logout"}
-                icon={<LogoutIcon />}
-                onClick={logoutHandler}
-              />
+            <Box
+              sx={{
+                display: { xs: "block", sm: "none" },
+              }}
+            >
+              <IconButton
+                color="inherit"
+                onClick={() => dispatch(setAreOptionsOpen(true))}
+              >
+                <MenuIcon />
+              </IconButton>
+            </Box>
+            <Box
+              sx={{
+                display: {
+                  xs: "none",
+                  sm: "flex",
+                },
+                flexDirection: "row",
+                alignItems: "center",
+                // gap: "0.5rem",
+              }}
+            >
+              <SearchButton />
+              <AddGroupButton />
+              <ManageGroupsButton />
+              <NotificationButton />
+              <LogoutButton />
             </Box>
           </Toolbar>
         </AppBar>
@@ -137,7 +119,6 @@ const Header = () => {
           <Notifications />
         </Suspense>
       )}
-
     </>
   );
 };
@@ -146,9 +127,13 @@ const IconBtn = ({ title, icon, onClick, value }) => {
   return (
     <Tooltip title={title}>
       <IconButton color="inherit" size="large" onClick={onClick}>
-        {value ? <Badge badgeContent={value} color="error">
-          {icon}
-        </Badge> : (icon)}
+        {value ? (
+          <Badge badgeContent={value} color="error">
+            {icon}
+          </Badge>
+        ) : (
+          icon
+        )}
       </IconButton>
     </Tooltip>
   );
