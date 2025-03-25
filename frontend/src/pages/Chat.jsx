@@ -1,21 +1,21 @@
-import { useDispatch, useSelector } from 'react-redux';
+import { useInfiniteScrollTop } from '6pp';
 import { AttachFile as AttachFileButton, Send as SendIcon } from "@mui/icons-material";
 import { IconButton, Skeleton, Stack } from "@mui/material";
-import React, { useCallback, useMemo, useRef, useState, useEffect } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import FileMenu from "../components/dialogs/FileMenu";
 import { useErrors, useSocketEvents } from "../components/hooks/hooks";
 import AppLayout from "../components/layout/AppLayout";
-import MessageComponent from "../components/shared/MessageComponent";
-import { InputBox } from "../components/styles/styledComponent";
-import { grayColor, orange } from "../constants/color";
-import { ALERT, NEW_MESSAGE, START_TYPING, STOP_TYPING } from '../constants/events';
-import { useGetChatDetailsQuery, useGetChatMessagesQuery } from "../redux/api/api";
-import { getSocket } from "../Socket";
-import { useInfiniteScrollTop } from '6pp'
-import { setIsFileMenu } from '../redux/reducers/miscSlice';
-import { removeNewMessageAlert } from '../redux/reducers/chatSlice';
 import { TypingLoader } from '../components/layout/Loaders';
-import { useNavigate } from 'react-router-dom';
+import MessageComponent from "../components/shared/MessageComponent";
+import { InputBox } from "../components/styles/StyledComponent";
+import { grayColor, orange } from "../constants/color";
+import { NEW_MESSAGE, START_TYPING, STOP_TYPING } from '../constants/events';
+import { useGetChatDetailsQuery, useGetChatMessagesQuery } from "../redux/api/api";
+import { removeNewMessageAlert } from '../redux/reducers/chatSlice';
+import { setIsFileMenu } from '../redux/reducers/miscSlice';
+import { getSocket } from "../Socket";
 
 const ChatContent = ({ chatId, user }) => {
   const authState = useSelector(state => state.auth)
@@ -119,25 +119,9 @@ const ChatContent = ({ chatId, user }) => {
     setUserTyping(false);
   }, [chatId]);
 
-  // const alertListener = useCallback((data) => {
-  //   console.log("HELLO")
-  //   if (data.chatId !== chatId) return;
-  //   const messageForAlert = {
-  //     content: data.message,
-  //     sender: {
-  //       _id: "67c8485d8b5433d4cca2e1bb",
-  //       username: "Admin1"
-  //     },
-  //     chatId,
-  //     createdAt: new Date().toISOString()
-  //   }
-  //   console.log(messageForAlert)
-  //   setMessageList((prev) => [...prev, messageForAlert]);
-  // }, [chatId])
 
   const eventHandler = {
     [NEW_MESSAGE]: newMessageListener,
-    // [ALERT]: alertListener,
     [START_TYPING]: startTypingListener,
     [STOP_TYPING]: stopTypingListener
   }
@@ -155,7 +139,7 @@ const ChatContent = ({ chatId, user }) => {
         padding={"1rem"}
         spacing={"1rem"}
         bgcolor={grayColor}
-        height={"90%"}
+        height={"88%"}
         sx={{
           overflowX: "hidden",
           overflowY: "auto",
@@ -170,35 +154,42 @@ const ChatContent = ({ chatId, user }) => {
 
         <div ref={bottomRef} />
       </Stack >
-      <form style={{ height: "10%" }} onSubmit={submitHanlder}>
-        <Stack direction={"row"} height={"100%"} padding={"1rem 0"} alignItems={"center"} position={"relative"} boxSizing={"border-box"} sx={{
+      <form style={{ height: "11%" }} onSubmit={submitHanlder}>
+        <Stack direction={"row"} height={"100%"} alignItems={"center"} position={"relative"} boxSizing={"border-box"} sx={{
           width: "100%"
         }}>
           <IconButton
             onClick={handleMenuOpen}
             sx={{
               position: "absolute",
-              left: "0.5rem"
+              left: "0.5rem",
+              bottom: "0.2rem"
             }}
           >
             <AttachFileButton />
           </IconButton>
 
-          <InputBox placeholder="Type Message Here..."
-            value={message}
-            onChange={messageChangeHandler}
-          />
-
           <IconButton type="submit" sx={{
             bgcolor: orange,
             color: "white",
-            padding: "0.5rem",
+            position: "absolute",
+            right: "0.5rem",
+            bottom: "0.2rem",
+            // padding: "0.5rem",
             "&:hover": {
               backgroundColor: "error.dark"
             }
           }}>
             <SendIcon />
           </IconButton>
+
+          <InputBox placeholder="Type Message Here..."
+            value={message}
+            onChange={messageChangeHandler}
+            sx={{
+              marginTop: "2%"
+            }}
+          />
         </Stack>
       </form>
       <FileMenu anchorE1={menuAnchor} chatId={chatId} />

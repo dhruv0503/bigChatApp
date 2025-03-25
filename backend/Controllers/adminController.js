@@ -105,7 +105,7 @@ module.exports.allMessages = async (req, res, next) => {
             username: sender.username,
             avatar: sender.avatar.url
         },
-        chatId,
+        chat : chatId._id,
         groupChat: chatId.groupChat ? "Yes" : "No",
         createdAt: chatId.createdAt.toLocaleString()
     }))

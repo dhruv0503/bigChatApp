@@ -1,34 +1,30 @@
-import { useNavigate } from "react-router-dom";
-import { lazy, Suspense, useState } from "react";
-import {
-  Box,
-  AppBar,
-  Toolbar,
-  Typography,
-  IconButton,
-  Tooltip,
-  Backdrop,
-  Badge,
-} from "@mui/material";
-import { orange } from "../../constants/color";
 import {
   Add as AddIcon,
-  Menu as MenuIcon,
-  Search as SearchIcon,
   Group as GroupIcon,
   Logout as LogoutIcon,
+  Menu as MenuIcon,
   Notifications as NotificationIcon,
+  Search as SearchIcon,
 } from "@mui/icons-material";
-import axios from "axios";
-import toast from "react-hot-toast";
+import {
+  AppBar,
+  Backdrop,
+  Badge,
+  Box,
+  IconButton,
+  Toolbar,
+  Tooltip,
+  Typography,
+} from "@mui/material";
+import { lazy, Suspense } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { updateUser } from "../../redux/reducers/authSlice";
-import { setIsMobile, setIsNewGroup, setIsNotification, setIsSearch } from "../../redux/reducers/miscSlice";
-import { setIsLogin } from '../../redux/reducers/authSlice'
-import api from '../../redux/api/api'
+import { useNavigate } from "react-router-dom";
+import { orange } from "../../constants/color";
+import api, { useLogoutMutation } from '../../redux/api/api';
+import { setIsLogin, updateUser } from "../../redux/reducers/authSlice";
 import { resetNotficationCount } from "../../redux/reducers/chatSlice";
+import { setIsMobile, setIsNewGroup, setIsNotification, setIsSearch } from "../../redux/reducers/miscSlice";
 import { useAsyncMutation } from "../hooks/hooks";
-import { useLogoutMutation } from "../../redux/api/api";
 
 const Search = lazy(() => import("../specific/Search"));
 const Notifications = lazy(() => import("../specific/Notifications"));

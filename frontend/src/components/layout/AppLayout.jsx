@@ -119,14 +119,16 @@ const AppLayout = ({ WrappedContent, ...props }) => {
           sx={{
             display: { xs: "none", sm: "block" },
             flexGrow: "1",
-            maxWidth: "25%",
+            maxWidth: {
+              sm: "33%",
+              md: "25%"
+            },
             boxSizing: "border-box",
             margin: "0.5rem",
             borderRadius: "25px",
           }}
           height={"100%"}
         >
-          {/* First */}
           {isLoading ? (
             <Skeleton />
           ) : (
@@ -135,7 +137,6 @@ const AppLayout = ({ WrappedContent, ...props }) => {
               chatId={chatId}
               handleDeleteChat={handleDeleteChat}
               newMessagesAlert={newMessageAlert}
-              // onlineUsers={["1", "2"]}
             />
           )}
         </Grid2>
@@ -149,7 +150,11 @@ const AppLayout = ({ WrappedContent, ...props }) => {
             flexGrow: "2",
             margin: "0.5rem",
             borderRadius: "25px",
-            maxWidth: "50%",
+            maxWidth: {
+              xs: "100%",
+              sm: "67%",
+              md: "50%"
+            },
           }}
         >
           <WrappedContent {...props} chatId={chatId} user={user} />

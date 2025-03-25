@@ -266,7 +266,7 @@ const Groups = () => {
           sm: "none",
         },
       }} open={isMobileMenuOpen} onClick={handleMobileClose}>
-        <GroupList w="50vw" myGroups={sampleChats} chatId={chatId} />
+        <GroupList w="50vw" myGroups={myGroups?.data?.groups} chatId={chatId} />
       </Drawer>
     </Grid2 >
   )
