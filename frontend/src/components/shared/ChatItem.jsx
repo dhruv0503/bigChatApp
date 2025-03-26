@@ -1,11 +1,10 @@
 /* eslint-disable react/prop-types */
-import { memo } from "react";
-import { StyledLink } from "../styles/styledComponent";
 import { Box, Stack, Typography } from "@mui/material";
-import AvatarCard from "../shared/AvatarCard";
+import { memo } from "react";
 import { useDispatch } from "react-redux";
 import { setIsMobile } from "../../redux/reducers/miscSlice";
-import { delay, motion } from "framer-motion";
+import AvatarCard from "../shared/AvatarCard";
+import { StyledLink } from "../styles/StyledComponent";
 
 const ChatItem = ({
   avatar = [],
@@ -15,7 +14,6 @@ const ChatItem = ({
   sameSender,
   isOnline,
   newMessageAlert,
-  index = 0,
   handleDeleteChat,
 }) => {
   const dispatch = useDispatch();
@@ -24,26 +22,23 @@ const ChatItem = ({
     <StyledLink
       to={`/chat/${_id}`}
       onContextMenu={(e) => handleDeleteChat(e, _id, groupChat)}
-      onClick={() => dispatch(setIsMobile(false))}
+      onClick={() => dispatch(setIsMobile(true))}
     >
-      <motion.div
-        style={{
-          display: "flex",
+      <Stack
+        direction={"row"}
+        sx={{
           alignItems: "center",
           padding: "0.5rem",
-          gap: "1rem",
           cursor: "pointer",
           backgroundColor: sameSender ? "black" : "unset",
           position: "relative",
+          // gap : "1rem",
           color: sameSender ? "white" : "unset",
           overflow: "hidden"
         }}
-        initial={{ opacity: 0, y: "-100%" }}
-        whileInView={{ opacity: 1, y: 0 }}
-        transition={{ delay: index * 0.1 }}
       >
         <AvatarCard avatar={avatar} />
-        <Stack >
+        <Stack sx={{margin : groupChat ? "0 1rem" : "unset"}}>
           <Typography>{username}</Typography>
           {newMessageAlert && (
             <Typography>{newMessageAlert.count} New Messages</Typography>
@@ -64,7 +59,7 @@ const ChatItem = ({
             }}
           />
         )}
-      </motion.div>
+      </Stack>
     </StyledLink >
   );
 };

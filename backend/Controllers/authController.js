@@ -14,6 +14,7 @@ module.exports.createUser = async (req, res, next) => {
     const user = new User({ name, username, password, avatar, bio });
     if (!user) return next(new expressError('User not created', 400));
     const createdUser = await user.save();
+    
     sendToken(res, createdUser, 201, "Sign Up Successful");
 
 }

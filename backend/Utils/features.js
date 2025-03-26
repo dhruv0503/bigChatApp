@@ -3,6 +3,8 @@ const jwt = require('jsonwebtoken')
 const { v4: uuid } = require('uuid')
 const streamifier = require('streamifier')
 const { getSockets } = require('./helper')
+const { myFriends } = require('../Controllers/userController')
+const { FRIEND_JOINED } = require('../Constants/events')
 const cloudinary = require('cloudinary').v2
 
 const cookieOptions = {
@@ -77,9 +79,23 @@ const uploadToCloudinary = async (files = []) => {
 }
 
 const emitEvent = (req, event, users, data) => {
-    const io = req.app.get("io")
+    const io = req.ap
+    p.get("io")
     const userSockets = getSockets(users);
     io.to(userSockets).emit(event, data);
+}
+
+const sendOnlineStatus = async (req) => {
+    try {
+        const io = req.app.get("io");
+        const getMyFriends = await myFriends();
+        const friendIds = getMyFriends.map(friend => friend._id);
+        const userSockets = getSockets(friendIds);
+        io.to(userSockets).emit(FRIEND_JOINED, { req.userId });
+    } catch (err) {
+        return next(new expressError(err.message, 500))
+    }
+
 }
 
 module.exports = { connectDB, sendToken, emitEvent, deleteFilesFromCloudinary, cookieOptions, uploadToCloudinary }

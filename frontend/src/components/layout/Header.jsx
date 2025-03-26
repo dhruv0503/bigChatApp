@@ -1,18 +1,19 @@
-import { Chat as ChatIcon, Menu as MenuIcon } from "@mui/icons-material";
+import {
+  Menu as MenuIcon
+} from "@mui/icons-material";
 import {
   AppBar,
   Backdrop,
-  Badge,
   Box,
   IconButton,
   Toolbar,
-  Tooltip,
   Typography,
+  Stack
 } from "@mui/material";
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { orange } from "../../constants/color";
-import { setAreOptionsOpen, setIsMobile } from "../../redux/reducers/miscSlice";
+import { setAreOptionsOpen } from "../../redux/reducers/miscSlice";
 import {
   AddGroupButton,
   LogoutButton,
@@ -20,6 +21,9 @@ import {
   NotificationButton,
   SearchButton,
 } from "../shared/IconButtons";
+import { useParams } from "react-router-dom";
+import { useGetChatDetailsQuery } from "../../redux/api/api";
+import AvatarCard from "../shared/AvatarCard";
 
 
 const Search = lazy(() => import("../specific/Search"));
@@ -27,10 +31,57 @@ const Notifications = lazy(() => import("../specific/Notifications"));
 const NewGroup = lazy(() => import("../specific/NewGroup"));
 
 const Header = () => {
+  const { user } = useSelector(state => state.auth)
+  const params = useParams();
+  const chatId = params?.chatId;
   const dispatch = useDispatch();
   const { isSearch, isNotification, isNewGroup } = useSelector(
     (state) => state.misc
   );
+  const chatDetails = useGetChatDetailsQuery({ chatId, populate: true }, { skip: !chatId })
+  const chatInfo = chatDetails?.data?.chat;
+  const [openChatInfo, setOpenChatInfo] = useState({
+    chat: "",
+    avatar: []
+  })
+
+  useEffect(() => {
+    if (chatInfo?.groupChat) {
+      const groupAvatar = chatInfo?.members.slice(0, 3).map(member => member.avatar);
+      setOpenChatInfo({
+        chat: chatInfo?.name,
+        avatar: groupAvatar
+      })
+    }
+    else {
+      const otherMember = chatInfo?.members?.filter(member => member._id !== user._id)
+      if (Array.isArray(otherMember)) {
+        setOpenChatInfo({
+          chat: otherMember[0]?.username,
+          avatar: [otherMember[0]?.avatar]
+        })
+      }
+    }
+  }, [chatInfo, setOpenChatInfo])
+
+  const MobileChatComponent = ({groupChat = false}) => (
+    <Stack
+      direction={"row"}
+      sx={{
+        alignItems: "center",
+        margin : "0.7rem 0",
+        backgroundColor: "inherit",
+        gap: "1rem",
+        display: { xs: "block", sm: "none" },
+        boxSizing : "border-box"
+      }}
+    >
+      <Stack direction={"row"} gap={groupChat ? "2rem" : "unset"} alignItems={"center"}>
+        <AvatarCard avatar={openChatInfo?.avatar} />
+        <Typography>{openChatInfo.chat}</Typography>
+      </Stack>
+    </Stack >
+  )
 
   return (
     <>
@@ -56,18 +107,8 @@ const Header = () => {
             >
               Big Chat App
             </Typography>
-            <Box
-              sx={{
-                display: { xs: "block", sm: "none" },
-              }}
-            >
-              <IconButton
-                color="inherit"
-                onClick={() => dispatch(setIsMobile(true))}
-              >
-                <ChatIcon />
-              </IconButton>
-            </Box>
+            <MobileChatComponent groupChat={chatInfo?.groupChat}/>
+
             <Box sx={{ flexGrow: 1 }} />
             <Box
               sx={{
@@ -120,22 +161,6 @@ const Header = () => {
         </Suspense>
       )}
     </>
-  );
-};
-
-const IconBtn = ({ title, icon, onClick, value }) => {
-  return (
-    <Tooltip title={title}>
-      <IconButton color="inherit" size="large" onClick={onClick}>
-        {value ? (
-          <Badge badgeContent={value} color="error">
-            {icon}
-          </Badge>
-        ) : (
-          icon
-        )}
-      </IconButton>
-    </Tooltip>
   );
 };
 

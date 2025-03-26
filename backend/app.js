@@ -10,7 +10,7 @@ const expressError = require('./Utils/expressError')
 const { globalError } = require('./Middlewares/error')
 const { Server } = require('socket.io')
 const http = require('http')
-const { NEW_MESSAGE, START_TYPING, STOP_TYPING } = require('./Constants/events')
+const { NEW_MESSAGE, START_TYPING, STOP_TYPING, CHAT_JOINED } = require('./Constants/events')
 const cloudinary = require('cloudinary').v2
 const { corsOptions, cloudinaryConfig } = require('./Constants/config')
 const app = express()
@@ -67,8 +67,14 @@ io.on("connection", (socket) => {
     socket.on(START_TYPING, ({ members, chatId }) => {
         onTyping(io, members, chatId, user._id)
     })
-    socket.on(STOP_TYPING, ({members, chatId}) => {
+    socket.on(STOP_TYPING, ({ members, chatId }) => {
         onStopTyping(io, members, chatId, user._id)
+    })
+    socket.on(CHAT_JOINED, (userId) => {
+        console.log("joined")
+    })
+    socket.on(CHAT_LEFT, (userId) => {
+        console.log("left")
     })
 
     socket.on("disconnect", () => {

@@ -174,22 +174,23 @@ const leaveGroup = async (req, res, next) => {
 
 const getChatDetails = async (req, res, next) => {
     if (req.query.populate === "true") {
-        const chat = await Chat.findById(req.params.chatId).populate("members", "username avatar").lean();
+        const chat = await Chat.findById(req.params.chatId).populate("members", "username avatar name").lean();
         if (!chat) return next(new expressError("Chat not found", 404));
 
         let index = 0;
-        chat.members = chat.members.map(({ _id, username, avatar }, idx) => {
+        chat.members = chat.members.map(({ _id, username, avatar, name }, idx) => {
             if (_id.toString() === chat.creator.toString()) index = idx;
             return {
                 _id,
                 username,
-                avatar: avatar.url
+                avatar: avatar.url,
+                name
             }
         })
         let temp = chat.members[0];
         chat.members[0] = chat.members[index];
         chat.members[index] = temp;
-        
+
         return res.status(200).json({ success: true, chat })
     } else {
         const chat = await Chat.findById(req.params.chatId);

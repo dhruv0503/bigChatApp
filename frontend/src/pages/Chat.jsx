@@ -1,5 +1,5 @@
 import { useInfiniteScrollTop } from '6pp';
-import { AttachFile as AttachFileButton, Send as SendIcon } from "@mui/icons-material";
+import { AttachFile as AttachFileButton, Home as HomeIcon, Send as SendIcon } from "@mui/icons-material";
 import { IconButton, Skeleton, Stack } from "@mui/material";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from 'react-redux';
@@ -11,10 +11,10 @@ import { TypingLoader } from '../components/layout/Loaders';
 import MessageComponent from "../components/shared/MessageComponent";
 import { InputBox } from "../components/styles/StyledComponent";
 import { grayColor, orange } from "../constants/color";
-import { NEW_MESSAGE, START_TYPING, STOP_TYPING } from '../constants/events';
+import { CHAT_JOINED, CHAT_LEFT, NEW_MESSAGE, START_TYPING, STOP_TYPING } from '../constants/events';
 import { useGetChatDetailsQuery, useGetChatMessagesQuery } from "../redux/api/api";
 import { removeNewMessageAlert } from '../redux/reducers/chatSlice';
-import { setIsFileMenu } from '../redux/reducers/miscSlice';
+import { setIsFileMenu, setIsMobile } from '../redux/reducers/miscSlice';
 import { getSocket } from "../Socket";
 
 const ChatContent = ({ chatId, user }) => {
@@ -39,8 +39,6 @@ const ChatContent = ({ chatId, user }) => {
   let oldMessagesChunk = useGetChatMessagesQuery({ chatId, page })
   const members = chatDetails?.data?.chat?.members;
 
-  // console.log(userTyping)
-
   const { data: oldMessages, setData: setOldMessages } = useInfiniteScrollTop(
     containerRef,
     oldMessagesChunk?.data?.totalPages,
@@ -55,14 +53,16 @@ const ChatContent = ({ chatId, user }) => {
   ]
 
   useEffect(() => {
+    socket.emit(CHAT_JOINED, user._id, )
     dispatch(removeNewMessageAlert(chatId));
     return () => {
       setMessage("")
       setMessageList([])
       setPage(1)
       setOldMessages([])
+      socket.emit(CHAT_LEFT, user._id)
     }
-  }, [chatId])
+  }, [chatId, socket])
 
   useEffect(() => {
     if (bottomRef.current) {
@@ -158,11 +158,29 @@ const ChatContent = ({ chatId, user }) => {
         <Stack direction={"row"} height={"100%"} alignItems={"center"} position={"relative"} boxSizing={"border-box"} sx={{
           width: "100%"
         }}>
+          <IconButton onClick={() => {
+            dispatch(setIsMobile(false))
+            navigate("/")
+          }}
+            sx={{
+              color: "rgb(32, 41, 43)",
+              bottom: "0",
+              left: "0.5rem",
+              display: {
+                xs: "block",
+                sm: "none"
+              },
+              position: "absolute",
+
+              padding: "0.4rem",
+            }}>
+            <HomeIcon />
+          </IconButton>
           <IconButton
             onClick={handleMenuOpen}
             sx={{
               position: "absolute",
-              left: "0.5rem",
+              left: { xs: "2.5rem", sm: "0.5rem" },
               bottom: "0.2rem"
             }}
           >
@@ -175,7 +193,6 @@ const ChatContent = ({ chatId, user }) => {
             position: "absolute",
             right: "0.5rem",
             bottom: "0.2rem",
-            // padding: "0.5rem",
             "&:hover": {
               backgroundColor: "error.dark"
             }
@@ -184,14 +201,19 @@ const ChatContent = ({ chatId, user }) => {
           </IconButton>
 
           <InputBox placeholder="Type Message Here..."
+
             value={message}
             onChange={messageChangeHandler}
             sx={{
-              marginTop: "2%"
+              marginTop: "2%",
+              padding: {
+                xs: "0 5rem",
+                sm: "0 3.5rem 0 3rem"
+              }
             }}
           />
-        </Stack>
-      </form>
+        </Stack >
+      </form >
       <FileMenu anchorE1={menuAnchor} chatId={chatId} />
     </>
   );

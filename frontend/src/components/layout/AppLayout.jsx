@@ -34,7 +34,7 @@ const AppLayout = ({ WrappedContent, ...props }) => {
   const chatId = params.chatId;
   const socket = getSocket();
   const deleteMenuAnchor = useRef(null);
-
+  
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
   const { isMobile, areOptionsOpen } = useSelector((state) => state.misc);
@@ -93,22 +93,6 @@ const AppLayout = ({ WrappedContent, ...props }) => {
       {isLoading ? (
         <Skeleton />
       ) : (
-        <Drawer open={isMobile} onClose={() => dispatch(setIsMobile(false))}>
-          {isLoading ? (
-            <Skeleton />
-          ) : (
-            <ChatList
-              chats={data?.chats}
-              chatId={chatId}
-              handleDeleteChat={handleDeleteChat}
-              newMessagesAlert={newMessageAlert}
-            />
-          )}
-        </Drawer>
-      )}
-      {isLoading ? (
-        <Skeleton />
-      ) : (
         <Drawer open={areOptionsOpen} onClose={() => dispatch(setAreOptionsOpen(false))}>
           {isLoading ? (
             <Skeleton />
@@ -127,18 +111,23 @@ const AppLayout = ({ WrappedContent, ...props }) => {
         }}
       >
         <Grid2
+          xs={12}
           sm={4}
           md={3}
           sx={{
-            display: { xs: "none", sm: "block" },
             flexGrow: "1",
             maxWidth: {
+              xs: "100%",
               sm: "33%",
               md: "25%",
             },
             boxSizing: "border-box",
             margin: "0.5rem",
             borderRadius: "25px",
+            display : {
+              xs : isMobile ? "none" : "block",
+              sm : "block"
+            }
           }}
           height={"100%"}
         >
@@ -154,17 +143,17 @@ const AppLayout = ({ WrappedContent, ...props }) => {
           )}
         </Grid2>
         <Grid2
-          xs={12}
+          xs={0}
           sm={8}
-          md={5}
-          lg={6}
+          md={6}
           height={"100%"}
+        display={{xs : isMobile ? "block" : "none", sm: "block" }}
           sx={{
             flexGrow: "2",
             margin: "0.5rem",
             borderRadius: "25px",
             maxWidth: {
-              xs: "100%",
+              xs : "100%",
               sm: "67%",
               md: "50%",
             },
