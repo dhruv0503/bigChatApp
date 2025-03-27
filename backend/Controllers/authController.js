@@ -1,6 +1,8 @@
+const { FRIEND_JOINED, FRIEND_LEFT } = require('../Constants/events.js');
 const User = require('../Models/userModel.js');
 const expressError = require('../Utils/expressError.js');
 const { sendToken, uploadToCloudinary } = require('../Utils/features.js')
+const { sendOnlineStatus } = require('../Utils/features.js')
 
 module.exports.createUser = async (req, res, next) => {
     const { name, username, password, bio } = req.body;
@@ -14,7 +16,6 @@ module.exports.createUser = async (req, res, next) => {
     const user = new User({ name, username, password, avatar, bio });
     if (!user) return next(new expressError('User not created', 400));
     const createdUser = await user.save();
-    
     sendToken(res, createdUser, 201, "Sign Up Successful");
 
 }
@@ -26,20 +27,16 @@ module.exports.loginUser = async (req, res, next) => {
     if (!user) return next(new expressError('Incorrect Username or Password', 400));
     const isMatch = await user.matchPassword(password);
     if (!isMatch) return next(new expressError('Incorrect Username or Password', 400));
+
+    sendOnlineStatus(req, user._id, FRIEND_JOINED, next)
     sendToken(res, user, 200, `Welcome Back ${user.name}`);
 }
 
 module.exports.logout = async (req, res, next) => {
     res.clearCookie('jsonToken');
+    sendOnlineStatus(req, req.userId, FRIEND_LEFT, next)
     res.status(200).json({
         status: true,
         message: "Logged Out Successfully"
     });
 }
-
-// module.exports.imageUploadTest = async(req, res, next) =>{
-//     const file = req.file;
-//     if(!file) return next(new expressError('No file uploaded', 400));
-//     console.log(file)
-//     res.send({file})
-// }

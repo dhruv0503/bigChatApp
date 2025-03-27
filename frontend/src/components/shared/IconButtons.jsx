@@ -97,14 +97,23 @@ export const LogoutButton = ({ text = false }) => {
 };
 
 const IconBtn = ({ title, icon, onClick, value, text }) => {
-  return (
-    <Tooltip title={title}>
+
+  const MainComponent = () => {
+    return (
       <Stack
         direction={"row"}
         spacing={"0.5rem"}
         alignItems={"center"}
         onClick={onClick}
         margin={text ? "0.5rem 1rem" : "unset"}
+        padding={text ? "0 1rem 0 0" : "unset"}
+        sx={{
+          "&:hover": {
+            cursor: "pointer",
+            backgroundColor: "rgba(255, 255, 255, 0.5)",
+            borderRadius: "0.5rem",
+          },
+        }}
       >
         <IconButton color="inherit" size="large">
           {value ? (
@@ -117,6 +126,10 @@ const IconBtn = ({ title, icon, onClick, value, text }) => {
         </IconButton>
         {text && <Typography>{title}</Typography>}
       </Stack>
-    </Tooltip>
+    )
+  }
+
+  return (text ? <MainComponent /> : <Tooltip title={title}><MainComponent /></Tooltip>
+
   );
 };

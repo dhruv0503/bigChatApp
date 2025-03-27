@@ -6,7 +6,7 @@ const { emitEvent, deleteFilesFromCloudinary } = require('../Utils/features')
 const { ALERT, REFETCH_CHATS } = require('../Constants/events')
 const mongoose = require("mongoose");
 const uuid = require('uuid');
-const { getSockets } = require('../Utils/helper');
+const { getSockets, updateFriendsCache } = require('../Utils/helper');
 const { NEW_MESSAGE, NEW_MESSAGE_ALERT } = require('../Constants/events');
 
 const adminMessage = async (req, chatId, message, members) => {
@@ -167,7 +167,6 @@ const leaveGroup = async (req, res, next) => {
     chat.members = remainingMembers;
     const updatedChat = await chat.save();
 
-    // emitEvent(req, ALERT, updatedChat.members, { chatId, message: `${user.username} has left the group` })
     adminMessage(req, chatId, `${user.username} has left the group`, updatedChat.members)
     return res.status(200).json({ success: true, message: "Group left successfully" })
 }
@@ -229,6 +228,9 @@ const deleteChat = async (req, res, next) => {
 
     if (chat.groupChat && !chat.members.includes(req.userId)) return next(new expressError("You are not in the group", 403))
 
+    let otherMember;
+    if (!chat.groupChat) otherMember = chat.members.filter(member => member.toString() !== req.userId.toString())[0];
+
     const messageWithAttachments = await Message.find({
         chatId,
         attachments: {
@@ -253,6 +255,8 @@ const deleteChat = async (req, res, next) => {
     await Message.deleteMany({ chatId })
 
     emitEvent(req, REFETCH_CHATS, chat.members, { users: [...chat.members] })
+    updateFriendsCache(req.userId, otherMember)
+    updateFriendsCache(otherMember, req.userId)
 
     res.status(200).json({ success: true, message: "Chat deleted successfully" })
 }

@@ -130,7 +130,6 @@ const Header = () => {
                 },
                 flexDirection: "row",
                 alignItems: "center",
-                // gap: "0.5rem",
               }}
             >
               <SearchButton />

@@ -2,10 +2,10 @@ const mongoose = require('mongoose')
 const jwt = require('jsonwebtoken')
 const { v4: uuid } = require('uuid')
 const streamifier = require('streamifier')
-const { getSockets } = require('./helper')
-const { myFriends } = require('../Controllers/userController')
-const { FRIEND_JOINED } = require('../Constants/events')
+const { getSockets, getCachedFriends, setCachedFriends } = require('./helper')
 const cloudinary = require('cloudinary').v2
+const Chat = require("../Models/chatModel")
+const User = require("../Models/userModel")
 
 const cookieOptions = {
     httpOnly: true,
@@ -30,6 +30,13 @@ const sendToken = (res, user, code, msg) => {
         message: msg,
         user
     })
+}
+
+const getMyFriends = async (req) => {
+    const allChatMembers = await Chat.find({ groupChat: false, members: req?.userId });
+    const myFriends = allChatMembers.flatMap((chat) => chat.members).filter((member) => member.toString() !== req.userId.toString());
+    const friends = await User.find({ _id: { $in: myFriends } })
+    return friends;
 }
 
 const deleteFilesFromCloudinary = async (files) => {
@@ -79,23 +86,21 @@ const uploadToCloudinary = async (files = []) => {
 }
 
 const emitEvent = (req, event, users, data) => {
-    const io = req.ap
-    p.get("io")
+    const io = req.app.get("io")
     const userSockets = getSockets(users);
     io.to(userSockets).emit(event, data);
 }
 
-const sendOnlineStatus = async (req) => {
-    try {
-        const io = req.app.get("io");
-        const getMyFriends = await myFriends();
-        const friendIds = getMyFriends.map(friend => friend._id);
-        const userSockets = getSockets(friendIds);
-        io.to(userSockets).emit(FRIEND_JOINED, { req.userId });
-    } catch (err) {
-        return next(new expressError(err.message, 500))
+const sendOnlineStatus = async (req, userId, event, next) => {
+    const io = req.app.get("io");
+    let friendIds = getCachedFriends(userId)
+    if (!friendIds) {
+        const myFriends = await getMyFriends(req)
+        friendIds = myFriends?.map(friend => friend._id);
+        setCachedFriends(userId, friendIds)
     }
-
+    const userSockets = getSockets(friendIds);
+    if (userSockets.length > 0) io.to(userSockets).emit(event, { userId });
 }
 
-module.exports = { connectDB, sendToken, emitEvent, deleteFilesFromCloudinary, cookieOptions, uploadToCloudinary }
+module.exports = { connectDB, sendToken, emitEvent, deleteFilesFromCloudinary, cookieOptions, uploadToCloudinary, sendOnlineStatus, getMyFriends }

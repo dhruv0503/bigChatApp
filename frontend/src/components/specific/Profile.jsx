@@ -12,12 +12,12 @@ const Profile = () => {
   const { user } = useSelector(state => state.auth)
   return (
     <Stack
-      spacing={"2rem"}
+      spacing={"1rem"}
       direction={"column"}
       alignItems={"center"}
       marginTop={"1rem"}
       boxSizing={"border-box"}
-
+      overflow={"hidden"}
     >
       <Avatar
         sx={{
@@ -58,7 +58,7 @@ const ProfileCard = ({ text, icon, heading }) => (
     color={"white"}
     textAlign={"center"}
     marginTop={"1rem"}
-    maxWidth={"60%"}
+    maxWidth={"80%"}
   >
     {icon && icon}
     <Stack>

@@ -11,7 +11,7 @@ import { TypingLoader } from '../components/layout/Loaders';
 import MessageComponent from "../components/shared/MessageComponent";
 import { InputBox } from "../components/styles/StyledComponent";
 import { grayColor, orange } from "../constants/color";
-import { CHAT_JOINED, CHAT_LEFT, NEW_MESSAGE, START_TYPING, STOP_TYPING } from '../constants/events';
+import { NEW_MESSAGE, START_TYPING, STOP_TYPING } from '../constants/events';
 import { useGetChatDetailsQuery, useGetChatMessagesQuery } from "../redux/api/api";
 import { removeNewMessageAlert } from '../redux/reducers/chatSlice';
 import { setIsFileMenu, setIsMobile } from '../redux/reducers/miscSlice';
@@ -53,14 +53,12 @@ const ChatContent = ({ chatId, user }) => {
   ]
 
   useEffect(() => {
-    socket.emit(CHAT_JOINED, user._id, )
     dispatch(removeNewMessageAlert(chatId));
     return () => {
       setMessage("")
       setMessageList([])
       setPage(1)
       setOldMessages([])
-      socket.emit(CHAT_LEFT, user._id)
     }
   }, [chatId, socket])
 

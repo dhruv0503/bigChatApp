@@ -70,13 +70,6 @@ io.on("connection", (socket) => {
     socket.on(STOP_TYPING, ({ members, chatId }) => {
         onStopTyping(io, members, chatId, user._id)
     })
-    socket.on(CHAT_JOINED, (userId) => {
-        console.log("joined")
-    })
-    socket.on(CHAT_LEFT, (userId) => {
-        console.log("left")
-    })
-
     socket.on("disconnect", () => {
         deleteSocket(user._id);
     })

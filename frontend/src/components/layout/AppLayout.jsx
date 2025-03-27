@@ -1,11 +1,14 @@
+import { useState } from 'react';
 import { Drawer, Grid2, Skeleton } from "@mui/material";
 import { useCallback, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import {
+  FRIEND_JOINED,
   NEW_MESSAGE_ALERT,
   NEW_REQUEST,
   REFETCH_CHATS,
+  FRIEND_LEFT
 } from "../../constants/events";
 import { getOrSaveFromStorage } from "../../lib/features";
 import { useGetChatsQuery } from "../../redux/api/api";
@@ -16,17 +19,16 @@ import {
 import {
   setAreOptionsOpen,
   setIsDeleteMenu,
-  setIsMobile,
-  setSelectedDeleteChat,
+  setSelectedDeleteChat
 } from "../../redux/reducers/miscSlice";
 import { getSocket } from "../../Socket";
 import DeleteChatMenu from "../dialogs/DeleteChatMenu";
 import { useErrors, useSocketEvents } from "../hooks/hooks";
 import Title from "../shared/Title";
 import ChatList from "../specific/ChatList";
+import OptionsSidebar from "../specific/OptionsSidebar";
 import Profile from "../specific/Profile";
 import Header from "./Header";
-import OptionsSidebar from "../specific/OptionsSidebar";
 
 const AppLayout = ({ WrappedContent, ...props }) => {
   const params = useParams();
@@ -34,8 +36,9 @@ const AppLayout = ({ WrappedContent, ...props }) => {
   const chatId = params.chatId;
   const socket = getSocket();
   const deleteMenuAnchor = useRef(null);
-  
+
   const dispatch = useDispatch();
+  const [onlineUsers, setOnlineUsers] = useState([]);
   const { user } = useSelector((state) => state.auth);
   const { isMobile, areOptionsOpen } = useSelector((state) => state.misc);
   const { newMessageAlert } = useSelector((state) => state.chat);
@@ -56,10 +59,18 @@ const AppLayout = ({ WrappedContent, ...props }) => {
   const refetchListener = useCallback(
     (data = {}) => {
       refetch();
-      if (data?.users?.includes(user._id)) navigate("/");
+      if (data?.users?.includes(user?._id)) navigate("/");
     },
-    [refetch, navigate, user._id]
+    [refetch, navigate, user?._id]
   );
+
+  const friendJoinedListener = useCallback((data) => {
+    setOnlineUsers((prev) => [...prev, data.userId])
+  }, [])
+
+  const friendLeftListener = useCallback((data) => {
+    setOnlineUsers((prev) => prev.filter((id) => id !== data.userId))
+  }, [])
 
   useEffect(() => {
     if (user && !data) refetch();
@@ -81,6 +92,8 @@ const AppLayout = ({ WrappedContent, ...props }) => {
     [NEW_MESSAGE_ALERT]: newMessageAlertListener,
     [NEW_REQUEST]: newRequestListener,
     [REFETCH_CHATS]: refetchListener,
+    [FRIEND_JOINED]: friendJoinedListener,
+    [FRIEND_LEFT]: friendLeftListener
   };
 
   useSocketEvents(socket, eventHandler);
@@ -124,9 +137,9 @@ const AppLayout = ({ WrappedContent, ...props }) => {
             boxSizing: "border-box",
             margin: "0.5rem",
             borderRadius: "25px",
-            display : {
-              xs : isMobile ? "none" : "block",
-              sm : "block"
+            display: {
+              xs: isMobile ? "none" : "block",
+              sm: "block"
             }
           }}
           height={"100%"}
@@ -139,6 +152,7 @@ const AppLayout = ({ WrappedContent, ...props }) => {
               chatId={chatId}
               handleDeleteChat={handleDeleteChat}
               newMessagesAlert={newMessageAlert}
+              onlineUsers={onlineUsers}
             />
           )}
         </Grid2>
@@ -147,13 +161,13 @@ const AppLayout = ({ WrappedContent, ...props }) => {
           sm={8}
           md={6}
           height={"100%"}
-        display={{xs : isMobile ? "block" : "none", sm: "block" }}
+          display={{ xs: isMobile ? "block" : "none", sm: "block" }}
           sx={{
             flexGrow: "2",
             margin: "0.5rem",
             borderRadius: "25px",
             maxWidth: {
-              xs : "100%",
+              xs: "100%",
               sm: "67%",
               md: "50%",
             },

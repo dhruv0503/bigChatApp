@@ -16,6 +16,7 @@ const ChatList = ({
   ],
   handleDeleteChat,
 }) => {
+  console.log(onlineUsers)
   return (
     <Stack
       direction={"column"}

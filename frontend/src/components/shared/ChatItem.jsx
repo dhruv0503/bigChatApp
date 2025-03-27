@@ -32,7 +32,6 @@ const ChatItem = ({
           cursor: "pointer",
           backgroundColor: sameSender ? "black" : "unset",
           position: "relative",
-          // gap : "1rem",
           color: sameSender ? "white" : "unset",
           overflow: "hidden"
         }}
