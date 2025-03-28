@@ -71,13 +71,6 @@ const api = createApi({
             }),
             keepUnusedDataFor: 0
         }),
-        getOnlineFriends: builder.query({
-            query: () => ({
-                url: `/user/friends/online`,
-                credentials: "include"
-            }),
-            providesTags: ["user"]
-        }),
         login: builder.mutation({
             query: (data) => ({
                 url: `/login`,

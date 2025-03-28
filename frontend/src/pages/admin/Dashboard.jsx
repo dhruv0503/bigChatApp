@@ -20,34 +20,34 @@ const Dashboard = () => {
   const stats = data?.stats;
 
   useErrors([{ isError, error }]);
-  const AppBar = () => {
-    return (
-      <Paper
-        elevation={3}
-        sx={{
-          padding: "2rem",
-          margin: "2rem 0",
-          borderRadius: "1rem",
-        }}
-      >
-        <Stack spacing={"1rem"} alignItems={"center"} direction={"row"}>
-          <AdminPanelSettingsIcon sx={{ fontSize: "3rem" }} />
-          <SearchField />
-          <CurvedButton>Search</CurvedButton>
-          <Box flexGrow={1} />
-          <Typography
-            display={{
-              xs: "none",
-              xl: "block",
-            }}
-            textAlign={"center"}
-          >
-            {moment().format("MMMM Do YYYY")}
-          </Typography>
-        </Stack>
-      </Paper>
-    );
-  };
+  // const AppBar = () => {
+  //   return (
+  //     <Paper
+  //       elevation={3}
+  //       sx={{
+  //         padding: "2rem",
+  //         margin: "2rem 0",
+  //         borderRadius: "1rem",
+  //       }}
+  //     >
+  //       <Stack spacing={"1rem"} alignItems={"center"} direction={"row"}>
+  //         <AdminPanelSettingsIcon sx={{ fontSize: "3rem" }} />
+  //         <SearchField />
+  //         <CurvedButton>Search</CurvedButton>
+  //         <Box flexGrow={1} />
+  //         <Typography
+  //           display={{
+  //             xs: "none",
+  //             xl: "block",
+  //           }}
+  //           textAlign={"center"}
+  //         >
+  //           {moment().format("MMMM Do YYYY")}
+  //         </Typography>
+  //       </Stack>
+  //     </Paper>
+  //   );
+  // };
 
   const Widgets = () => {
     return (
@@ -84,8 +84,8 @@ const Dashboard = () => {
     <LayoutLoader />
   ) : (
     <AdminLayout>
-      <Container component={"main"}>
-        <AppBar />
+      <Container component={"main"} sx={{marginTop : "2rem"}}>
+        {/* <AppBar /> */}
         <Stack
           direction={{
             xs: "column",
@@ -107,9 +107,11 @@ const Dashboard = () => {
               padding: "2rem",
               borderRadius: "1rem",
               width: "100%",
+              // maxHeight: "80%",
               maxWidth: {
                 xs: "100%",
-                sm: "30rem",
+                sm : "60%",
+                lg: "40%",
               },
             }}
           >
@@ -128,10 +130,11 @@ const Dashboard = () => {
               alignItems: "center",
               width: "100%",
               position: "relative",
+              // maxHeight: "80%",
               maxWidth: {
-                xs: "40rem",
-                sm: "30rem",
-                // md: "25rem",
+                xs: "100%",
+                sm : "60%",
+                lg : "40%",
               },
             }}
           >
@@ -165,9 +168,12 @@ const Widget = ({ title, value, icon }) => {
     <Paper
       elevation={3}
       sx={{
-        padding: "2rem",
+        padding: {
+          xs : "1rem",
+          xl : "2rem"
+        },
         borderRadius: "1.5rem",
-        width: "20rem",
+        width: "90%",
         margin: "2rem 0",
       }}
     >

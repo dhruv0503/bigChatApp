@@ -15,12 +15,13 @@ import { setIsAdmin } from "../../redux/reducers/authSlice";
 
 const AdminLogin = () => {
     const [secretKey, setSecretKey] = useState("");
+    // const navigate = useNavigate();
     const { isAdmin } = useSelector(state => state.auth)
     const [adminLogin, isLoading] = useAsyncMutation(useAdminLoginMutation)
     const { data } = useGetIsAdminQuery();
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    
+
     const submitForm = async (e) => {
         e.preventDefault();
         const result = await adminLogin("Logging In...", { secretKey });
@@ -32,7 +33,7 @@ const AdminLogin = () => {
         dispatch(setIsAdmin(data?.success ? true : false))
     }, [data, navigate]);
 
-    if (isAdmin) return <Navigate to={'/admin/dashboard'} />
+    if (isAdmin) navigate("/admin/dashboard");
 
     return (
         <div style={{

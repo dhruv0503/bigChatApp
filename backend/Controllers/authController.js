@@ -1,4 +1,3 @@
-const { FRIEND_JOINED, FRIEND_LEFT } = require('../Constants/events.js');
 const User = require('../Models/userModel.js');
 const expressError = require('../Utils/expressError.js');
 const { sendToken, uploadToCloudinary } = require('../Utils/features.js')
@@ -28,13 +27,11 @@ module.exports.loginUser = async (req, res, next) => {
     const isMatch = await user.matchPassword(password);
     if (!isMatch) return next(new expressError('Incorrect Username or Password', 400));
 
-    sendOnlineStatus(req, user._id, FRIEND_JOINED, next)
     sendToken(res, user, 200, `Welcome Back ${user.name}`);
 }
 
 module.exports.logout = async (req, res, next) => {
     res.clearCookie('jsonToken');
-    sendOnlineStatus(req, req.userId, FRIEND_LEFT, next)
     res.status(200).json({
         status: true,
         message: "Logged Out Successfully"

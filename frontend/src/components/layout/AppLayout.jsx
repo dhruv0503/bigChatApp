@@ -1,17 +1,16 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Drawer, Grid2, Skeleton } from "@mui/material";
 import { useCallback, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import {
-  FRIEND_JOINED,
   NEW_MESSAGE_ALERT,
   NEW_REQUEST,
   REFETCH_CHATS,
-  FRIEND_LEFT
+  ONLINE_USERS
 } from "../../constants/events";
 import { getOrSaveFromStorage } from "../../lib/features";
-import { useGetChatsQuery } from "../../redux/api/api";
+import { useGetChatsQuery, useGetFriendsQuery } from "../../redux/api/api";
 import {
   incrementNotficationCount,
   setNewMessagesAlert,
@@ -19,6 +18,7 @@ import {
 import {
   setAreOptionsOpen,
   setIsDeleteMenu,
+  setOnlineUsers,
   setSelectedDeleteChat
 } from "../../redux/reducers/miscSlice";
 import { getSocket } from "../../Socket";
@@ -38,11 +38,11 @@ const AppLayout = ({ WrappedContent, ...props }) => {
   const deleteMenuAnchor = useRef(null);
 
   const dispatch = useDispatch();
-  const [onlineUsers, setOnlineUsers] = useState([]);
   const { user } = useSelector((state) => state.auth);
-  const { isMobile, areOptionsOpen } = useSelector((state) => state.misc);
+  const { isMobile, areOptionsOpen, onlineUsers } = useSelector((state) => state.misc);
   const { newMessageAlert } = useSelector((state) => state.chat);
   const { data, isLoading, isError, error, refetch } = useGetChatsQuery();
+  const myFriends = useGetFriendsQuery();
 
   const newMessageAlertListener = useCallback(
     (data) => {
@@ -64,13 +64,14 @@ const AppLayout = ({ WrappedContent, ...props }) => {
     [refetch, navigate, user?._id]
   );
 
-  const friendJoinedListener = useCallback((data) => {
-    setOnlineUsers((prev) => [...prev, data.userId])
-  }, [])
+  const onlineUsersListener = useCallback((data) => {
+    dispatch(setOnlineUsers(data))
+  }, [dispatch, setOnlineUsers]);
 
-  const friendLeftListener = useCallback((data) => {
-    setOnlineUsers((prev) => prev.filter((id) => id !== data.userId))
-  }, [])
+  const filterFriends = useMemo(() => {
+    if (!myFriends?.data?.friends || !onlineUsers) return [];
+    return myFriends?.data?.friends?.filter((friend) => onlineUsers?.includes(friend?._id))
+  }, [myFriends?.data?.friends, onlineUsers])
 
   useEffect(() => {
     if (user && !data) refetch();
@@ -80,7 +81,8 @@ const AppLayout = ({ WrappedContent, ...props }) => {
     getOrSaveFromStorage({ key: NEW_MESSAGE_ALERT, value: newMessageAlert });
   }, [newMessageAlert]);
 
-  useErrors([{ isError, error }]);
+
+  useErrors([{ isError, error }, { isError: myFriends.isError, error: myFriends.error }]);
 
   const handleDeleteChat = (e, chatId, groupChat) => {
     dispatch(setIsDeleteMenu(true));
@@ -92,8 +94,8 @@ const AppLayout = ({ WrappedContent, ...props }) => {
     [NEW_MESSAGE_ALERT]: newMessageAlertListener,
     [NEW_REQUEST]: newRequestListener,
     [REFETCH_CHATS]: refetchListener,
-    [FRIEND_JOINED]: friendJoinedListener,
-    [FRIEND_LEFT]: friendLeftListener
+    [ONLINE_USERS]: onlineUsersListener
+
   };
 
   useSocketEvents(socket, eventHandler);
@@ -106,7 +108,7 @@ const AppLayout = ({ WrappedContent, ...props }) => {
       {isLoading ? (
         <Skeleton />
       ) : (
-        <Drawer open={areOptionsOpen} onClose={() => dispatch(setAreOptionsOpen(false))}>
+        <Drawer anchor={"right"} open={areOptionsOpen} onClose={() => dispatch(setAreOptionsOpen(false))}>
           {isLoading ? (
             <Skeleton />
           ) : (
@@ -152,7 +154,7 @@ const AppLayout = ({ WrappedContent, ...props }) => {
               chatId={chatId}
               handleDeleteChat={handleDeleteChat}
               newMessagesAlert={newMessageAlert}
-              onlineUsers={onlineUsers}
+              onlineFriends={filterFriends}
             />
           )}
         </Grid2>

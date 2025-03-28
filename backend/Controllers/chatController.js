@@ -6,7 +6,7 @@ const { emitEvent, deleteFilesFromCloudinary } = require('../Utils/features')
 const { ALERT, REFETCH_CHATS } = require('../Constants/events')
 const mongoose = require("mongoose");
 const uuid = require('uuid');
-const { getSockets, updateFriendsCache } = require('../Utils/helper');
+const { getSockets } = require('../Utils/helper');
 const { NEW_MESSAGE, NEW_MESSAGE_ALERT } = require('../Constants/events');
 
 const adminMessage = async (req, chatId, message, members) => {
@@ -255,8 +255,6 @@ const deleteChat = async (req, res, next) => {
     await Message.deleteMany({ chatId })
 
     emitEvent(req, REFETCH_CHATS, chat.members, { users: [...chat.members] })
-    updateFriendsCache(req.userId, otherMember)
-    updateFriendsCache(otherMember, req.userId)
 
     res.status(200).json({ success: true, message: "Chat deleted successfully" })
 }

@@ -2,12 +2,13 @@
 import { Stack } from "@mui/material";
 import { bgGradient } from "../../constants/color";
 import ChatItem from "../shared/ChatItem";
+import { useMemo } from "react";
 
 const ChatList = ({
   w = "100%",
   chats = [],
   chatId,
-  onlineUsers = [],
+  onlineFriends = [],
   newMessagesAlert = [
     {
       chatId: "",
@@ -16,7 +17,10 @@ const ChatList = ({
   ],
   handleDeleteChat,
 }) => {
-  console.log(onlineUsers)
+
+  const onlineUserIds = useMemo(() => new Set(onlineFriends.map((user) => user._id.toString())), [onlineFriends]);
+
+
   return (
     <Stack
       direction={"column"}
@@ -30,7 +34,7 @@ const ChatList = ({
         const newMessageAlert = newMessagesAlert.find(
           ({ chatId }) => chatId === _id
         );
-        const isOnline = members?.some((member) => onlineUsers.includes(_id));
+        const isOnline = members?.some((member) => onlineUserIds.has(member));
         return (
           <ChatItem
             index={idx}

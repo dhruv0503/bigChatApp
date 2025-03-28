@@ -1,9 +1,8 @@
 const Request = require('../Models/requestModel');
 const Chat = require('../Models/chatModel');
-const { emitEvent, sendOnlineStatus } = require('../Utils/features');
+const { emitEvent } = require('../Utils/features');
 const expressError = require('../Utils/expressError');
-const { REFETCH_CHATS, NEW_REQUEST, FRIEND_JOINED } = require('../Constants/events');
-const { getSocket, updateFriendsCache } = require('../Utils/helper');
+const { REFETCH_CHATS, NEW_REQUEST } = require('../Constants/events');
 
 module.exports.sendFriendRequest = async (req, res, next) => {
     const { userId } = req.body;
@@ -61,13 +60,6 @@ module.exports.acceptFriendRequest = async (req, res, next) => {
     await newChat.save();
     await request.deleteOne();
     emitEvent(req, REFETCH_CHATS, members)
-
-    updateFriendsCache(request.sender._id, request.receiver._id)
-    updateFriendsCache(request.receiver._id, request.sender._id)
-
-    sendOnlineStatus(req, request.receiver._id, FRIEND_JOINED, next)
-    const senderSocket = getSocket(request.sender._id)
-    if(senderSocket) sendOnlineStatus(req, request.sender._id, FRIEND_JOINED, next)
 
     return res.status(200).json({
         success: true,

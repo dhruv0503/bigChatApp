@@ -57,7 +57,7 @@ const DoughnutChartOptions = {
             display: false
         }
     },
-    cutout : 120
+    cutout : 100
 }
 
 const labels = getLast7Days();
@@ -66,7 +66,7 @@ const LineChart = ({ value }) => {
     const data = {
         labels,
         datasets: [{
-            label: 'My First Dataset',
+            label: 'Total Messages',
             data: value,
             fill: true,
             borderColor: 'rgb(75, 192, 192)',
@@ -87,7 +87,7 @@ const DoughnutChart = ({value = [], labels = []}) => {
             borderColor: ['rgb(75, 192, 192)','rgb(255,99,132)' ],
             backgroundColor : ['rgba(75, 192, 192, 0.5)', 'rgba(255, 99, 132, 0.5)'],
             hoverBackgroundColor : ["rgba(75, 192, 212, 0.8)", "rgba(250, 99, 132, 0.8"],
-            offset: 40,
+            offset: 20,
         }]
     }
     return (

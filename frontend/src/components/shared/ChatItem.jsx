@@ -33,7 +33,11 @@ const ChatItem = ({
           backgroundColor: sameSender ? "black" : "unset",
           position: "relative",
           color: sameSender ? "white" : "unset",
-          overflow: "hidden"
+          overflow: "hidden",
+          gap : {
+            xs : groupChat ? "1.5rem" : "unset",
+            sm : "unset"
+          },
         }}
       >
         <AvatarCard avatar={avatar} />

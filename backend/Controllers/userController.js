@@ -2,7 +2,7 @@ const User = require('../Models/userModel')
 const Chat = require('../Models/chatModel')
 const Request = require('../Models/requestModel')
 const { getMyFriends } = require('../Utils/features')
-const { getSocket, getAllSockets, getSockets } = require('../Utils/helper')
+const { getSocket, getAllSockets } = require('../Utils/helper')
 
 module.exports.getMyProfile = async (req, res, next) => {
     const user = await User.findById(req.userId);
@@ -13,22 +13,10 @@ module.exports.getMyProfile = async (req, res, next) => {
 }
 
 module.exports.myFriends = async (req, res, next) => {
-    const allChatMembers = await Chat.find({ groupChat: false, members: req?.userId });
-    const myFriends = allChatMembers.flatMap((chat) => chat.members).filter((member) => member.toString() !== req.userId.toString());
-    const friends = await User.find({ _id: { $in: myFriends } })
+    const friends = await getMyFriends(req);
     res.status(200).json({
         success: true,
         friends
-    })
-}
-
-module.exports.myOnlineFriends = async (req, res, next) => {
-    const myFriends = await getMyFriends(req);
-    const friendIds = myFriends.map(friend => friend._id)
-    const onlineFriends = friendIds.filter(friend => getSocket(friend) !== undefined)
-    res.status(200).json({
-        success: true,
-        onlineFriends
     })
 }
 

@@ -69,13 +69,13 @@ const Sidebar = ({ w = "100%" }) => {
       sx={{
         height: "100%",
         width: w,
-        padding: "3rem",
+        padding: "3rem 2rem",
         boxSizing: "border-box",
         boxShadow: "0px 0px 10px 0px rgba(0,0,0,0.2)",
       }}
     >
-      <Typography variant="h5" textTransform={"uppercase"}>
-        Admin
+      <Typography variant="h5" textAlign={"center"} fontWeight={600}>
+        Admin Panel
       </Typography>
       <Stack spacing={"1rem"}>
         {tabs.map((tab) => {
@@ -127,15 +127,14 @@ const AdminLayout = ({ children }) => {
   return (
     <Grid2
       conatiner={"true"}
-      minHeight={"100vh"}
       display={"flex"}
       width={"100%"}
-      height={"100%"}
+      height={"100vh"}
     >
-      <Box
+      {/* <Box
         sx={{
-          display: { xs: "block", lg: "none" },
-          position: "fixed",
+          display: { xs: "block", md: "none" },
+          position: "absolute",
           right: "3rem",
           top: "4.5rem",
         }}
@@ -143,14 +142,14 @@ const AdminLayout = ({ children }) => {
         <IconButton onClick={hanldeMobile}>
           <MenuIcon />
         </IconButton>
-      </Box>
+      </Box> */}
       <Grid2
         item="true"
-        md={4}
+        xs={0}
         lg={3}
         sx={{
-          display: { xs: "none", lg: "block" },
-          minHeight: "100%",
+          display: { xs: "none", md: "block" },
+          height: "100%",
           minWidth: "25%",
         }}
       >
@@ -159,11 +158,10 @@ const AdminLayout = ({ children }) => {
       <Grid2
         item="true"
         xs={12}
-        md={8}
         lg={9}
         sx={{
           backgroundColor: grayColor,
-          minHeight: "100%",
+          height : "100%",
           minWidth: {
             xs: "100%",
             sm: "75%",

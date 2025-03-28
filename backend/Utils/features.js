@@ -2,7 +2,7 @@ const mongoose = require('mongoose')
 const jwt = require('jsonwebtoken')
 const { v4: uuid } = require('uuid')
 const streamifier = require('streamifier')
-const { getSockets, getCachedFriends, setCachedFriends } = require('./helper')
+const { getSockets} = require('./helper')
 const cloudinary = require('cloudinary').v2
 const Chat = require("../Models/chatModel")
 const User = require("../Models/userModel")
@@ -91,16 +91,4 @@ const emitEvent = (req, event, users, data) => {
     io.to(userSockets).emit(event, data);
 }
 
-const sendOnlineStatus = async (req, userId, event, next) => {
-    const io = req.app.get("io");
-    let friendIds = getCachedFriends(userId)
-    if (!friendIds) {
-        const myFriends = await getMyFriends(req)
-        friendIds = myFriends?.map(friend => friend._id);
-        setCachedFriends(userId, friendIds)
-    }
-    const userSockets = getSockets(friendIds);
-    if (userSockets.length > 0) io.to(userSockets).emit(event, { userId });
-}
-
-module.exports = { connectDB, sendToken, emitEvent, deleteFilesFromCloudinary, cookieOptions, uploadToCloudinary, sendOnlineStatus, getMyFriends }
+module.exports = { connectDB, sendToken, emitEvent, deleteFilesFromCloudinary, cookieOptions, uploadToCloudinary, getMyFriends }

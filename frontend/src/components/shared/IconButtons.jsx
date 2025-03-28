@@ -5,9 +5,9 @@ import {
   Notifications as NotificationIcon,
   Search as SearchIcon,
 } from "@mui/icons-material";
-import { Badge, IconButton, Tooltip, Stack, Typography } from "@mui/material";
+import { Badge, IconButton, Stack, Tooltip, Typography } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
-import { setIsSearch } from "../../redux/reducers/miscSlice";
+import { setAreOptionsOpen, setIsSearch } from "../../redux/reducers/miscSlice";
 
 import { useNavigate } from "react-router-dom";
 import api, { useLogoutMutation } from "../../redux/api/api";
@@ -17,6 +17,7 @@ import {
   setIsNewGroup,
   setIsNotification,
 } from "../../redux/reducers/miscSlice";
+import { getSocket } from "../../Socket";
 import { useAsyncMutation } from "../hooks/hooks";
 
 export const SearchButton = ({ text = false }) => {
@@ -76,15 +77,16 @@ export const NotificationButton = ({ text = false }) => {
   );
 };
 
-export const LogoutButton = ({ text = false }) => {
+export const LogoutButton = ({ text = false}) => {
   const [userLogout] = useAsyncMutation(useLogoutMutation);
-
+  const socket = getSocket();
   const dispatch = useDispatch();
   const logoutHandler = async () => {
     await userLogout("Logging Out");
     dispatch(api.util.resetApiState());
     dispatch(setIsLogin(false));
     dispatch(updateUser(null));
+    socket.disconnect();
   };
   return (
     <IconBtn
@@ -97,24 +99,30 @@ export const LogoutButton = ({ text = false }) => {
 };
 
 const IconBtn = ({ title, icon, onClick, value, text }) => {
-
-  const MainComponent = () => {
-    return (
-      <Stack
-        direction={"row"}
-        spacing={"0.5rem"}
-        alignItems={"center"}
-        onClick={onClick}
-        margin={text ? "0.5rem 1rem" : "unset"}
-        padding={text ? "0 1rem 0 0" : "unset"}
-        sx={{
+  const dispatch = useDispatch();
+  const combiedHandler = () =>{
+    onClick();
+    if(text) dispatch(setAreOptionsOpen(false));
+  }
+  return (
+    <Stack
+      direction="row"
+      spacing="0.5rem"
+      alignItems="center"
+      onClick={combiedHandler}
+      margin={text ? "0.5rem 1rem" : "unset"}
+      padding={text ? "0 1rem 0 0" : "unset"}
+      sx={{
+        ...(text && {
           "&:hover": {
             cursor: "pointer",
             backgroundColor: "rgba(255, 255, 255, 0.5)",
             borderRadius: "0.5rem",
           },
-        }}
-      >
+        }),
+      }}
+    >
+      <Tooltip title={text ? "" : title}>
         <IconButton color="inherit" size="large">
           {value ? (
             <Badge badgeContent={value} color="error">
@@ -124,12 +132,8 @@ const IconBtn = ({ title, icon, onClick, value, text }) => {
             icon
           )}
         </IconButton>
-        {text && <Typography>{title}</Typography>}
-      </Stack>
-    )
-  }
-
-  return (text ? <MainComponent /> : <Tooltip title={title}><MainComponent /></Tooltip>
-
+      </Tooltip>
+      {text && <Typography>{title}</Typography>}
+    </Stack>
   );
 };
