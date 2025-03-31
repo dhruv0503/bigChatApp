@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { Drawer, Grid2, Skeleton } from "@mui/material";
 import { useCallback, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -12,8 +12,8 @@ import {
 import { getOrSaveFromStorage } from "../../lib/features";
 import { useGetChatsQuery, useGetFriendsQuery } from "../../redux/api/api";
 import {
-  incrementNotficationCount,
-  setNewMessagesAlert,
+    incrementNotificationCount,
+    setNewMessagesAlert,
 } from "../../redux/reducers/chatSlice";
 import {
   setAreOptionsOpen,
@@ -52,9 +52,9 @@ const AppLayout = ({ WrappedContent, ...props }) => {
     [chatId, dispatch]
   );
 
-  const newRequestListener = useCallback(() => {
-    dispatch(incrementNotficationCount());
-  }, [dispatch]);
+  const newRequestListener = useCallback(({userId}) => {
+    if(user._id === userId) dispatch(incrementNotificationCount());
+  }, [dispatch, user?._id]);
 
   const refetchListener = useCallback(
     (data = {}) => {
@@ -66,7 +66,7 @@ const AppLayout = ({ WrappedContent, ...props }) => {
 
   const onlineUsersListener = useCallback((data) => {
     dispatch(setOnlineUsers(data))
-  }, [dispatch, setOnlineUsers]);
+  }, [dispatch]);
 
   const filterFriends = useMemo(() => {
     if (!myFriends?.data?.friends || !onlineUsers) return [];
@@ -80,7 +80,6 @@ const AppLayout = ({ WrappedContent, ...props }) => {
   useEffect(() => {
     getOrSaveFromStorage({ key: NEW_MESSAGE_ALERT, value: newMessageAlert });
   }, [newMessageAlert]);
-
 
   useErrors([{ isError, error }, { isError: myFriends.isError, error: myFriends.error }]);
 

@@ -62,7 +62,7 @@ const FileMenu = ({ anchorE1, chatId }) => {
                         <ListItemText style={{ marginLeft: "0.5rem" }}>
                             Image
                         </ListItemText>
-                        <input type="file" multiple accept='image/png, image/jpeg, image/gif' style={{ visibility: "hidden" }} onChange={(e) => fileChangeHandler(e, "Images")} ref={imageRef}/>
+                        <input type="file" multiple accept='image/png, image/jpeg, image/gif, image/jpg' style={{ visibility: "hidden" }} onChange={(e) => fileChangeHandler(e, "Images")} ref={imageRef}/>
                     </MenuItem>
                     <MenuItem onClick={selectAudio}>
                         <Tooltip title={"Audio"}>
@@ -87,9 +87,9 @@ const FileMenu = ({ anchorE1, chatId }) => {
                             <UploadFileIcon />
                         </Tooltip>
                         <ListItemText style={{ marginLeft: "0.5rem" }}>
-                            Video
+                            File
                         </ListItemText>
-                        <input type="file" multiple accept='*' style={{ display: "none" }} onChange={(e) => fileChangeHandler(e, "Files")}ref={fileRef} />
+                        <input type="file" multiple accept='*' style={{ display: "none" }} onChange={(e) => fileChangeHandler(e, "Files")} ref={fileRef} />
                     </MenuItem>
                 </MenuList>
             </div>

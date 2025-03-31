@@ -74,6 +74,6 @@ module.exports.getMyNotifications = async (req, res, next) => {
 
     return res.status(200).json({
         success: true,
-        notifications: transformedRequests
+        notifications: transformedRequests,
     })
 }

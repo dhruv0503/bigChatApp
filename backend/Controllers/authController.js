@@ -1,7 +1,6 @@
 const User = require('../Models/userModel.js');
 const expressError = require('../Utils/expressError.js');
 const { sendToken, uploadToCloudinary } = require('../Utils/features.js')
-const { sendOnlineStatus } = require('../Utils/features.js')
 
 module.exports.createUser = async (req, res, next) => {
     const { name, username, password, bio } = req.body;
@@ -20,14 +19,13 @@ module.exports.createUser = async (req, res, next) => {
 }
 
 module.exports.loginUser = async (req, res, next) => {
-    console.log(req.body);
     const { username, password } = req.body;
     const user = await User.findOne({ username }).select("+password");
     if (!user) return next(new expressError('Incorrect Username or Password', 400));
     const isMatch = await user.matchPassword(password);
     if (!isMatch) return next(new expressError('Incorrect Username or Password', 400));
 
-    sendToken(res, user, 200, `Welcome Back ${user.name}`);
+    sendToken(res, user, 200, `Welcome Back ${user?.name}`);
 }
 
 module.exports.logout = async (req, res, next) => {

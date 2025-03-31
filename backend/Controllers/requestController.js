@@ -23,7 +23,7 @@ module.exports.sendFriendRequest = async (req, res, next) => {
 
     await newRequest.save();
 
-    emitEvent(req, NEW_REQUEST, [userId], `Request Received from ${userId}`)
+    emitEvent(req, NEW_REQUEST, [userId], {userId})
 
     return res.status(200).json({
         success: true,
@@ -42,7 +42,6 @@ module.exports.acceptFriendRequest = async (req, res, next) => {
 
     if (!accept) {
         await request.deleteOne();
-        emitEvent(req, "REQUEST_REJECTED", request.sender._id, `Request Rejected by ${request.receiver._id}`)
         return res.status(200).json({
             success: true,
             message: "Friend request rejected"

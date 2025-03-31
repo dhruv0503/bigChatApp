@@ -12,7 +12,7 @@ import { setAreOptionsOpen, setIsSearch } from "../../redux/reducers/miscSlice";
 import { useNavigate } from "react-router-dom";
 import api, { useLogoutMutation } from "../../redux/api/api";
 import { setIsLogin, updateUser } from "../../redux/reducers/authSlice";
-import { resetNotficationCount } from "../../redux/reducers/chatSlice";
+import { resetNotificationCount } from "../../redux/reducers/chatSlice";
 import {
   setIsNewGroup,
   setIsNotification,
@@ -64,7 +64,7 @@ export const NotificationButton = ({ text = false }) => {
   const dispatch = useDispatch();
   const openNotification = () => {
     dispatch(setIsNotification(true));
-    dispatch(resetNotficationCount());
+    dispatch(resetNotificationCount());
   };
   return (
     <IconBtn

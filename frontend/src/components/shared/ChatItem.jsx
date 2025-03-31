@@ -41,8 +41,15 @@ const ChatItem = ({
         }}
       >
         <AvatarCard avatar={avatar} />
-        <Stack sx={{margin : groupChat ? "0 1rem" : "unset"}}>
-          <Typography>{username}</Typography>
+        <Stack sx={{margin : groupChat ? "0 1rem" : "unset", padding : "0 1rem 0 0"}}>
+          <Typography
+            sx={{
+                display: "-webkit-box",
+                WebkitLineClamp: 2,
+                WebkitBoxOrient: "vertical",
+                overflow: "hidden",
+            }}
+          >{username}</Typography>
           {newMessageAlert && (
             <Typography>{newMessageAlert.count} New Messages</Typography>
           )}
@@ -59,6 +66,7 @@ const ChatItem = ({
               right: "1rem",
               top: "50%",
               transform: "translateY(-50%)",
+              marginLeft : "1rem"
             }}
           />
         )}

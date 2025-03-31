@@ -1,12 +1,11 @@
-import { useEffect } from 'react'
+import { Delete as DeleteIcon, ExitToApp as ExitToAppIcon } from '@mui/icons-material'
 import { Menu, Stack, Typography } from '@mui/material'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useSelector } from 'react-redux'
-import { setIsDeleteMenu } from '../../redux/reducers/miscSlice'
-import { ExitToApp as ExitToAppIcon, Delete as DeleteIcon } from '@mui/icons-material'
 import { useNavigate } from 'react-router-dom'
-import { useAsyncMutation } from '../hooks/hooks'
 import { useDeleteChatMutation, useLeaveGroupMutation } from '../../redux/api/api'
+import { setIsDeleteMenu } from '../../redux/reducers/miscSlice'
+import { useAsyncMutation } from '../hooks/hooks'
 
 const DeleteChatMenu = ({ dispatch, deleteMenuAnchor }) => {
 
@@ -19,7 +18,8 @@ const DeleteChatMenu = ({ dispatch, deleteMenuAnchor }) => {
     const closeHandler = () => {
         dispatch(setIsDeleteMenu(false))
         deleteMenuAnchor.current = null
-    }
+        navigate('/')
+}
 
     const leaveChatHandler = () => {
         closeHandler()

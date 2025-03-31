@@ -53,7 +53,7 @@ const tabs = [
   },
 ];
 
-const Sidebar = ({ w = "100%" }) => {
+const Sidebar = () => {
   const location = useLocation();
   const [adminLogout] = useAsyncMutation(useAdminLogoutMutation);
   const dispatch = useDispatch();
@@ -68,10 +68,11 @@ const Sidebar = ({ w = "100%" }) => {
       spacing={"3rem"}
       sx={{
         height: "100%",
-        width: w,
+        width: "100%",
         padding: "3rem 2rem",
         boxSizing: "border-box",
         boxShadow: "0px 0px 10px 0px rgba(0,0,0,0.2)",
+        flexGrow: 1,
       }}
     >
       <Typography variant="h5" textAlign={"center"} fontWeight={600}>
@@ -129,20 +130,26 @@ const AdminLayout = ({ children }) => {
       conatiner={"true"}
       display={"flex"}
       width={"100%"}
-      height={"100vh"}
+      height={{
+        xs: "100%",
+        lg: "100vh",
+      }}
     >
-      {/* <Box
+      <Box
         sx={{
           display: { xs: "block", md: "none" },
           position: "absolute",
-          right: "3rem",
-          top: "4.5rem",
+          right: {
+            xs : "0.5rem",
+            sm : "1.5rem"
+          },
+          top: "2rem",
         }}
       >
         <IconButton onClick={hanldeMobile}>
           <MenuIcon />
         </IconButton>
-      </Box> */}
+      </Box>
       <Grid2
         item="true"
         xs={0}
@@ -151,6 +158,7 @@ const AdminLayout = ({ children }) => {
           display: { xs: "none", md: "block" },
           height: "100%",
           minWidth: "25%",
+          flexGrow: 1,
         }}
       >
         <Sidebar />
@@ -161,17 +169,17 @@ const AdminLayout = ({ children }) => {
         lg={9}
         sx={{
           backgroundColor: grayColor,
-          height : "100%",
+          height: "100%",
           minWidth: {
             xs: "100%",
-            sm: "75%",
+            md: "75%",
           },
         }}
       >
         {children}
       </Grid2>
-      <Drawer open={isMobile} onClose={handleClose}>
-        <Sidebar w="50vw" />
+      <Drawer anchor="right" open={isMobile} onClose={handleClose}>
+        <Sidebar />
       </Drawer>
     </Grid2>
   );

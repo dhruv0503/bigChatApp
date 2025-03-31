@@ -20,13 +20,12 @@ const Notifications = () => {
   const { isNotification } = useSelector(state => state.misc)
   const dispatch = useDispatch();
   const { isLoading, data, error, isError } = useGetNotificationsQuery();
-  console.log(data);
 
   const [acceptRequest] = useAsyncMutation(useAcceptFriendeRequestMutation)
 
   const friendRequestHandler = async (_id, accept) => {
     dispatch(setIsNotification(false))
-    await acceptRequest("Accepting Friend Request", { requestId: _id, accept })
+    await acceptRequest("Resolving Friend Request", { requestId: _id, accept })
   };
 
   useErrors([{ error, isError }])
@@ -34,7 +33,7 @@ const Notifications = () => {
   return (
     <Dialog open={isNotification} onClose={() => dispatch(setIsNotification(false))}>
       <Stack p={{ xs: "0.5rem", sm: "1rem" }} maxWidth={"25rem"}>
-        <DialogTitle>Notificatons</DialogTitle>
+        <DialogTitle>Notifications</DialogTitle>
         {
           isLoading ? <Skeleton /> : (
             <>

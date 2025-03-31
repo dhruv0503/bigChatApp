@@ -1,7 +1,7 @@
 import { useInfiniteScrollTop } from '6pp';
 import { AttachFile as AttachFileButton, Home as HomeIcon, Send as SendIcon } from "@mui/icons-material";
 import { IconButton, Skeleton, Stack } from "@mui/material";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import  { useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import FileMenu from "../components/dialogs/FileMenu";
@@ -91,11 +91,7 @@ const ChatContent = ({ chatId, user }) => {
     dispatch(setIsFileMenu(true))
   };
 
-  const handleMenuClose = () => {
-    setMenuAnchor(null);
-  };
-
-  const submitHanlder = (e) => {
+  const submitHandler = (e) => {
     e.preventDefault();
     if (!message.trim()) return;
     socket.emit(NEW_MESSAGE, { chatId, members, message })
@@ -133,11 +129,11 @@ const ChatContent = ({ chatId, user }) => {
     <>
       <Stack
         ref={containerRef}
-        boxSizing={"border-box"}
         padding={"1rem"}
         spacing={"1rem"}
         bgcolor={grayColor}
-        height={"88%"}
+        height={"90%"}
+        boxSizing="border-box"
         sx={{
           overflowX: "hidden",
           overflowY: "auto",
@@ -152,9 +148,10 @@ const ChatContent = ({ chatId, user }) => {
 
         <div ref={bottomRef} />
       </Stack >
-      <form style={{ height: "11%" }} onSubmit={submitHanlder}>
+      <form style={{ height: "8vh" }} onSubmit={submitHandler}>
         <Stack direction={"row"} height={"100%"} alignItems={"center"} position={"relative"} boxSizing={"border-box"} sx={{
           width: "100%"
+
         }}>
           <IconButton onClick={() => {
             dispatch(setIsMobile(false))
@@ -162,8 +159,8 @@ const ChatContent = ({ chatId, user }) => {
           }}
             sx={{
               color: "rgb(32, 41, 43)",
-              bottom: "0",
-              left: "0.5rem",
+              bottom: "0.5vh",
+              left: "1.5vw",
               display: {
                 xs: "block",
                 sm: "none"
@@ -178,8 +175,8 @@ const ChatContent = ({ chatId, user }) => {
             onClick={handleMenuOpen}
             sx={{
               position: "absolute",
-              left: { xs: "2.5rem", sm: "0.5rem" },
-              bottom: "0.2rem"
+              left: { xs: "5.5vw", sm: "0.5vw" },
+              bottom: "0.7vh"
             }}
           >
             <AttachFileButton />
@@ -189,8 +186,11 @@ const ChatContent = ({ chatId, user }) => {
             bgcolor: orange,
             color: "white",
             position: "absolute",
-            right: "0.5rem",
-            bottom: "0.2rem",
+            right: {
+              xs: "2vw",
+              sm : "1vw"
+            },
+            bottom: "0.7vh",
             "&:hover": {
               backgroundColor: "error.dark"
             }
@@ -199,13 +199,17 @@ const ChatContent = ({ chatId, user }) => {
           </IconButton>
 
           <InputBox placeholder="Type Message Here..."
-
+            fontSize={{
+              xs : "1rem",
+              md : "1.2rem",
+              lg : "1.5rem"
+            }}
             value={message}
             onChange={messageChangeHandler}
             sx={{
-              marginTop: "2%",
+              marginTop: "3%",
               padding: {
-                xs: "0 5rem",
+                xs: "0 4.5rem",
                 sm: "0 3.5rem 0 3rem"
               }
             }}
