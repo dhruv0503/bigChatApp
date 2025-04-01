@@ -7,7 +7,7 @@ import {
     Typography
 } from "@mui/material";
 import { useState } from "react";
-import { Navigate, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from "react-redux"
 import { useAsyncMutation } from '../../components/hooks/hooks'
 import { useAdminLoginMutation, useGetIsAdminQuery } from "../../redux/api/adminApi";
@@ -15,7 +15,6 @@ import { setIsAdmin } from "../../redux/reducers/authSlice";
 
 const AdminLogin = () => {
     const [secretKey, setSecretKey] = useState("");
-    // const navigate = useNavigate();
     const { isAdmin } = useSelector(state => state.auth)
     const [adminLogin, isLoading] = useAsyncMutation(useAdminLoginMutation)
     const { data } = useGetIsAdminQuery();
@@ -30,10 +29,12 @@ const AdminLogin = () => {
     };
 
     useEffect(() => {
-        dispatch(setIsAdmin(data?.success ? true : false))
-    }, [data, navigate]);
+        dispatch(setIsAdmin(!!data))
+    }, [data, navigate, dispatch]);
 
-    if (isAdmin) navigate("/admin/dashboard");
+    useEffect(() => {
+        if (isAdmin) navigate("/admin/dashboard");
+    }, [isAdmin, navigate]);
 
     return (
         <div style={{

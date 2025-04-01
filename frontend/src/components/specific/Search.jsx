@@ -32,12 +32,6 @@
           .catch((err) => console.log(err))
     }, [searchText, searchUser, users])
 
-    const addFriendLoader = async (_id) => {
-      await sendFriendRequest("Sending Friend Request...", { userId: _id })
-      await searchUserFunction()
-    }
-
-
     useEffect(() => {
       const timeOutId = setTimeout(searchUserFunction, 1000)
       return () => {
@@ -45,6 +39,11 @@
       }
 
     }, [searchText, searchUserFunction])
+
+    const addFriendLoader = async (_id) => {
+      await sendFriendRequest("Sending Friend Request...", { userId: _id })
+      await searchUserFunction()
+    }
 
     return (
       <Dialog width={"25rem"} open={isSearch} onClose={() => dispatch(setIsSearch(false))}>

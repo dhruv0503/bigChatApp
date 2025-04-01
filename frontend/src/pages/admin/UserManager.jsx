@@ -56,7 +56,6 @@ const UserManager = () => {
   const [rows, setRows] = useState([]);
   const { data, isError, error, isLoading } = useGetAdminUsersQuery();
   useEffect(() => {
-    console.log(data);
     setRows(
       data?.users?.map((user) => {
         return {

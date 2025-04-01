@@ -3,7 +3,7 @@ const User = require('../Models/userModel');
 const Message = require('../Models/messageModel');
 const expressError = require('../Utils/expressError');
 const { emitEvent, deleteFilesFromCloudinary } = require('../Utils/features')
-const { ALERT, REFETCH_CHATS } = require('../Constants/events')
+const { REFETCH_CHATS, NEW_GROUP, ADD_MEMBER, REMOVE_MEMBER, LEAVE_GROUP, DELETE_GROUP} = require('../Constants/events')
 const mongoose = require("mongoose");
 const uuid = require('uuid');
 const { getSockets } = require('../Utils/helper');
@@ -32,12 +32,11 @@ const adminMessage = async (req, chatId, message, members) => {
         chatId,
         message: messageForRealTime
     })
-    console.log(chatId)
     io.to(membersSocket).emit(NEW_MESSAGE_ALERT, { chatId })
     await messageForDb.save();
 }
 
-const newGroupChat = async (req, res, next) => {
+const newGroupChat = async (req, res) => {
     const { name, members } = req.body;
 
     if (members.length < 2) return res.status(400).json({ message: "More than 2 users are required to form a group chat" })
@@ -47,12 +46,13 @@ const newGroupChat = async (req, res, next) => {
     const newGroupChat = await newGroup.save();
 
     emitEvent(req, REFETCH_CHATS, members)
-    adminMessage(req, newGroupChat._id, `Welcome to ${name}`, allMembers)
+    emitEvent(req, NEW_GROUP, members, { chatId: newGroupChat._id, name })
+    await adminMessage(req, newGroupChat._id, `Welcome to ${name}`, allMembers)
 
-    return res.status(200).json({ succes: true, message: "Group chat created successfully" })
+    return res.status(200).json({ success : true, message: "Group chat created successfully" })
 }
 
-const getMyChat = async (req, res, next) => {
+const getMyChat = async (req, res) => {
     const chats = await Chat.find({ members: req.userId }).populate("members", "username avatar")
     const transformedChats = chats.map(({ _id, name, members, groupChat }) => {
         const otherMembers = members.filter((member) => member._id.toString() !== req.userId.toString());
@@ -72,7 +72,7 @@ const getMyChat = async (req, res, next) => {
     return res.status(200).json({ success: true, chats: transformedChats })
 }
 
-const getMyGroups = async (req, res, next) => {
+const getMyGroups = async (req, res) => {
     const chats = await Chat.find({ members: req.userId, groupChat: true }).populate("members", "username avatar")
     const transformedChats = chats.map(({ _id, name, members, groupChat }) => {
         return {
@@ -120,6 +120,7 @@ const addMembers = async (req, res, next) => {
     const updatedChat = await Chat.findByIdAndUpdate(chatId, { members: allMembers }, { new: true }).populate("members", "username")
 
     emitEvent(req, REFETCH_CHATS, updatedChat.members)
+    emitEvent(req, ADD_MEMBER, updatedChat.members, {userId :  newMembers[0]})
     adminMessage(req, chatId, `${newMembersNames} have been added to the group`, allMembers)
     return res.status(200).json({ success: true, message: "Members added successfully" })
 }
@@ -142,6 +143,7 @@ const removeMember = async (req, res, next) => {
     const eventMembers = updatedChat.members.map((member) => member._id)
 
     emitEvent(req, REFETCH_CHATS, chat.members, { users: [removedUser._id] })
+    emitEvent(req, REMOVE_MEMBER, chat.members, { userId: removedUser._id, chatId })
     adminMessage(req, chatId, `${removedUser.username} has been removed from the group`, eventMembers)
 
     return res.status(200).json({ success: true, message: `${removedUser.username} removed successfully` })
@@ -167,6 +169,8 @@ const leaveGroup = async (req, res, next) => {
     chat.members = remainingMembers;
     const updatedChat = await chat.save();
 
+    emitEvent(req, REFETCH_CHATS, updatedChat.members)
+    emitEvent(req, LEAVE_GROUP, updatedChat.members, { chatId})
     adminMessage(req, chatId, `${user.username} has left the group`, updatedChat.members)
     return res.status(200).json({ success: true, message: "Group left successfully" })
 }
@@ -228,9 +232,6 @@ const deleteChat = async (req, res, next) => {
 
     if (chat.groupChat && !chat.members.includes(req.userId)) return next(new expressError("You are not in the group", 403))
 
-    let otherMember;
-    if (!chat.groupChat) otherMember = chat.members.filter(member => member.toString() !== req.userId.toString())[0];
-
     const messageWithAttachments = await Message.find({
         chatId,
         attachments: {
@@ -249,13 +250,13 @@ const deleteChat = async (req, res, next) => {
             cloudinaryFiles.push({ public_id, fileType })
         })
     })
-
+    const isGroup = chat.groupChat;
     await deleteFilesFromCloudinary(cloudinaryFiles)
     await chat.deleteOne();
     await Message.deleteMany({ chatId })
 
     emitEvent(req, REFETCH_CHATS, chat.members, { users: [...chat.members] })
-
+    if(isGroup) emitEvent(req, DELETE_GROUP, chat.members, { chatId })
     res.status(200).json({ success: true, message: "Chat deleted successfully" })
 }
 

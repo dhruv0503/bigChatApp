@@ -72,7 +72,6 @@ const AppLayout = ({WrappedContent, ...props}) => {
 
     useEffect(() => {
         if (user && !data) {
-            console.log("Here");
             refetch();
         }
     }, [user, data, refetch]);

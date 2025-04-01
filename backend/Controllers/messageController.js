@@ -51,7 +51,6 @@ const sendAttachment = async (req, res, next) => {
 
     if (files.length < 1) return next(new expressError("Please provide attachments", 400))
     if (files.length > 5) return next(new expressError("You can only send 5 attachments at a time", 400))
-    console.log(files);
     const attachments = await uploadToCloudinary(files)
     const messageForDB = {
         content: "",
