@@ -70,7 +70,7 @@ const ChatContent = ({ chatId, user }) => {
 
   useEffect(() => {
     if (chatDetails.isError) navigate('/')
-  }, [chatDetails.data, chatDetails.isLoading])
+  }, [chatDetails, navigate])
 
   const messageChangeHandler = (e) => {
     setMessage(e.target.value);
@@ -83,7 +83,7 @@ const ChatContent = ({ chatId, user }) => {
     typingTimeout.current = setTimeout(() => {
       socket.emit(STOP_TYPING, { members, chatId })
       setTyping(false)
-    }, [2000])
+    },2000)
   }
 
   const handleMenuOpen = (event) => {
@@ -148,10 +148,9 @@ const ChatContent = ({ chatId, user }) => {
 
         <div ref={bottomRef} />
       </Stack >
-      <form style={{ height: "8vh" }} onSubmit={submitHandler}>
+      <form style={{ height: "8%" }} onSubmit={submitHandler}>
         <Stack direction={"row"} height={"100%"} alignItems={"center"} position={"relative"} boxSizing={"border-box"} sx={{
           width: "100%"
-
         }}>
           <IconButton onClick={() => {
             dispatch(setIsMobile(false))

@@ -46,6 +46,7 @@ const AddMemberDialog = lazy(() =>
 );
 
 const Groups = () => {
+    // console.log("Hello")
   const chatId = useSearchParams()[0].get("group");
   const dispatch = useDispatch();
   const { isAddMember } = useSelector((state) => state.misc);

@@ -1,4 +1,4 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
+import {createApi, fetchBaseQuery} from '@reduxjs/toolkit/query/react'
 
 const api = createApi({
     reducerPath: "api",
@@ -14,6 +14,16 @@ const api = createApi({
                 credentials: "include"
             }),
             providesTags: ["chat"]
+        }),
+        getUserProfile: builder.query({
+            query: () => {
+                return {
+                    url: `/user/profile`,
+                    method: "GET",
+                    credentials: "include"
+                }
+            },
+            providesTags: ["user"]
         }),
         getGroups: builder.query({
             query: () => ({
@@ -40,7 +50,7 @@ const api = createApi({
             keepUnusedDataFor: 0
         }),
         getChatDetails: builder.query({
-            query: ({ chatId, populate = false }) => {
+            query: ({chatId, populate = false}) => {
                 let url = `/chat/${chatId}`
                 if (populate) url += "?populate=true"
                 return {
@@ -64,7 +74,7 @@ const api = createApi({
             providesTags: ["chat"]
         }),
         getChatMessages: builder.query({
-            query: ({ chatId, page = 1 }) => ({
+            query: ({chatId, page = 1}) => ({
                 url: `/message/${chatId}?page=${page}`,
                 credentials: "include"
 
@@ -106,11 +116,11 @@ const api = createApi({
             }),
         }),
         createNewGroup: builder.mutation({
-            query: ({ name, members }) => ({
+            query: ({name, members}) => ({
                 url: `/chat/group/new`,
                 method: "POST",
                 credentials: "include",
-                body: { name, members }
+                body: {name, members}
             }),
             invalidatesTags: ["chat"]
         }),
@@ -133,28 +143,28 @@ const api = createApi({
             invalidatesTags: ["user", "chat"]
         }),
         renameGroup: builder.mutation({
-            query: ({ chatId, name }) => ({
+            query: ({chatId, name}) => ({
                 url: `/chat/${chatId}`,
                 method: 'PATCH',
-                body: { name },
+                body: {name},
                 credentials: 'include'
             }),
             invalidatesTags: ["chat"]
         }),
         removeMember: builder.mutation({
-            query: ({ chatId, userId }) => ({
+            query: ({chatId, userId}) => ({
                 url: `/chat/group/remove`,
                 method: 'PATCH',
-                body: { chatId, userId },
+                body: {chatId, userId},
                 credentials: 'include'
             }),
             invalidatesTags: ["chat"]
         }),
         addMember: builder.mutation({
-            query: ({ chatId, members }) => ({
+            query: ({chatId, members}) => ({
                 url: `/chat/group/add`,
                 method: 'PATCH',
-                body: { chatId, newMembers: members },
+                body: {chatId, newMembers: members},
                 credentials: 'include'
             }),
             invalidatesTags: ["chat"]
@@ -198,5 +208,6 @@ export const {
     useLoginMutation,
     useRegisterMutation,
     useLogoutMutation,
-    useGetOnlineFriendsQuery
+    useGetOnlineFriendsQuery,
+    useGetUserProfileQuery,
 } = api

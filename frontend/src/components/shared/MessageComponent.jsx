@@ -32,7 +32,7 @@ const MessageComponent = ({ message, user }) => {
                 </Typography>
             }
             {
-                content && <Typography sx={{ wordWrap: "break-word", wordWrap: "breal-word", whiteSpace: "pre-wrap" }}>{content}</Typography>
+                content && <Typography sx={{ wordWrap: "break-word", whiteSpace: "pre-wrap" }}>{content}</Typography>
             }
             {attachments.length > 0 && (
                 attachments.map((attach, idx) => {
@@ -46,6 +46,7 @@ const MessageComponent = ({ message, user }) => {
                             style={{
                                 color: "black",
                             }}
+                            key={idx}
                         >
                             {RenderAttachment(file, url)}
                         </a>
