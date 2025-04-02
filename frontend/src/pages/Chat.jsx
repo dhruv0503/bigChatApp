@@ -148,9 +148,9 @@ const ChatContent = ({ chatId, user }) => {
 
         <div ref={bottomRef} />
       </Stack >
-      <form style={{ height: "8%" }} onSubmit={submitHandler}>
+      <form style={{ height: "8%", margin : "1% 0", boxSizing : "border-box" }} onSubmit={submitHandler}>
         <Stack direction={"row"} height={"100%"} alignItems={"center"} position={"relative"} boxSizing={"border-box"} sx={{
-          width: "100%"
+          width: "100%",
         }}>
           <IconButton onClick={() => {
             dispatch(setIsMobile(false))
@@ -158,15 +158,13 @@ const ChatContent = ({ chatId, user }) => {
           }}
             sx={{
               color: "rgb(32, 41, 43)",
-              bottom: "0.5vh",
-              left: "1.5vw",
+              bottom: "10%",
+              left: "1%",
               display: {
-                xs: "block",
+                xs: "flex",
                 sm: "none"
               },
               position: "absolute",
-
-              padding: "0.4rem",
             }}>
             <HomeIcon />
           </IconButton>
@@ -174,8 +172,8 @@ const ChatContent = ({ chatId, user }) => {
             onClick={handleMenuOpen}
             sx={{
               position: "absolute",
-              left: { xs: "5.5vw", sm: "0.5vw" },
-              bottom: "0.7vh"
+              left: { xs: "7%", sm: "1%" },
+              bottom: "10%"
             }}
           >
             <AttachFileButton />
@@ -185,11 +183,8 @@ const ChatContent = ({ chatId, user }) => {
             bgcolor: orange,
             color: "white",
             position: "absolute",
-            right: {
-              xs: "2vw",
-              sm : "1vw"
-            },
-            bottom: "0.7vh",
+            right: "2%",
+            bottom: "10%",
             "&:hover": {
               backgroundColor: "error.dark"
             }
@@ -206,10 +201,10 @@ const ChatContent = ({ chatId, user }) => {
             value={message}
             onChange={messageChangeHandler}
             sx={{
-              marginTop: "3%",
+              marginTop: "1%",
               padding: {
-                xs: "0 4.5rem",
-                sm: "0 3.5rem 0 3rem"
+                xs: "0 15%",
+                sm: "0 15% 0 10%"
               }
             }}
           />
