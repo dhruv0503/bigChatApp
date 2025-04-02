@@ -7,6 +7,7 @@ const miscSlice = createSlice({
     isAddMember: false,
     isNotification: false,
     isMobile: false,
+    isMobileGroup : true,
     isSearch: false,
     isFileMenu: false,
     isDeleteMenu: false,
@@ -16,7 +17,6 @@ const miscSlice = createSlice({
       groupChat: false
     },
     areOptionsOpen: false,
-    openChat: false
   },
   onlineUsers: [],
   reducers: {
@@ -50,11 +50,11 @@ const miscSlice = createSlice({
     setAreOptionsOpen: (state, action) => {
       state.areOptionsOpen = action.payload;
     },
-    setOpenChat: (state, action) => {
-      state.openChat = action.payload;
-    },
     setOnlineUsers : (state, action) => {
       state.onlineUsers = action.payload.onlineUsers;
+    },
+    setIsMobileGroup : (state, action) => {
+      state.isMobileGroup = action.payload;
     }
   },
 });
@@ -72,6 +72,6 @@ export const {
   setUploadingLoader,
   setSelectedDeleteChat,
   setAreOptionsOpen,
-  setOpenChat,
-  setOnlineUsers
+  setOnlineUsers,
+    setIsMobileGroup
 } = miscSlice.actions;

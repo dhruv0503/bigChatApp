@@ -7,7 +7,7 @@ import {
 } from "@mui/icons-material";
 import { Badge, IconButton, Stack, Tooltip, Typography } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
-import { setAreOptionsOpen, setIsSearch } from "../../redux/reducers/miscSlice";
+import {setAreOptionsOpen, setIsMobileGroup, setIsSearch} from "../../redux/reducers/miscSlice";
 
 import { useNavigate } from "react-router-dom";
 import api, { useLogoutMutation } from "../../redux/api/api";
@@ -46,7 +46,9 @@ export const AddGroupButton = ({ text = false }) => {
 };
 export const ManageGroupsButton = ({ text = false }) => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const navigateToGroup = () => {
+    dispatch(setIsMobileGroup(true))
     navigate("/groups");
   };
 

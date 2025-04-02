@@ -121,7 +121,7 @@ const addMembers = async (req, res, next) => {
 
     emitEvent(req, REFETCH_CHATS, updatedChat.members)
     emitEvent(req, ADD_MEMBER, updatedChat.members, {userId :  newMembers[0]})
-    adminMessage(req, chatId, `${newMembersNames} have been added to the group`, allMembers)
+    adminMessage(req, chatId, `${newMembersNames} has been added`, allMembers)
     return res.status(200).json({ success: true, message: "Members added successfully" })
 }
 
@@ -144,7 +144,7 @@ const removeMember = async (req, res, next) => {
 
     emitEvent(req, REFETCH_CHATS, chat.members, { users: [removedUser._id] })
     emitEvent(req, REMOVE_MEMBER, chat.members, { userId: removedUser._id, chatId })
-    adminMessage(req, chatId, `${removedUser.username} has been removed from the group`, eventMembers)
+    adminMessage(req, chatId, `${removedUser.username} has been removed`, eventMembers)
 
     return res.status(200).json({ success: true, message: `${removedUser.username} removed successfully` })
 }
@@ -171,7 +171,7 @@ const leaveGroup = async (req, res, next) => {
 
     emitEvent(req, REFETCH_CHATS, updatedChat.members)
     emitEvent(req, LEAVE_GROUP, updatedChat.members, { chatId})
-    adminMessage(req, chatId, `${user.username} has left the group`, updatedChat.members)
+    adminMessage(req, chatId, `${user.username} left `, updatedChat.members)
     return res.status(200).json({ success: true, message: "Group left successfully" })
 }
 

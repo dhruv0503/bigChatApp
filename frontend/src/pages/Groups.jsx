@@ -5,7 +5,8 @@ import {
     Done as DoneIcon,
     Edit as EditIcon,
     KeyboardBackspace as KeyboardBackSpaceIcon,
-    Menu as MenuIcon,
+    Home as HomeIcon,
+    Group as GroupIcon,
 } from "@mui/icons-material";
 import {
     Backdrop,
@@ -37,7 +38,7 @@ import {
     useRemoveMemberMutation,
     useRenameGroupMutation,
 } from "../redux/api/api";
-import {setIsAddMember, setIsMobile} from "../redux/reducers/miscSlice";
+import {setIsAddMember, setIsMobile, setIsMobileGroup} from "../redux/reducers/miscSlice";
 import {ADD_MEMBER, DELETE_GROUP, LEAVE_GROUP, NEW_GROUP, REMOVE_MEMBER} from "../constants/events.js";
 import {getSocket} from "../Socket.jsx";
 
@@ -55,12 +56,15 @@ const Groups = () => {
     const dispatch = useDispatch();
     const {isAddMember} = useSelector((state) => state.misc);
     const {user} = useSelector((state) => state.auth);
+    const {isMobileGroup} = useSelector(state => state.misc)
+
 
     const myGroups = useGetGroupsQuery();
     const groupDetails = useGetChatDetailsQuery(
         {chatId, populate: true},
         {
             skip: !chatId,
+            refetchOnMountOrArgChange: true
         }
     );
     const [updateGroup, isLoadingGroupName] = useAsyncMutation(
@@ -94,7 +98,8 @@ const Groups = () => {
     ];
 
     useEffect(() => {
-        myGroups.refetch();``
+        myGroups.refetch();
+        ``
     }, []);
 
     const newGroupListener = useCallback(() => {
@@ -102,24 +107,23 @@ const Groups = () => {
     }, [])
 
     const newMemberAddedListener = useCallback(({userId}) => {
-        if(userId === user?._id) myGroups.refetch();
+        if (userId === user?._id) myGroups.refetch();
         groupDetails.refetch();
     }, [user?._id])
 
     const memberRemovedListener = useCallback((data) => {
-        if(data.userId === user?._id && location.pathname.split('/').pop() === "groups"){
+        if (data.userId === user?._id && location.pathname.split('/').pop() === "groups") {
             myGroups.refetch();
             navigate('/groups')
-        }
-        else if(chatId === data.chatId) groupDetails.refetch();
-    })
+        } else if (chatId === data.chatId) groupDetails.refetch();
+    }, [user._id, chatId, location.pathname])
 
     const memberLeftGroupListener = useCallback((data) => {
-        if(chatId === data.chatId) groupDetails.refetch();
+        if (chatId === data.chatId) groupDetails.refetch();
     }, [chatId])
 
     const deleteGroupListener = useCallback((data) => {
-        if(chatId === data.chatId) navigate('/groups');
+        if (chatId === data.chatId) navigate('/groups');
         myGroups.refetch();
     }, [chatId, navigate])
 
@@ -145,11 +149,6 @@ const Groups = () => {
         closeConfirmDeleteHandler();
     };
 
-    const handleMobile = () => {
-        setIsMobileMenuOpen((prev) => !prev);
-    };
-    const handleMobileClose = () => setIsMobileMenuOpen(false);
-
     const updateGroupNameHandler = useCallback(async () => {
         setIsEdit(false);
         await updateGroup("Updating Group Name", {chatId, name: groupNameUpdatedValue});
@@ -173,10 +172,10 @@ const Groups = () => {
 
     const eventHandler = {
         [NEW_GROUP]: newGroupListener,
-        [ADD_MEMBER] : newMemberAddedListener,
-        [REMOVE_MEMBER] : memberRemovedListener,
-        [LEAVE_GROUP] : memberLeftGroupListener,
-        [DELETE_GROUP] : deleteGroupListener,
+        [ADD_MEMBER]: newMemberAddedListener,
+        [REMOVE_MEMBER]: memberRemovedListener,
+        [LEAVE_GROUP]: memberLeftGroupListener,
+        [DELETE_GROUP]: deleteGroupListener,
     }
 
     useSocketEvents(socket, eventHandler)
@@ -195,11 +194,8 @@ const Groups = () => {
                     xs: "unset",
                     md: "1rem 3rem",
                 }}
-                margin={{
-                    xs: "2rem 0",
-                    // md: "3rem 0",
-                }}
-                maxWidth={{xs: "90%"}}
+                margin={groupDetails?.data?.chat?.members?.length > 3 ? "2rem 0" : "-1rem 0"}
+                maxWidth={"100%"}
             >
                 <Button
                     size="large"
@@ -207,7 +203,6 @@ const Groups = () => {
                     color="error"
                     startIcon={<DeleteIcon/>}
                     onClick={openConfirmDeleteHandler}
-                    // disabled={isLoadingDeleteGroup}
                 >
                     Delete Group
                 </Button>
@@ -278,42 +273,61 @@ const Groups = () => {
     };
     const IconBtns = () => {
         return (
-            <>
-                <Box
+            <Tooltip title="back">
+                <IconButton
                     sx={{
-                        display: {
-                            xs: "block",
-                            md: "none",
-                        },
                         position: "absolute",
-                        right: "1.5rem",
-                        top: "1.5rem",
+                        top: "5vh",
+                        left: {
+                            sm: "33vw",
+                            md: "3vw"
+                        },
+                        background: "rgba(0,0,0,0.8)",
+                        color: "white",
+                        "&:hover": {
+                            background: "rgba(0,0,0,0.7)",
+                        },
+                        display: {
+                            xs: "none",
+                            sm: "flex"
+                        }
                     }}
+                    onClick={navigateBack}
                 >
-                    <IconButton onClick={handleMobile}>
-                        <MenuIcon/>
-                    </IconButton>
-                </Box>
-                <Tooltip title="back">
-                    <IconButton
-                        sx={{
-                            position: "absolute",
-                            top: {xs: "2rem", sm: "1rem", md : "-4rem"},
-                            left: "2rem",
-                            background: "rgba(0,0,0,0.8)",
-                            color: "white",
-                            "&:hover": {
-                                background: "rgba(0,0,0,0.7)",
-                            },
-                        }}
-                        onClick={navigateBack}
-                    >
-                        <KeyboardBackSpaceIcon/>
-                    </IconButton>
-                </Tooltip>
-            </>
+                    <KeyboardBackSpaceIcon/>
+                </IconButton>
+            </Tooltip>
         );
     };
+
+    const BottomBox = () => {
+        return (
+            <Box
+                sx={{
+                    position: "absolute",
+                    bottom: 0,
+                    left: 0,
+                    width: "100%",
+                    bgcolor: "inherit",
+                    display: {
+                        xs: "flex",
+                        sm: "none"
+                    },
+                    justifyContent: "space-between",
+                }}
+            >
+                <Button variant="contained" color="primary" sx={{flexGrow : 1}} onClick={navigateBack} startIcon={<HomeIcon/>}>
+                    Home
+                </Button>
+                {
+                    !isMobileGroup && <Button variant="contained" color="secondary" sx={{flexGrow : 1}} onClick={() => dispatch(setIsMobileGroup(true))} startIcon={<GroupIcon/>}>
+                        Groups
+                    </Button>
+                }
+            </Box>
+        );
+    }
+
 
     return myGroups.isLoading ? (
         <LayoutLoader/>
@@ -325,7 +339,7 @@ const Groups = () => {
                 display: "flex",
                 flexDirection: "row",
                 width: "100%",
-                alignItems: "center",
+                // alignItems: "center",
                 justifyContent: "center",
                 bgcolor: grayColor,
             }}
@@ -334,14 +348,18 @@ const Groups = () => {
                 <IconBtns/>
             </Box>
             <Grid2
+                xs={12}
                 sm={4}
                 sx={{
                     display: {
-                        xs: "none",
+                        xs: isMobileGroup ? "block" : "none",
                         sm: "block",
                     },
                     flexGrow: 1,
-                    maxWidth: "30%",
+                    maxWidth: {
+                        xs: "100%",
+                        sm: "30%"
+                    },
                     boxSizing: "border-box",
                     backgroundImage: bgGradient,
                 }}
@@ -352,7 +370,10 @@ const Groups = () => {
                 xs={12}
                 sm={8}
                 sx={{
-                    display: "flex",
+                    display: {
+                        xs: isMobileGroup ? "none" : "flex",
+                        sm: "flex"
+                    },
                     flexDirection: "column",
                     alignItems: "center",
                     position: "relative",
@@ -449,20 +470,7 @@ const Groups = () => {
                     />
                 </Suspense>
             )}
-
-            <Drawer
-                sx={{
-                    display: {
-                        xs: "block",
-                        md: "none",
-                    },
-                }}
-                anchor="right"
-                open={isMobileMenuOpen}
-                onClick={handleMobileClose}
-            >
-                <GroupList myGroups={myGroups?.data?.groups} chatId={chatId}/>
-            </Drawer>
+            <BottomBox/>
         </Grid2>
     );
 };
@@ -488,11 +496,13 @@ const GroupList = ({myGroups = [], chatId}) => {
 
 const GroupListItem = memo(({group, chatId}) => {
     const {name, avatar, _id} = group;
+    const dispatch = useDispatch();
     return (
         <StyledLink
             to={`?group=${_id}`}
             onClick={(e) => {
                 if (chatId === _id) e.preventDefault();
+                dispatch(setIsMobileGroup(false))
             }}
         >
             <motion.div
