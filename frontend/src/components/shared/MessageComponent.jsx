@@ -11,7 +11,7 @@ const MessageComponent = ({ message, user }) => {
     const sameSender = sender?._id === user?._id;
     const timeAgo = moment(createdAt).fromNow()
 
-    const isAdminMessage = message.sender?._id.toString() === "67c8485d8b5433d4cca2e1bb";
+    const isAdminMessage = message.sender?._id.toString() === import.meta.env.VITE_ADMIN_ID;
 
     return (
         <motion.div
