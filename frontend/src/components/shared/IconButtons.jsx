@@ -11,7 +11,9 @@ import {setAreOptionsOpen, setIsMobileGroup, setIsSearch} from "../../redux/redu
 
 import { useNavigate } from "react-router-dom";
 import api, { useLogoutMutation } from "../../redux/api/api";
-import { setIsLogin, updateUser } from "../../redux/reducers/authSlice";
+import { updateUser } from "../../redux/reducers/authSlice";
+// import { setIsLogin, updateUser } from "../../redux/reducers/authSlice";
+
 import { resetNotificationCount } from "../../redux/reducers/chatSlice";
 import {
   setIsNewGroup,
@@ -86,7 +88,7 @@ export const LogoutButton = ({ text = false}) => {
   const logoutHandler = async () => {
     await userLogout("Logging Out");
     dispatch(api.util.resetApiState());
-    dispatch(setIsLogin(false));
+    // dispatch(setIsLogin(false));
     dispatch(updateUser(null));
     socket.disconnect();
   };

@@ -24,7 +24,6 @@ module.exports.loginUser = async (req, res, next) => {
     if (!user) return next(new expressError('Incorrect Username or Password', 400));
     const isMatch = await user.matchPassword(password);
     if (!isMatch) return next(new expressError('Incorrect Username or Password', 400));
-
     sendToken(res, user, 200, `Welcome Back ${user?.name}`);
 }
 

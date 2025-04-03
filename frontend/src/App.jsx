@@ -4,7 +4,7 @@ import {BrowserRouter as Router, Routes, Route} from "react-router-dom";
 import ProtectRoute from "./components/auth/ProtectRoute.jsx";
 import {HelmetProvider} from "react-helmet-async";
 import {LayoutLoader} from "./components/layout/Loaders.jsx";
-import {setIsLogin} from './redux/reducers/authSlice.js';
+// import {setIsLogin} from './redux/reducers/authSlice.js';
 import {Toaster} from 'react-hot-toast';
 import axios from 'axios';
 
@@ -25,7 +25,9 @@ import {SocketProvider} from './Socket.jsx';
 
 const App = () => {
 
-    const {isLogin, loader} = useSelector((state) => state.auth);
+    // const {isLogin, loader} = useSelector((state) => state.auth);
+    const {user, loader} = useSelector((state) => state.auth);
+
     const dispatch = useDispatch();
 
     const getProfile = async () => {
@@ -35,7 +37,7 @@ const App = () => {
             })
             return res;
         } catch (err) {
-            dispatch(setIsLogin(false))
+            // dispatch(setIsLogin(false))
             return null;
         }
     }
@@ -43,13 +45,15 @@ const App = () => {
     useEffect(() => {
         const getData = async () => {
             const response = await getProfile();
-            dispatch(setIsLogin(!!response))
+            // dispatch(setIsLogin(!!response))
+            dispatch(updateUser(!!response?.data?.user))
             if (response) dispatch(updateUser(response.data.user))
         }
 
         getData();
 
-    }, [dispatch, isLogin])
+    // }, [dispatch, isLogin])
+}, [dispatch])
 
     return loader ? (
         <LayoutLoader/>
@@ -60,7 +64,7 @@ const App = () => {
                     <Routes>
                         <Route element={
                             <SocketProvider>
-                                <ProtectRoute user={isLogin}/>
+                                <ProtectRoute user={user}/>
                             </SocketProvider>
                         }>
                             <Route path="/" element={<Home/>}/>
@@ -70,7 +74,7 @@ const App = () => {
                         <Route
                             path="/login"
                             element={
-                                <ProtectRoute user={!isLogin} redirect="/">
+                                <ProtectRoute user={!user} redirect="/">
                                     <Login/>
                                 </ProtectRoute>
                             }
