@@ -9,7 +9,7 @@
   } from "@mui/material";
   import { useEffect, useState, useCallback } from "react";
   import { useDispatch, useSelector } from "react-redux";
-  import { useLazySearchUserQuery, useSendFriendeRequestMutation } from "../../redux/api/api";
+  import { useLazySearchUserQuery, useSendFriendRequestMutation } from "../../redux/api/api";
   import { setIsSearch } from "../../redux/reducers/miscSlice";
   import UserItem from "../shared/UserItem";
   import { useAsyncMutation } from "../hooks/hooks";
@@ -20,7 +20,7 @@
     const [users, setUsers] = useState([]);
 
     const [searchUser] = useLazySearchUserQuery();
-    const [sendFriendRequest, isLoadingSendFriendRequest] = useAsyncMutation(useSendFriendeRequestMutation);
+    const [sendFriendRequest, isLoadingSendFriendRequest] = useAsyncMutation(useSendFriendRequestMutation);
 
     const dispatch = useDispatch();
 

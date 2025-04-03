@@ -13,7 +13,8 @@ const store = configureStore({
         [api.reducerPath]: api.reducer,
         [adminApi.reducerPath]: adminApi.reducer
     },
-    middleware: (mid) => [...mid(), api.middleware, adminApi.middleware]
+    middleware: (mid) => [...mid(), api.middleware, adminApi.middleware],
+    devTools : import.meta.env.VITE_NODE_ENV !== 'production'
 })
 
 export default store;

@@ -124,7 +124,7 @@ const api = createApi({
             }),
             invalidatesTags: ["chat"]
         }),
-        sendFriendeRequest: builder.mutation({
+        sendFriendRequest: builder.mutation({
             query: (data) => ({
                 url: '/request',
                 method: 'POST',
@@ -133,7 +133,7 @@ const api = createApi({
             }),
             invalidatesTags: ["user"]
         }),
-        acceptFriendeRequest: builder.mutation({
+        acceptFriendRequest: builder.mutation({
             query: (data) => ({
                 url: '/request',
                 method: 'PATCH',
@@ -191,9 +191,9 @@ export default api;
 export const {
     useGetChatsQuery,
     useLazySearchUserQuery,
-    useSendFriendeRequestMutation,
+    useSendFriendRequestMutation,
     useGetNotificationsQuery,
-    useAcceptFriendeRequestMutation,
+    useAcceptFriendRequestMutation,
     useGetChatDetailsQuery,
     useGetChatMessagesQuery,
     useSendAttachmentsMutation,
@@ -208,6 +208,4 @@ export const {
     useLoginMutation,
     useRegisterMutation,
     useLogoutMutation,
-    useGetOnlineFriendsQuery,
-    useGetUserProfileQuery,
 } = api
