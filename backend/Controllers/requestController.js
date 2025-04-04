@@ -2,7 +2,8 @@ const Request = require('../Models/requestModel');
 const Chat = require('../Models/chatModel');
 const { emitEvent } = require('../Utils/features');
 const expressError = require('../Utils/expressError');
-const { REFETCH_CHATS, NEW_REQUEST } = require('../Constants/events');
+const { REFETCH_CHATS, NEW_REQUEST, ONLINE_USERS} = require('../Constants/events');
+const {getOnlineUserIds} = require("../Utils/helper");
 
 module.exports.sendFriendRequest = async (req, res, next) => {
     const { userId } = req.body;
@@ -33,6 +34,7 @@ module.exports.sendFriendRequest = async (req, res, next) => {
 
 module.exports.acceptFriendRequest = async (req, res, next) => {
     const { requestId, accept } = req.body;
+    const io = req.app.get('io');
 
     const request = await Request.findById(requestId).populate("sender", "name username avatar").populate("receiver", "name username avatar");
 
@@ -59,6 +61,7 @@ module.exports.acceptFriendRequest = async (req, res, next) => {
     await newChat.save();
     await request.deleteOne();
     emitEvent(req, REFETCH_CHATS, members)
+    io.emit(ONLINE_USERS, { onlineUsers: getOnlineUserIds() })
 
     return res.status(200).json({
         success: true,

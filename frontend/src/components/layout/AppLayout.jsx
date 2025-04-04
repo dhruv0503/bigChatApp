@@ -43,9 +43,6 @@ const AppLayout = ({WrappedContent, ...props}) => {
     const {newMessageAlert} = useSelector((state) => state.chat);
     const {data, isLoading, isError, error, refetch} = useGetChatsQuery();
     const myFriends = useGetFriendsQuery();
-    // const userProfile = useGetUserProfileQuery(undefined, {
-    //     refetchOnMountOrArgChange: false,
-    // });
 
     const filterFriends = useMemo(() => {
         if (!myFriends?.data?.friends || !onlineUsers) return [];
@@ -81,10 +78,6 @@ const AppLayout = ({WrappedContent, ...props}) => {
     const onlineUsersListener = useCallback((data) => {
         dispatch(setOnlineUsers(data))
     }, [dispatch]);
-
-    // useEffect(() => {
-    //     dispatch(updateUser(userProfile?.data?.user))
-    // }, [dispatch])
 
     useEffect(() => {
         if (user && !data) {
