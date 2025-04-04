@@ -84,7 +84,6 @@ const Login = () => {
             if (response?.user) dispatch(setIsLogin(true))
         }
         if (response?.user) {
-            setIsLoading(false)
             setFormData({
                 name: "",
                 username: "",
@@ -93,6 +92,7 @@ const Login = () => {
             })
             setProfileImage(null)
         }
+        setIsLoading(false)
     }
 
     return (
