@@ -208,4 +208,5 @@ export const {
     useLoginMutation,
     useRegisterMutation,
     useLogoutMutation,
+    useGetUserProfileQuery,
 } = api

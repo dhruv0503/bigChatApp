@@ -4,8 +4,9 @@ import {BrowserRouter as Router, Routes, Route} from "react-router-dom";
 import ProtectRoute from "./components/auth/ProtectRoute.jsx";
 import {HelmetProvider} from "react-helmet-async";
 import {LayoutLoader} from "./components/layout/Loaders.jsx";
-// import {setIsLogin} from './redux/reducers/authSlice.js';
 import {Toaster} from 'react-hot-toast';
+import {setIsLogin, updateUser} from './redux/reducers/authSlice';
+import {SocketProvider} from './Socket.jsx';
 import axios from 'axios';
 
 const Home = lazy(() => import("./pages/Home.jsx"));
@@ -19,14 +20,10 @@ const ChatManager = lazy(() => import("./pages/admin/ChatManager.jsx"));
 const MessageManager = lazy(() => import("./pages/admin/MessageManager.jsx"));
 const UserManager = lazy(() => import("./pages/admin/UserManager.jsx"));
 
-import {updateUser} from './redux/reducers/authSlice';
-
-import {SocketProvider} from './Socket.jsx';
 
 const App = () => {
 
-    // const {isLogin, loader} = useSelector((state) => state.auth);
-    const {user, loader} = useSelector((state) => state.auth);
+    const {user, loader, isLogin} = useSelector((state) => state.auth);
 
     const dispatch = useDispatch();
 
@@ -35,25 +32,23 @@ const App = () => {
             const res = await axios.get(`${import.meta.env.VITE_SERVER}/api/user/profile`, {
                 withCredentials: true
             })
-            return res;
+            return res?.data?.user;
         } catch (err) {
-            // dispatch(setIsLogin(false))
             return null;
         }
     }
 
     useEffect(() => {
+        dispatch(setIsLogin(false))
+    }, [dispatch]);
+
+    useEffect(() => {
         const getData = async () => {
-            const response = await getProfile();
-            // dispatch(setIsLogin(!!response))
-            dispatch(updateUser(!!response?.data?.user))
-            if (response) dispatch(updateUser(response.data.user))
+            const user = await getProfile();
+            if (user) dispatch(updateUser(user))
         }
-
         getData();
-
-    // }, [dispatch, isLogin])
-}, [dispatch])
+    }, [dispatch, isLogin])
 
     return loader ? (
         <LayoutLoader/>
@@ -74,7 +69,7 @@ const App = () => {
                         <Route
                             path="/login"
                             element={
-                                <ProtectRoute user={!user} redirect="/">
+                                <ProtectRoute user={!isLogin} redirect="/">
                                     <Login/>
                                 </ProtectRoute>
                             }

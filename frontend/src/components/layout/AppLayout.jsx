@@ -10,7 +10,7 @@ import {
     ONLINE_USERS
 } from "../../constants/events";
 import {getOrSaveFromStorage} from "../../lib/features";
-import {useGetChatsQuery, useGetFriendsQuery} from "../../redux/api/api";
+import {useGetChatsQuery, useGetFriendsQuery, useGetUserProfileQuery} from "../../redux/api/api";
 import {
     incrementNotificationCount,
     setNewMessagesAlert,
@@ -29,6 +29,7 @@ import ChatList from "../specific/ChatList";
 import OptionsSidebar from "../specific/OptionsSidebar";
 import Profile from "../specific/Profile";
 import Header from "./Header";
+import {updateUser} from "../../redux/reducers/authSlice.js";
 
 const AppLayout = ({WrappedContent, ...props}) => {
     const params = useParams();
@@ -42,6 +43,22 @@ const AppLayout = ({WrappedContent, ...props}) => {
     const {newMessageAlert} = useSelector((state) => state.chat);
     const {data, isLoading, isError, error, refetch} = useGetChatsQuery();
     const myFriends = useGetFriendsQuery();
+    // const userProfile = useGetUserProfileQuery(undefined, {
+    //     refetchOnMountOrArgChange: false,
+    // });
+
+    const filterFriends = useMemo(() => {
+        if (!myFriends?.data?.friends || !onlineUsers) return [];
+        return myFriends?.data?.friends?.filter((friend) => onlineUsers?.includes(friend?._id))
+    }, [myFriends?.data?.friends, onlineUsers])
+
+    const handleDeleteChat = (e, chatId, groupChat) => {
+        dispatch(setIsDeleteMenu(true));
+        dispatch(setSelectedDeleteChat({chatId, groupChat}));
+        deleteMenuAnchor.current = e.currentTarget;
+    };
+
+    //Event Listeners
     const newMessageAlertListener = useCallback(
         (data) => {
             if (data.chatId !== chatId) dispatch(setNewMessagesAlert(data));
@@ -65,10 +82,9 @@ const AppLayout = ({WrappedContent, ...props}) => {
         dispatch(setOnlineUsers(data))
     }, [dispatch]);
 
-    const filterFriends = useMemo(() => {
-        if (!myFriends?.data?.friends || !onlineUsers) return [];
-        return myFriends?.data?.friends?.filter((friend) => onlineUsers?.includes(friend?._id))
-    }, [myFriends?.data?.friends, onlineUsers])
+    // useEffect(() => {
+    //     dispatch(updateUser(userProfile?.data?.user))
+    // }, [dispatch])
 
     useEffect(() => {
         if (user && !data) {
@@ -80,13 +96,8 @@ const AppLayout = ({WrappedContent, ...props}) => {
         getOrSaveFromStorage({key: NEW_MESSAGE_ALERT, value: newMessageAlert});
     }, [newMessageAlert]);
 
-    useErrors([{isError, error}, {isError: myFriends.isError, error: myFriends.error}]);
 
-    const handleDeleteChat = (e, chatId, groupChat) => {
-        dispatch(setIsDeleteMenu(true));
-        dispatch(setSelectedDeleteChat({chatId, groupChat}));
-        deleteMenuAnchor.current = e.currentTarget;
-    };
+    useErrors([{isError, error}, {isError: myFriends.isError, error: myFriends.error}]);
 
     const eventHandler = {
         [NEW_MESSAGE_ALERT]: newMessageAlertListener,
@@ -107,11 +118,7 @@ const AppLayout = ({WrappedContent, ...props}) => {
                 <Skeleton/>
             ) : (
                 <Drawer anchor={"right"} open={areOptionsOpen} onClose={() => dispatch(setAreOptionsOpen(false))}>
-                    {isLoading ? (
-                        <Skeleton/>
-                    ) : (
                         <OptionsSidebar/>
-                    )}
                 </Drawer>
             )}
             <Grid2
