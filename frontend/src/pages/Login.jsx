@@ -15,7 +15,7 @@ import { useAsyncMutation } from "../components/hooks/hooks";
 import { VisuallyHiddenInput } from "../components/styles/StyledComponent";
 import { useLoginMutation } from "../redux/api/api";
 import { useRegisterMutation } from "../redux/api/api";
-import { setIsLogin } from "../redux/reducers/authSlice";
+import { updateUser } from "../redux/reducers/authSlice";
 import { validateFormInput } from "../utils/validation";
 
 const Login = () => {
@@ -64,13 +64,13 @@ const Login = () => {
       return;
     }
     setIsLoading(true)
+    let response;
     if (isRegistered) {
-      const response = await userLogin("Logging In", {
+      response = await userLogin("Logging In", {
         username: formData.username,
         password: formData.password
       })
-      if(response?.user) dispatch(setIsLogin(true))
-      console.log(response);
+      if(response?.user) dispatch(updateUser(response.user));
     } else {
       const multiForm = new FormData();
       multiForm.append("name", formData.name)
@@ -79,17 +79,20 @@ const Login = () => {
       multiForm.append("bio", formData.bio)
       multiForm.append("avatar", profileImage)
 
-      const response = await userRegister("Registering User", multiForm)
-      if(response?.user) dispatch(setIsLogin(true))
+      response = await userRegister("Registering User", multiForm)
+      if(response?.user) dispatch(updateUser(response?.user))
     }
+    if(response?.user){
+      setFormData({
+        name: "",
+        username: "",
+        password: "",
+        bio: "",
+      })
+      setProfileImage(null)
+    }
+
     setIsLoading(false)
-    setFormData({
-      name: "",
-      username: "",
-      password: "",
-      bio: "",
-    })
-    setProfileImage(null)
   }
 
   return (

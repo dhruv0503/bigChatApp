@@ -17,11 +17,15 @@ const getMessages = async (req, res, next) => {
     const limit = 20;
     const skip = (page - 1) * limit;
 
-    const messages = await Message.find({ chatId: id }).sort({ createdAt: -1 }).skip(skip).limit(limit).populate("sender", "username avatar").lean();
+    const messages = await Message.find({ chatId: id })
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit)
+        .populate("sender", "username avatar")
+        .lean();
 
     const totalMessages = await Message.countDocuments({ chatId: id })
     const totalPages = Math.ceil(totalMessages / limit);
-
     const transformedMessages = messages.reverse().map(({ _id, sender, content, attachments, createdAt }) => {
         return {
             _id,
@@ -36,7 +40,6 @@ const getMessages = async (req, res, next) => {
             chatId: id
         }
     })
-
     return res.status(200).json({ success: true, messages: transformedMessages, totalPages })
 }
 

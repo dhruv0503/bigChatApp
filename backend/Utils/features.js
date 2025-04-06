@@ -77,7 +77,7 @@ const uploadToCloudinary = async (files = []) => {
         const fileType = fileFormat(file.originalname, fileExtension);
         const publicId = `${uuid()}-${file.originalname}`;
         return new Promise((resolve, reject) => {
-            const uploadStream = cloudinaPry.uploader.upload_stream({
+            const uploadStream = cloudinary.uploader.upload_stream({
                 folder: process.env.CLOUDINARY_FOLDER,
                 resource_type: fileType,
                 public_id: publicId,

@@ -22,6 +22,7 @@ const adminMessage = async (req, chatId, message, members) => {
         chatId,
         createdAt: new Date().toISOString()
     }
+
     const messageForDb = new Message({
         content: message,
         sender: senderId,

@@ -5,7 +5,7 @@ import ProtectRoute from "./components/auth/ProtectRoute.jsx";
 import {HelmetProvider} from "react-helmet-async";
 import {LayoutLoader} from "./components/layout/Loaders.jsx";
 import {Toaster} from 'react-hot-toast';
-import {setIsLogin, updateUser} from './redux/reducers/authSlice';
+import {updateUser} from './redux/reducers/authSlice';
 import {SocketProvider} from './Socket.jsx';
 import axios from 'axios';
 
@@ -23,32 +23,16 @@ const UserManager = lazy(() => import("./pages/admin/UserManager.jsx"));
 
 const App = () => {
 
-    const {user, loader, isLogin} = useSelector((state) => state.auth);
+    const {user, loader } = useSelector((state) => state.auth);
 
     const dispatch = useDispatch();
 
-    const getProfile = async () => {
-        try {
-            const res = await axios.get(`${import.meta.env.VITE_SERVER}/api/user/profile`, {
-                withCredentials: true
-            })
-            return res?.data?.user;
-        } catch (err) {
-            return null;
-        }
-    }
-
     useEffect(() => {
-        dispatch(setIsLogin(false))
+        axios
+            .get(`${import.meta.env.VITE_SERVER}/api/user/profile`, { withCredentials: true })
+            .then(({ data }) => dispatch(updateUser(data.user)))
+            .catch((err) => dispatch(updateUser()));
     }, [dispatch]);
-
-    useEffect(() => {
-        const getData = async () => {
-            const user = await getProfile();
-            if (user) dispatch(updateUser(user))
-        }
-        getData();
-    }, [dispatch, isLogin])
 
     return loader ? (
         <LayoutLoader/>
@@ -69,7 +53,7 @@ const App = () => {
                         <Route
                             path="/login"
                             element={
-                                <ProtectRoute user={!isLogin} redirect="/">
+                                <ProtectRoute user={!user} redirect="/">
                                     <Login/>
                                 </ProtectRoute>
                             }
