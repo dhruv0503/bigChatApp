@@ -9,6 +9,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { useAsyncMutation } from "../components/hooks/hooks";
@@ -20,11 +21,11 @@ import { validateFormInput } from "../utils/validation";
 
 const Login = () => {
   const [isRegistered, setIsRegistered] = useState(true);
-  const toggleRegistered = () => setIsRegistered(prev => !prev)
+  const toggleRegistered = () => setIsRegistered((prev) => !prev);
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false);
-  const [userLogin] = useAsyncMutation(useLoginMutation)
-  const [userRegister] = useAsyncMutation(useRegisterMutation)
+  const [userLogin] = useAsyncMutation(useLoginMutation);
+  const [userRegister] = useAsyncMutation(useRegisterMutation);
 
   const [formErrors, setFormErrors] = useState({
     username: "",
@@ -63,42 +64,44 @@ const Login = () => {
     if (Object.values(formErrors).some((error) => error)) {
       return;
     }
-    setIsLoading(true)
+    setIsLoading(true);
     let response;
     if (isRegistered) {
       response = await userLogin("Logging In", {
         username: formData.username,
-        password: formData.password
-      })
-      if(response?.user) dispatch(updateUser(response.user));
+        password: formData.password,
+      });
+      if (response?.user) dispatch(updateUser(response.user));
     } else {
       const multiForm = new FormData();
-      multiForm.append("name", formData.name)
-      multiForm.append("username", formData.username)
-      multiForm.append("password", formData.password)
-      multiForm.append("bio", formData.bio)
-      multiForm.append("avatar", profileImage)
+      multiForm.append("name", formData.name);
+      multiForm.append("username", formData.username);
+      multiForm.append("password", formData.password);
+      multiForm.append("bio", formData.bio);
+      multiForm.append("avatar", profileImage);
 
-      response = await userRegister("Registering User", multiForm)
-      if(response?.user) dispatch(updateUser(response?.user))
+      response = await userRegister("Registering User", multiForm);
+      if (response?.user) dispatch(updateUser(response?.user));
     }
-    if(response?.user){
+    if (response?.user) {
       setFormData({
         name: "",
         username: "",
         password: "",
         bio: "",
-      })
-      setProfileImage(null)
+      });
+      setProfileImage(null);
     }
 
-    setIsLoading(false)
-  }
+    setIsLoading(false);
+  };
 
   return (
-    <div style={{
-      backgroundImage: "linear-gradient(to right, #fbc2eb, #a6c1ee)"
-    }}>
+    <div
+      style={{
+        backgroundImage: "linear-gradient(to right, #fbc2eb, #a6c1ee)",
+      }}
+    >
       <Container
         component={"main"}
         maxWidth="xs"
@@ -165,7 +168,12 @@ const Login = () => {
                 <Typography sx={{ textAlign: "center", margin: "1rem" }}>
                   OR
                 </Typography>
-                <Button variant="text" fullWidth onClick={() => toggleRegistered()} disabled={isLoading}>
+                <Button
+                  variant="text"
+                  fullWidth
+                  onClick={() => toggleRegistered()}
+                  disabled={isLoading}
+                >
                   Sign Up Instead
                 </Button>
               </form>
@@ -292,5 +300,5 @@ const Login = () => {
       </Container>
     </div>
   );
-}
+};
 export default Login;
