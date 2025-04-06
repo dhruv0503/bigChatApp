@@ -33,10 +33,11 @@ const ChatContent = ({ chatId, user }) => {
   const [messageList, setMessageList] = useState([]);
   const [menuAnchor, setMenuAnchor] = useState(null);
   const [page, setPage] = useState(1);
+  const inputRef = useRef(null);
 
   const chatDetails = useGetChatDetailsQuery({ chatId }, { skip: !chatId })
 
-  let oldMessagesChunk = useGetChatMessagesQuery({ chatId, page })
+  let oldMessagesChunk = useGetChatMessagesQuery({ id : chatId, page })
   const members = chatDetails?.data?.chat?.members;
 
   const { data: oldMessages, setData: setOldMessages } = useInfiniteScrollTop(
@@ -54,6 +55,7 @@ const ChatContent = ({ chatId, user }) => {
 
   useEffect(() => {
     dispatch(removeNewMessageAlert(chatId));
+    if(inputRef.current) inputRef.current.focus()
     return () => {
       setMessage("")
       setMessageList([])
@@ -104,12 +106,12 @@ const ChatContent = ({ chatId, user }) => {
   }, [chatId]);
 
   const startTypingListener = useCallback((data) => {
-    if (data.chatId !== chatId || data.userId.toString() === authState.user._id) return;
+    if (data.chatId !== chatId || data?.userId?.toString() === authState?.user?._id) return;
     setUserTyping(true);
   }, [chatId]);
 
   const stopTypingListener = useCallback((data) => {
-    if (data.chatId !== chatId || data.userId.toString() === authState.user._id) return;
+    if (data.chatId !== chatId || data.userId.toString() === authState?.user?._id) return;
     setUserTyping(false);
   }, [chatId]);
 
@@ -125,7 +127,7 @@ const ChatContent = ({ chatId, user }) => {
 
 
   const allMessages = [...oldMessages, ...messageList]
-  return chatDetails.isLoading ? <Skeleton /> : (
+  return chatDetails.isLoading ? <Skeleton height={"90%"}/> : (
     <>
       <Stack
         ref={containerRef}
@@ -193,18 +195,15 @@ const ChatContent = ({ chatId, user }) => {
           </IconButton>
 
           <InputBox placeholder="Type Message Here..."
-            fontSize={{
-              xs : "1rem",
-              md : "1.2rem",
-              lg : "1.5rem"
-            }}
             value={message}
             onChange={messageChangeHandler}
+            ref={inputRef}
             sx={{
               marginTop: "1%",
               padding: {
                 xs: "0 15%",
-                sm: "0 15% 0 10%"
+                sm: "0 15% 0 10%",
+                lg : "0 10% 0 7%"
               }
             }}
           />

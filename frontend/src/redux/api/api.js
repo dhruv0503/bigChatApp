@@ -74,8 +74,8 @@ const api = createApi({
             providesTags: ["chat"]
         }),
         getChatMessages: builder.query({
-            query: ({chatId, page = 1}) => ({
-                url: `/message/${chatId}?page=${page}`,
+            query: ({id, page = 1}) => ({
+                url: `/message/${id}?page=${page}`,
                 credentials: "include"
 
             }),

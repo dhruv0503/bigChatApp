@@ -31,7 +31,7 @@ const requestRoutes = require('./Routes/requestRoutes')
 const adminRoutes = require('./Routes/adminRoutes')
 const { onNewMessage, onTyping, onStopTyping } = require('./Controllers/socketMethods')
 const { socketAuthenticator } = require('./Middlewares/auth')
-const { setSocket, deleteSocket, getAllSockets, getOnlineUserIds } = require('./Utils/helper')
+const { setSocket, deleteSocket, getAllSockets, getOnlineUserIds, getSocket} = require('./Utils/helper')
 
 app.use(cors(corsOptions))
 app.use(express.json());
@@ -60,8 +60,13 @@ io.use((socket, next) => {
 
 io.on("connection", (socket) => {
     const user = socket.user;
-    setSocket(user._id, socket.id);
-    io.emit(ONLINE_USERS, { onlineUsers: getOnlineUserIds() });
+    const userId = user._id.toString();
+    const isAlreadyOnline = getSocket(userId);
+    setSocket(userId, socket.id);
+    socket.emit(ONLINE_USERS, { onlineUsers: getOnlineUserIds() })
+    if (!isAlreadyOnline) {
+        io.emit(ONLINE_USERS, { onlineUsers:  getOnlineUserIds()});
+    }
     socket.on(NEW_MESSAGE, async ({ chatId, members, message }) => {
         await onNewMessage(io, chatId, members, message, user);
     })
@@ -73,7 +78,9 @@ io.on("connection", (socket) => {
     })
     socket.on("disconnect", () => {
         deleteSocket(user._id);
-        io.emit(ONLINE_USERS, { onlineUsers: getOnlineUserIds() })
+        if (!getSocket(userId)) {
+            io.emit(ONLINE_USERS, { onlineUsers: getOnlineUserIds() });
+        }
     })
 })
 
@@ -82,7 +89,6 @@ app.all('*', (req, res, next) => {
 })
 
 app.use(globalError)
-
 
 server.listen(process.env.PORT || 3000, () => {
     console.log(`Server is running on port ${process.env.PORT || 3000}`)

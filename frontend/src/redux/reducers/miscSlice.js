@@ -51,7 +51,7 @@ const miscSlice = createSlice({
       state.areOptionsOpen = action.payload;
     },
     setOnlineUsers : (state, action) => {
-      state.onlineUsers = action.payload.onlineUsers;
+      state.onlineUsers = action.payload;
     },
     setIsMobileGroup : (state, action) => {
       state.isMobileGroup = action.payload;

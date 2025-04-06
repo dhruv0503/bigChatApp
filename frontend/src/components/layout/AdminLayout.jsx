@@ -17,7 +17,7 @@ import {
 } from "@mui/material";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, Navigate, useLocation } from "react-router-dom";
+import {Link, Navigate, useLocation, useNavigate} from "react-router-dom";
 import { grayColor } from "../../constants/color";
 import { useAdminLogoutMutation } from "../../redux/api/adminApi";
 import { setIsAdmin } from "../../redux/reducers/authSlice";
@@ -55,12 +55,16 @@ const tabs = [
 
 const Sidebar = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const [adminLogout] = useAsyncMutation(useAdminLogoutMutation);
   const dispatch = useDispatch();
   const logoutHandler = async (e) => {
     e.preventDefault();
     const data = await adminLogout("Logging Out...", {});
-    if (data && data?.success) dispatch(setIsAdmin(false));
+    if (data && data?.success) {
+      dispatch(setIsAdmin(false));
+      navigate('/');
+    }
   };
   return (
     <Stack

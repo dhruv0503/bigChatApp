@@ -17,7 +17,6 @@ const ChatItem = ({
   handleDeleteChat,
 }) => {
   const dispatch = useDispatch();
-
   return (
     <StyledLink
       to={`/chat/${_id}`}
