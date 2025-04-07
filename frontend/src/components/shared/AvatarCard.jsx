@@ -10,7 +10,7 @@ const AvatarCard = ({ avatar = [], max = 4 }) => {
           {avatar.map((src, idx) => {
             return <Avatar
               key={Math.random() * 1000}
-              src={transformImage(src, 50)}
+              src={transformImage(src)}
               alt={`Avatar ${idx}`}
               sx={{
                 height: "3rem",

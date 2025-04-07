@@ -63,8 +63,8 @@ const Sidebar = () => {
     const data = await adminLogout("Logging Out...", {});
     if (data && data?.success) {
       dispatch(setIsAdmin(false));
-      navigate('/');
     }
+    navigate('/');
   };
   return (
     <Stack

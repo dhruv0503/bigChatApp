@@ -127,7 +127,7 @@ const ChatContent = ({ chatId, user }) => {
 
 
   const allMessages = [...oldMessages, ...messageList]
-  return chatDetails.isLoading ? <Skeleton height={"90%"}/> : (
+  return chatDetails.isLoading ? <Skeleton height={"100vh%"}/> : (
     <>
       <Stack
         ref={containerRef}

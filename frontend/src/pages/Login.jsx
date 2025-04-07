@@ -154,6 +154,8 @@ const Login = () => {
                   onChange={(evt) => handleChange(evt)}
                   error={!!formErrors.password}
                   helperText={formErrors.password}
+                  onCopy={ e => e.preventDefault()}
+                  onPaste={ e => e.preventDefault()}
                 />
                 <Button
                   sx={{ marginTop: "1rem" }}
@@ -270,6 +272,8 @@ const Login = () => {
                   onChange={(evt) => handleChange(evt)}
                   error={!!formErrors.password}
                   helperText={formErrors.password}
+                  onCopy={ e => e.preventDefault()}
+                  onPaste={ e => e.preventDefault()}
                 />
                 <Button
                   sx={{ marginTop: "1rem" }}
