@@ -2,6 +2,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {lazy, Suspense, useEffect} from "react";
 import {BrowserRouter as Router, Routes, Route} from "react-router-dom";
 import ProtectRoute from "./components/auth/ProtectRoute.jsx";
+import RequireAdmin from "./components/auth/RequireAdmin.jsx";
 import {HelmetProvider} from "react-helmet-async";
 import {LayoutLoader} from "./components/layout/Loaders.jsx";
 import {Toaster} from 'react-hot-toast';
@@ -23,14 +24,14 @@ const UserManager = lazy(() => import("./pages/admin/UserManager.jsx"));
 
 const App = () => {
 
-    const {user, loader } = useSelector((state) => state.auth);
+    const {user, loader} = useSelector((state) => state.auth);
 
     const dispatch = useDispatch();
 
     useEffect(() => {
         axios
-            .get(`${import.meta.env.VITE_SERVER}/api/user/profile`, { withCredentials: true })
-            .then(({ data }) => dispatch(updateUser(data.user)))
+            .get(`${import.meta.env.VITE_SERVER}/api/user/profile`, {withCredentials: true})
+            .then(({data}) => dispatch(updateUser(data.user)))
             .catch((err) => dispatch(updateUser()));
     }, [dispatch]);
 
@@ -60,10 +61,13 @@ const App = () => {
                         />
 
                         <Route path="admin" element={<AdminLogin/>}/>
-                        <Route path="admin/dashboard" element={<Dashboard/>}/>
-                        <Route path="admin/chats" element={<ChatManager/>}/>
-                        <Route path="admin/users" element={<UserManager/>}/>
-                        <Route path="admin/messages" element={<MessageManager/>}/>
+                        <Route element={<RequireAdmin/>}>
+                            <Route path="/admin/dashboard" element={<Dashboard/>}/>
+                            <Route path="/admin/chats" element={<ChatManager/>}/>
+                            <Route path="/admin/users" element={<UserManager/>}/>
+                            <Route path="/admin/messages" element={<MessageManager/>}/>
+                        </Route>
+
 
                         <Route path="*" element={<NotFound/>}/>
                     </Routes>

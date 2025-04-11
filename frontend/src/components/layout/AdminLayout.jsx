@@ -6,22 +6,14 @@ import {
   Menu as MenuIcon,
   Message as MessageIcon,
 } from "@mui/icons-material";
-import {
-  Box,
-  Drawer,
-  Grid2,
-  IconButton,
-  Stack,
-  Typography,
-  styled,
-} from "@mui/material";
-import { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import {Box, Drawer, Grid2, IconButton, Stack, styled, Typography,} from "@mui/material";
+import {useState} from "react";
+import {useDispatch, useSelector} from "react-redux";
 import {Link, Navigate, useLocation, useNavigate} from "react-router-dom";
-import { grayColor } from "../../constants/color";
-import { useAdminLogoutMutation } from "../../redux/api/adminApi";
-import { setIsAdmin } from "../../redux/reducers/authSlice";
-import { useAsyncMutation } from "../hooks/hooks";
+import {grayColor} from "../../constants/color";
+import {useAdminLogoutMutation} from "../../redux/api/adminApi";
+import {setIsAdmin} from "../../redux/reducers/authSlice";
+import {useAsyncMutation} from "../hooks/hooks";
 
 const StyledLink = styled(Link)({
   textDecoration: "none",
@@ -58,14 +50,15 @@ const Sidebar = () => {
   const navigate = useNavigate();
   const [adminLogout] = useAsyncMutation(useAdminLogoutMutation);
   const dispatch = useDispatch();
+  const {isAdmin} = useSelector(state => state.auth)
   const logoutHandler = async (e) => {
     e.preventDefault();
     const data = await adminLogout("Logging Out...", {});
     if (data?.success) {
       dispatch(setIsAdmin(false));
-      navigate('/admin')
     }
   };
+
   return (
     <Stack
       direction={"column"}
