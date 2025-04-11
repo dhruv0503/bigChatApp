@@ -6,14 +6,22 @@ import {
   Menu as MenuIcon,
   Message as MessageIcon,
 } from "@mui/icons-material";
-import {Box, Drawer, Grid2, IconButton, Stack, styled, Typography,} from "@mui/material";
-import {useState} from "react";
-import {useDispatch, useSelector} from "react-redux";
+import {
+  Box,
+  Drawer,
+  Grid2,
+  IconButton,
+  Stack,
+  Typography,
+  styled,
+} from "@mui/material";
+import { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import {Link, Navigate, useLocation, useNavigate} from "react-router-dom";
-import {grayColor} from "../../constants/color";
-import {useAdminLogoutMutation} from "../../redux/api/adminApi";
-import {setIsAdmin} from "../../redux/reducers/authSlice";
-import {useAsyncMutation} from "../hooks/hooks";
+import { grayColor } from "../../constants/color";
+import { useAdminLogoutMutation } from "../../redux/api/adminApi";
+import { setIsAdmin } from "../../redux/reducers/authSlice";
+import { useAsyncMutation } from "../hooks/hooks";
 
 const StyledLink = styled(Link)({
   textDecoration: "none",
@@ -58,6 +66,10 @@ const Sidebar = () => {
       dispatch(setIsAdmin(false));
     }
   };
+
+  useEffect(() => {
+    if (!isAdmin) navigate('/admin');
+  }, [isAdmin, navigate]);
 
   return (
     <Stack
@@ -108,6 +120,7 @@ const Sidebar = () => {
     </Stack>
   );
 };
+
 const AdminLayout = ({ children }) => {
   const { isAdmin } = useSelector((state) => state.auth);
   const [isMobile, setIsMobile] = useState(false);

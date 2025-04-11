@@ -14,6 +14,12 @@ const cookieOptions = {
     secure: true
 }
 
+const clearCookieOptions = {
+    httpOnly: true,
+    sameSite: "none",
+    secure: true
+}
+
 const connectDB = () => {
     mongoose.connect(process.env.MONGO_URI).then(() => {
         console.log('Connected to MongoDB')
@@ -117,5 +123,6 @@ module.exports = {
     deleteFilesFromCloudinary,
     cookieOptions,
     uploadToCloudinary,
-    getMyFriends
+    getMyFriends,
+    clearCookieOptions
 }

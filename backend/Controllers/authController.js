@@ -1,6 +1,7 @@
 const User = require('../Models/userModel.js');
 const expressError = require('../Utils/expressError.js');
 const { sendToken, uploadToCloudinary } = require('../Utils/features.js')
+const {clearCookieOptions} = require("../Utils/features");
 
 module.exports.createUser = async (req, res, next) => {
     const { name, username, password, bio } = req.body;
@@ -28,7 +29,7 @@ module.exports.loginUser = async (req, res, next) => {
 }
 
 module.exports.logout = async (req, res, next) => {
-    res.clearCookie('jsonToken');
+    res.clearCookie('jsonToken', clearCookieOptions);
     res.status(200).json({
         status: true,
         message: "Logged Out Successfully"

@@ -26,7 +26,6 @@ module.exports.searchUser = async (req, res, next) => {
     const allChatMembers = await Chat.find({ groupChat: false, members: req.userId });
     const myFriends = new Set(allChatMembers.flatMap((chat) => chat.members).map((member) => member.toString()))
     myFriends.delete(userId);
-    if(myFriends.has(process.env.ADMIN_ID)) myFriends.delete(process.env.ADMIN_ID);
     const alreadyRequestSentUsers = await Request.find({
         $or: [{ sender: req.userId }, { receiver: req.userId }]
     })
@@ -47,7 +46,9 @@ module.exports.searchUser = async (req, res, next) => {
 
     const searchList = await User.find(searchQuery).lean();
 
-    const updatedSearchList = searchList.map((user) => {
+    const updatedSearchList = searchList.filter((ele) => {
+        ele._id !== process.env.ADMIN_ID
+    }).map((user) => {
         return {
             ...user,
             avatar: user.avatar?.url

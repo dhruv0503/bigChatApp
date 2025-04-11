@@ -2,7 +2,7 @@ const User = require('../Models/userModel')
 const Chat = require('../Models/chatModel')
 const Message = require('../Models/messageModel');
 const expressError = require('../Utils/expressError');
-const { cookieOptions } = require('../Utils/features');
+const { cookieOptions, clearCookieOptions} = require('../Utils/features');
 const jwt = require('jsonwebtoken');
 const mongoose = require("mongoose");
 
@@ -23,7 +23,7 @@ module.exports.adminLogin = async (req, res, next) => {
 }
 
 module.exports.adminLogout = async (req, res, next) => {
-    return res.status(200).clearCookie('adminToken').json({
+    return res.status(200).clearCookie('adminToken', clearCookieOptions).json({
         success: true,
         message: "Logged Out Successfully"
     })
