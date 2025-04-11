@@ -127,7 +127,6 @@ const AdminLayout = ({ children }) => {
   };
 
   if (!isAdmin) return <Navigate to={"/admin"} />;
-  else <Navigate to={"/admin/dashboard"} />;
 
   return (
     <Grid2

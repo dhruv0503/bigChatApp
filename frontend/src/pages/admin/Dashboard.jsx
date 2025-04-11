@@ -1,53 +1,16 @@
-import {
-  AdminPanelSettings as AdminPanelSettingsIcon,
-  Group as GroupIcon,
-  Message as MessageIcon,
-  Person as PersonIcon,
-} from "@mui/icons-material";
-import { Box, Container, Paper, Stack, Typography } from "@mui/material";
-import moment from "moment";
-import { useErrors } from "../../components/hooks/hooks";
+import {Group as GroupIcon, Message as MessageIcon, Person as PersonIcon,} from "@mui/icons-material";
+import {Container, Paper, Stack, Typography} from "@mui/material";
+import {useErrors} from "../../components/hooks/hooks";
 import AdminLayout from "../../components/layout/AdminLayout";
-import { LayoutLoader } from "../../components/layout/Loaders";
-import { DoughnutChart, LineChart } from "../../components/specific/Charts";
-import {
-  CurvedButton,
-  SearchField,
-} from "../../components/styles/StyledComponent";
-import { useGetAdminDashboardQuery } from "../../redux/api/adminApi";
+import {LayoutLoader} from "../../components/layout/Loaders";
+import {DoughnutChart, LineChart} from "../../components/specific/Charts";
+import {useGetAdminDashboardQuery} from "../../redux/api/adminApi";
+
 const Dashboard = () => {
   const { data, isError, error, isLoading } = useGetAdminDashboardQuery();
   const stats = data?.stats;
 
   useErrors([{ isError, error }]);
-  // const AppBar = () => {
-  //   return (
-  //     <Paper
-  //       elevation={3}
-  //       sx={{
-  //         padding: "2rem",
-  //         margin: "2rem 0",
-  //         borderRadius: "1rem",
-  //       }}
-  //     >
-  //       <Stack spacing={"1rem"} alignItems={"center"} direction={"row"}>
-  //         <AdminPanelSettingsIcon sx={{ fontSize: "3rem" }} />
-  //         <SearchField />
-  //         <CurvedButton>Search</CurvedButton>
-  //         <Box flexGrow={1} />
-  //         <Typography
-  //           display={{
-  //             xs: "none",
-  //             xl: "block",
-  //           }}
-  //           textAlign={"center"}
-  //         >
-  //           {moment().format("MMMM Do YYYY")}
-  //         </Typography>
-  //       </Stack>
-  //     </Paper>
-  //   );
-  // };
 
   const Widgets = () => {
     return (
@@ -85,13 +48,11 @@ const Dashboard = () => {
   ) : (
     <AdminLayout>
       <Container component={"main"} sx={{ marginTop: "2rem", alignItem : "center", justifyContent : "center" }}> 
-        {/* <AppBar /> */}
         <Stack
           direction={{
             xs: "column",
             lg: "row",
           }}
-          flexWrap={"wrap"}
           justifyContent={"center"}
           alignItems={{
             xs: "center",
@@ -99,6 +60,7 @@ const Dashboard = () => {
           }}
           sx={{
             gap: "2rem",
+            flexWrap : "wrap"
           }}
         >
           <Paper
