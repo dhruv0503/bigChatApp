@@ -61,9 +61,9 @@ const Sidebar = () => {
   const logoutHandler = async (e) => {
     e.preventDefault();
     const data = await adminLogout("Logging Out...", {});
-    if (data && data?.success) {
+    if (data?.success) {
       dispatch(setIsAdmin(false));
-      navigate("/admin");
+      navigate('/admin')
     }
   };
   return (
@@ -115,11 +115,10 @@ const Sidebar = () => {
     </Stack>
   );
 };
-
 const AdminLayout = ({ children }) => {
   const { isAdmin } = useSelector((state) => state.auth);
   const [isMobile, setIsMobile] = useState(false);
-  const hanldeMobile = () => {
+  const handleMobile = () => {
     setIsMobile(!isMobile);
   };
   const handleClose = () => {
@@ -149,7 +148,7 @@ const AdminLayout = ({ children }) => {
           top: "2rem",
         }}
       >
-        <IconButton onClick={hanldeMobile}>
+        <IconButton onClick={handleMobile}>
           <MenuIcon />
         </IconButton>
       </Box>
