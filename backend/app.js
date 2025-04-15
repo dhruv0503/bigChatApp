@@ -46,6 +46,13 @@ app.use('/api/message', messageRoutes);
 app.use('/api/request', requestRoutes);
 app.use('/api/admin', adminRoutes);
 
+app.post('/api/keepalive', (req, res) => {
+    res.status(200).json({
+        status : "success",
+        server : "alive"
+    })
+})
+
 app.get('/', (req, res) => {
     res.send('Hello World!')
 })
