@@ -1,5 +1,5 @@
 import {Drawer, Grid2, Skeleton} from "@mui/material";
-import { useEffect, useRef} from "react";
+import {useEffect, useRef} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {
     NEW_MESSAGE_ALERT
@@ -47,7 +47,7 @@ const AppLayout = ({WrappedContent, ...props}) => {
 
 
     useErrors([
-        {isError : myChats.isError, error : myChats.error},
+        {isError: myChats.isError, error: myChats.error},
         {isError: myFriends.isError, error: myFriends.error}
     ]);
 
@@ -60,7 +60,7 @@ const AppLayout = ({WrappedContent, ...props}) => {
                 <Skeleton height={"100vh"} variant={"rounded"}/>
             ) : (
                 <Drawer anchor={"right"} open={areOptionsOpen} onClose={() => dispatch(setAreOptionsOpen(false))}>
-                        <OptionsSidebar/>
+                    <OptionsSidebar/>
                 </Drawer>
             )}
             <Grid2
@@ -80,11 +80,14 @@ const AppLayout = ({WrappedContent, ...props}) => {
                         flexGrow: "1",
                         maxWidth: {
                             xs: "100%",
-                            sm: "33%",
+                            sm: "32%",
                             md: "25%",
                         },
                         boxSizing: "border-box",
-                        margin: "0.5rem",
+                        margin: {
+                            xs: "1%",
+                            sm: "0.5%"
+                        },
                         borderRadius: "25px",
                         display: {
                             xs: isMobile ? "none" : "block",
@@ -113,11 +116,14 @@ const AppLayout = ({WrappedContent, ...props}) => {
                     display={{xs: isMobile ? "block" : "none", sm: "block"}}
                     sx={{
                         flexGrow: "2",
-                        margin: "0.5rem",
+                        margin: {
+                            xs: "1%",
+                            sm: "0.5%"
+                        },
                         borderRadius: "25px",
                         maxWidth: {
                             xs: "100%",
-                            sm: "67%",
+                            sm: "66%",
                             md: "50%",
                         },
                     }}
@@ -133,7 +139,7 @@ const AppLayout = ({WrappedContent, ...props}) => {
                         backgroundColor: "rgba(0,0,0,0.7)",
                         flexGrow: "1",
                         maxWidth: "25%",
-                        margin: "0.5rem",
+                        margin: "0.5%",
                         borderRadius: "25px",
                     }}
                 >
