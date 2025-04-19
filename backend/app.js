@@ -49,7 +49,8 @@ app.use('/api/admin', adminRoutes);
 app.post('/api/keepalive', (req, res) => {
     res.status(200).json({
         status : "success",
-        server : "alive"
+        server : "alive",
+        time : Date.now()
     })
 })
 
