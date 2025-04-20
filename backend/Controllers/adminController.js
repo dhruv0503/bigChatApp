@@ -94,9 +94,14 @@ module.exports.allChats = async (req, res, next) => {
 }
 
 module.exports.allMessages = async (req, res, next) => {
-    const messages = await Message.find({ sender: { $ne: process.env.ADMIN_ID } }).populate("sender", "username avatar").populate("chatId", "groupChat createdAt").lean();
+    const messages = await Message
+        .find({ sender: { $ne: process.env.ADMIN_ID } })
+        .populate("sender", "username avatar")
+        .populate("chatId", "groupChat createdAt")
+        .sort({createdAt : -1})
+        .lean();
 
-    const transformedMessages = messages.map(({ _id, attachments, content, sender, chatId }) => ({
+    const transformedMessages = messages.map(({ _id, attachments, content, sender, chatId, createdAt }) => ({
         _id,
         attachments: attachments.map(attach => attach.url),
         content,
@@ -107,7 +112,7 @@ module.exports.allMessages = async (req, res, next) => {
         },
         chat : chatId._id,
         groupChat: chatId.groupChat ? "Yes" : "No",
-        createdAt: chatId.createdAt.toLocaleString()
+        createdAt: createdAt.toLocaleString()
     }))
 
     res.status(200).json({

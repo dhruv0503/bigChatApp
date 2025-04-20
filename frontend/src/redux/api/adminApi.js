@@ -55,7 +55,8 @@ const adminApi = createApi({
                 url: '/',
                 method: 'GET',
                 credentials: 'include'
-            })
+            }),
+            keepUnusedDataFor: 0,
         })
     })
 })
