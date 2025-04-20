@@ -63,8 +63,10 @@ const Sidebar = () => {
     e.preventDefault();
     const data = await adminLogout("Logging Out...", {});
     if (data?.success) {
+      console.log(data);
       dispatch(setIsAdmin(false));
     }
+    console.log(data);
   };
 
   useEffect(() => {
