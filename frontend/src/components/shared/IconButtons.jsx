@@ -10,7 +10,7 @@ import { useDispatch, useSelector } from "react-redux";
 import {setAreOptionsOpen, setIsMobileGroup, setIsSearch} from "../../redux/reducers/miscSlice";
 
 import { useNavigate } from "react-router-dom";
-import api, { useLogoutMutation } from "../../redux/api/api";
+import api, { useLogoutMutation, useUpdateUnreadMessagesMutation } from "../../redux/api/api";
 import { updateUser } from "../../redux/reducers/authSlice";
 
 import { resetNotificationCount } from "../../redux/reducers/chatSlice";
@@ -82,10 +82,13 @@ export const NotificationButton = ({ text = false }) => {
 
 export const LogoutButton = ({ text = false}) => {
   const [userLogout] = useAsyncMutation(useLogoutMutation);
+  const chat = useSelector((state) => state.chat);
+  const [updateUnreadMessages] = useAsyncMutation(useUpdateUnreadMessagesMutation);
   const socket = getSocket();
   const dispatch = useDispatch();
   const logoutHandler = async () => {
     await userLogout("Logging Out");
+    await updateUnreadMessages("Updating Unread Messages", chat.newMessageAlert)
     dispatch(api.util.resetApiState());
     dispatch(updateUser(null));
     socket.disconnect();

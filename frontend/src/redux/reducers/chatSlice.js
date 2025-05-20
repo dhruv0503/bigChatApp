@@ -20,9 +20,6 @@ const chatSlice = createSlice({
     resetNotificationCount: (state) => {
       state.notificationCount = 0;
     },
-    setNotificationCount: (state, action) => {
-      state.notificationCount = action.payload;
-    },
     setNewMessagesAlert : (state, action) => {
       const chatId = action.payload.chatId
       const index = state.newMessageAlert.findIndex(
@@ -36,6 +33,12 @@ const chatSlice = createSlice({
       state.newMessageAlert = state.newMessageAlert.filter(
         (item) => item.chatId !== action.payload
       )
+    },
+    loadMessagesAlert : (state, action) => {
+      const unreadMessages = action.payload;
+      state.newMessageAlert = Object.entries(unreadMessages).map(
+          ([chatId, count]) => ({ chatId, count })
+      )
     }
   },
 });
@@ -47,5 +50,5 @@ export const {
   resetNotificationCount,
   setNewMessagesAlert,
   removeNewMessageAlert,
-  setNotificationCount
+  loadMessagesAlert
 } = chatSlice.actions;

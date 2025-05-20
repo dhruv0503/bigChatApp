@@ -17,6 +17,7 @@ import ChatList from "../specific/ChatList";
 import OptionsSidebar from "../specific/OptionsSidebar";
 import Profile from "../specific/Profile";
 import Header from "./Header";
+import {loadMessagesAlert} from "../../redux/reducers/chatSlice.js";
 
 
 const AppLayout = ({WrappedContent, ...props}) => {
@@ -34,6 +35,12 @@ const AppLayout = ({WrappedContent, ...props}) => {
         dispatch(setSelectedDeleteChat({chatId, groupChat}));
         deleteMenuAnchor.current = e.currentTarget;
     };
+
+    useEffect(() => {
+        if(user){
+            dispatch(loadMessagesAlert(user.unreadMessages));
+        }
+    }, [user, dispatch]);
 
     useEffect(() => {
         if (user && !myChats.data) {

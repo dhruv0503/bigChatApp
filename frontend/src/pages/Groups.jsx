@@ -13,7 +13,6 @@ import {
     Box,
     Button,
     CircularProgress,
-    Drawer,
     Grid2,
     IconButton,
     Stack,
@@ -290,7 +289,8 @@ const Groups = () => {
                         display: {
                             xs: "none",
                             sm: "flex"
-                        }
+                        },
+                        zIndex: 1000,
                     }}
                     onClick={navigateBack}
                 >

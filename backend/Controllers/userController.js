@@ -78,3 +78,14 @@ module.exports.getMyNotifications = async (req, res, next) => {
         notifications: transformedRequests,
     })
 }
+
+module.exports.updateUnreadMessageCount = async (req, res, next) => {
+    const {unreadMessages} = req.body;
+    const user = await User.findById(req.userId);
+    user.unreadMessages = unreadMessages;
+    await user.save();
+    return res.status(200).json({
+        success: true,
+        user
+    })
+}

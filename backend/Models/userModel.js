@@ -30,6 +30,11 @@ const userSchema = new Schema({
             type: String,
             required: true
         }
+    },
+    unreadMessages : {
+        type : Map,
+        of : Number,
+        default : {}
     }
 }, {
     timestamps: true

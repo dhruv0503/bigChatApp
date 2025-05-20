@@ -97,6 +97,14 @@ const api = createApi({
                 body: data
             }),
         }),
+        updateUnreadMessages : builder.mutation({
+            query : (data) => ({
+                url : `/user/unread`,
+                method : "PATCH",
+                credentials : "include",
+                body : data
+            })
+        }),
         logout: builder.mutation({
             query: (data) => ({
                 url: `/logout`,
@@ -208,5 +216,5 @@ export const {
     useLoginMutation,
     useRegisterMutation,
     useLogoutMutation,
-    useGetUserProfileQuery,
+    useUpdateUnreadMessagesMutation,
 } = api
