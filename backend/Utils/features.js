@@ -28,6 +28,7 @@ const sendToken = (res, user, code, msg) => {
     return res.status(code).json({
         success: true,
         message: msg,
+        token,
         user
     })
 }

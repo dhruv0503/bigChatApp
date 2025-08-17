@@ -23,7 +23,11 @@ module.exports.adminLogin = async (req, res, next) => {
 }
 
 module.exports.adminLogout = async (req, res, next) => {
-    return res.status(200).clearCookie('adminToken').json({
+    return res.status(200).clearCookie('adminToken', {
+        httpOnly : true,
+        secure : true,
+        sameSite : "none",
+    }).json({
         success: true,
         message: "Logged Out Successfully"
     })
