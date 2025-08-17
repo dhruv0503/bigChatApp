@@ -71,7 +71,6 @@ const Login = () => {
         username: formData.username,
         password: formData.password,
       });
-      console.log(response);
       if (response?.user && response?.token) dispatch(updateUser(response.user));
     } else {
       const multiForm = new FormData();

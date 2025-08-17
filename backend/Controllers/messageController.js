@@ -73,8 +73,6 @@ const sendAttachment = async (req, res, next) => {
     const message = await new Message(messageForDB)
     message.save();
 
-    console.log(messageForRealTime)
-
     emitEvent(req, NEW_MESSAGE, chat.members, { message: messageForRealTime, chatId })
     emitEvent(req, NEW_MESSAGE_ALERT, chat.members, chatId)
 

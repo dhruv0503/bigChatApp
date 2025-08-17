@@ -82,7 +82,7 @@ const uploadToCloudinary = async (files = []) => {
                 folder: process.env.CLOUDINARY_FOLDER,
                 resource_type: fileType,
                 public_id: publicId,
-                ...(fileType !== 'raw' && {format: fileExtension})
+                ...(fileType !== 'raw' && {format: fileExtension, flags :  "inline"})
             }, (error, result) => {
                 if (error) {
                     reject(error);

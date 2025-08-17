@@ -78,9 +78,13 @@ const useAppLayoutLogic = () => {
     const chatId = params.chatId;
     const socket = getSocket();
 
-    const myChats = useGetChatsQuery();
-    const myFriends = useGetFriendsQuery();
-
+    const myChats = useGetChatsQuery(undefined, {
+        skip : !user
+    });
+    const myFriends = useGetFriendsQuery(undefined, {
+        skip : !user
+    });
+    
     const onlineFriends = useMemo(() => {
         if (!myFriends?.data?.friends || !onlineUsers) return [];
         return myFriends?.data?.friends?.filter((friend) => onlineUsers?.includes(friend?._id))
@@ -102,8 +106,7 @@ const useAppLayoutLogic = () => {
             myChats.refetch();
             if (data?.users?.includes(user?._id) && location.pathname !== '/') navigate("/");
         },
-        [myChats.refetch
-            , navigate, user?._id]
+        [myChats.refetch, navigate, user?._id]
     );
 
     const onlineUsersListener = useCallback(({onlineUsers}) => {
@@ -120,7 +123,6 @@ const useAppLayoutLogic = () => {
     useSocketEvents(socket, eventHandler);
 
     return {socket, myChats, onlineFriends, myFriends, chatId}
-
 }
 
 export { useErrors, useAsyncMutation, useSocketEvents, useAppLayoutLogic };
