@@ -26,7 +26,7 @@ const AppLayout = ({WrappedContent, ...props}) => {
     const {isMobile, areOptionsOpen} = useSelector((state) => state.misc);
     const {newMessageAlert} = useSelector((state) => state.chat);
 
-    const {chatId, myChats, myFriends, socket, onlineFriends} = useAppLayoutLogic()
+    const {chatId, myChats, myFriends, onlineFriends} = useAppLayoutLogic()
 
 
     const handleDeleteChat = (e, chatId, groupChat) => {
@@ -39,7 +39,7 @@ const AppLayout = ({WrappedContent, ...props}) => {
         if (user && !myChats.data) {
             myChats.refetch();
         }
-    }, [user, myChats.data, myChats.refetch]);
+    }, [user, myChats.data, myChats.refetch, myChats]);
 
     useEffect(() => {
         getOrSaveFromStorage({key: NEW_MESSAGE_ALERT, value: newMessageAlert});
