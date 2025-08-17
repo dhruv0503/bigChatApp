@@ -8,7 +8,7 @@ import { motion } from 'framer-motion'
 
 const MessageComponent = ({ message, user }) => {
     const { sender, content, attachments = [], createdAt } = message || {};
-    console.log(message)
+    // console.log(message)
     const sameSender = sender?._id === user?._id;
     const timeAgo = moment(createdAt).fromNow()
 
@@ -39,7 +39,10 @@ const MessageComponent = ({ message, user }) => {
                 attachments.map((attach, idx) => {
                     const url = attach.url;
                     const file = fileFormat(url);
-                    return <Box key={idx}>
+                    const nameArray = attach?.public_id.split('-')
+                    const filteredNameArray = nameArray.filter((ele, idx) => idx >= 5)
+                    const name = filteredNameArray.join('-')
+                    return <Box key={idx} sx={{display: "flex", flexDirection: "row", alignItems: "center", gap: 1}}>
                         <a
                             href={url}
                             target="_blank"
@@ -51,6 +54,8 @@ const MessageComponent = ({ message, user }) => {
                         >
                             {RenderAttachment(file, url)}
                         </a>
+                        <Typography variant="subtitle"
+                                    sx={{wordWrap: "break-word", whiteSpace: "pre-wrap"}}>{name}</Typography>
                     </Box>
                 })
             )}
