@@ -71,7 +71,7 @@ const Login = () => {
         username: formData.username,
         password: formData.password,
       });
-      if (response?.user && response?.token) dispatch(updateUser(response.user));
+      if (response?.user) dispatch(updateUser(response.user));
     } else {
       const multiForm = new FormData();
       multiForm.append("name", formData.name);
@@ -81,9 +81,9 @@ const Login = () => {
       multiForm.append("avatar", profileImage);
 
       response = await userRegister("Registering User", multiForm);
-      if (response?.user && response?.token) dispatch(updateUser(response?.user));
+      if (response?.user ) dispatch(updateUser(response?.user));
     }
-    if (response?.user && response?.token) {
+    if (response?.user) {
       setFormData({
         name: "",
         username: "",

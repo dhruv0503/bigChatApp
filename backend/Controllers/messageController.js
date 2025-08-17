@@ -69,7 +69,6 @@ const sendAttachment = async (req, res, next) => {
             username: user.username
         },
     }
-    // console.log(messageForRealTime)
     const message = await new Message(messageForDB)
     message.save();
 

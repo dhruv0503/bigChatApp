@@ -41,7 +41,6 @@ const socketAuthenticator = async (err, socket, next) => {
         return next();
 
     } catch (error) {
-        console.log(error);
         return next(new expressError('Please Login First', 401))
     }
 }
