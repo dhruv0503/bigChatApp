@@ -81,7 +81,7 @@ const Login = () => {
       multiForm.append("avatar", profileImage);
 
       response = await userRegister("Registering User", multiForm);
-      if (response?.user) dispatch(updateUser(response?.user));
+      if (response?.user ) dispatch(updateUser(response?.user));
     }
     if (response?.user) {
       setFormData({
@@ -92,7 +92,6 @@ const Login = () => {
       });
       setProfileImage(null);
     }
-
     setIsLoading(false);
   };
 

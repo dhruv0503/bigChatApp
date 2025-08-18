@@ -38,7 +38,7 @@ const MessageComponent = ({ message, user }) => {
                 attachments.map((attach, idx) => {
                     const url = attach.url;
                     const file = fileFormat(url);
-                    const isRaw = file === "file";
+                    const isRaw = file === "file"
                     const namesArray = attach?.public_id.split('-');
                     const filteredNamesArray = namesArray.filter((name, idx) => idx >= 5);
                     const name = filteredNamesArray.join('-');
@@ -60,6 +60,7 @@ const MessageComponent = ({ message, user }) => {
                             {RenderAttachment(file, url)}
                         </a>
                         <Typography variant="subtitle2" sx={{ wordWrap: "break-word", whiteSpace: "pre-wrap" }}>{name}</Typography>
+
                     </Box>
                 })
             )}
