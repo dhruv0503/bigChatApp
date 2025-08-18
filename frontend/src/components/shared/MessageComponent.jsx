@@ -38,7 +38,16 @@ const MessageComponent = ({ message, user }) => {
                 attachments.map((attach, idx) => {
                     const url = attach.url;
                     const file = fileFormat(url);
-                    return <Box key={idx}>
+                    const isRaw = file === "file";
+                    const namesArray = attach?.public_id.split('-');
+                    const filteredNamesArray = namesArray.filter((name, idx) => idx >= 5);
+                    const name = filteredNamesArray.join('-');
+                    return <Box key={idx} sx={{
+                        display : "flex",
+                        flexDirection : isRaw ? "row" : "column",
+                        ...(isRaw ? {justifyContent : "center"} : {alignItems : "center"}),
+                        gap : 0.5
+                    }}>
                         <a
                             href={url}
                             target="_blank"
@@ -50,6 +59,7 @@ const MessageComponent = ({ message, user }) => {
                         >
                             {RenderAttachment(file, url)}
                         </a>
+                        <Typography variant="subtitle2" sx={{ wordWrap: "break-word", whiteSpace: "pre-wrap" }}>{name}</Typography>
                     </Box>
                 })
             )}
